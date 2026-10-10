@@ -1,0 +1,210 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Job } from '../../types';
+import { Colors, Radius } from '../../constants/colors';
+import { useApp } from '../../context/AppContext';
+import { Badge } from '../ui/Badge';
+import { Card } from '../ui/Card';
+
+interface JobCardProps {
+  job: Job;
+  onPress: () => void;
+  onApply?: () => void;
+  showApplyButton?: boolean;
+}
+
+export const JobCard: React.FC<JobCardProps> = ({
+  job,
+  onPress,
+  onApply,
+  showApplyButton = true,
+}) => {
+  const { language, t } = useApp();
+
+  const title = language === 'ta' ? job.title_ta : job.title_en;
+  const categoryName = language === 'ta' ? job.categoryName_ta : job.categoryName_en;
+  const localityName = language === 'ta' ? job.locality_ta : job.locality_en;
+
+  const wageSuffix =
+    job.wageType === 'per_day'
+      ? t('perDay')
+      : job.wageType === 'per_hour'
+      ? t('perHour')
+      : ` (${t('fixedPrice')})`;
+
+  return (
+    <Card style={styles.card} onPress={onPress}>
+      {/* Top row: Category + Urgent / Status */}
+      <View style={styles.topRow}>
+        <Badge
+          label={categoryName}
+          variant="yellow"
+          icon={<Ionicons name="briefcase" size={11} color="#854D0E" />}
+        />
+
+        <View style={styles.rightBadges}>
+          {job.isUrgent && (
+            <Badge
+              label={language === 'ta' ? 'அவசரம்' : 'Urgent'}
+              variant="urgent"
+              icon={<Ionicons name="flame" size={11} color={Colors.error} />}
+            />
+          )}
+          <Text style={styles.timeAgo}>{job.postedAt}</Text>
+        </View>
+      </View>
+
+      {/* Title */}
+      <Text style={styles.title} numberOfLines={2}>
+        {title}
+      </Text>
+
+      {/* Location & Landmark */}
+      <View style={styles.metaRow}>
+        <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
+        <Text style={styles.metaText} numberOfLines={1}>
+          {localityName} • {job.landmark}
+        </Text>
+      </View>
+
+      {/* Date & Time */}
+      <View style={styles.metaRow}>
+        <Ionicons name="calendar-outline" size={14} color={Colors.textSecondary} />
+        <Text style={styles.metaText} numberOfLines={1}>
+          {job.date} • {job.time}
+        </Text>
+      </View>
+
+      {/* Divider */}
+      <View style={styles.divider} />
+
+      {/* Bottom Row: Wage & Action */}
+      <View style={styles.bottomRow}>
+        <View>
+          <Text style={styles.wageLabel}>{t('wageOffered')}</Text>
+          <Text style={styles.wageValue}>
+            ₹{job.wageRate}
+            <Text style={styles.wageSuffix}>{wageSuffix}</Text>
+          </Text>
+        </View>
+
+        <View style={styles.actionGroup}>
+          <View style={styles.applicantsBadge}>
+            <Ionicons name="people-outline" size={12} color={Colors.textSecondary} />
+            <Text style={styles.applicantsText}>
+              {job.applicantsCount}/{job.workersNeeded}
+            </Text>
+          </View>
+
+          {showApplyButton && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={onApply || onPress}
+              style={styles.applyBtn}
+            >
+              <Text style={styles.applyBtnText}>{t('applyNow')}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </Card>
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    marginBottom: 12,
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  rightBadges: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  timeAgo: {
+    fontSize: 11,
+    color: Colors.textMuted,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  metaText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    marginLeft: 5,
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: 10,
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  wageLabel: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+  },
+  wageValue: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+  },
+  wageSuffix: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+  },
+  actionGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  applicantsBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.secondaryBg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: Radius.round,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    gap: 3,
+  },
+  applicantsText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  applyBtn: {
+    backgroundColor: Colors.brandYellow,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    borderColor: Colors.brandYellowDark,
+  },
+  applyBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.brandBlack,
+  },
+});
