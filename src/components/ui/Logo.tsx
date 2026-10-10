@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Colors } from '../../constants/colors';
+
+const APP_LOGO = require('../../../assets/images/app-logo.png');
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
@@ -17,14 +18,14 @@ export const Logo: React.FC<LogoProps> = ({
   const getBadgeDimensions = () => {
     switch (size) {
       case 'sm':
-        return { box: 32, icon: 18, fontSize: 16, subSize: 9 };
+        return { box: 28, fontSize: 16, subSize: 9 };
       case 'lg':
-        return { box: 56, icon: 30, fontSize: 24, subSize: 12 };
+        return { box: 48, fontSize: 24, subSize: 12 };
       case 'hero':
-        return { box: 76, icon: 42, fontSize: 32, subSize: 14 };
+        return { box: 76, fontSize: 32, subSize: 14 };
       case 'md':
       default:
-        return { box: 40, icon: 22, fontSize: 19, subSize: 10 };
+        return { box: 36, fontSize: 19, subSize: 10 };
     }
   };
 
@@ -32,19 +33,18 @@ export const Logo: React.FC<LogoProps> = ({
 
   return (
     <View style={styles.container}>
-      <View
+      <Image
+        source={APP_LOGO}
         style={[
           styles.badge,
           {
             width: dims.box,
             height: dims.box,
-            borderRadius: dims.box * 0.28,
-            backgroundColor: Colors.brandYellow,
+            borderRadius: dims.box * 0.22,
           },
         ]}
-      >
-        <Ionicons name="construct" size={dims.icon} color={Colors.brandBlack} />
-      </View>
+        resizeMode="contain"
+      />
 
       <View style={styles.textWrapper}>
         <View style={styles.titleRow}>
@@ -94,11 +94,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badge: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-    borderWidth: 1.5,
-    borderColor: '#171717',
+    marginRight: 9,
   },
   textWrapper: {
     justifyContent: 'center',
@@ -125,3 +121,4 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
 });
+
