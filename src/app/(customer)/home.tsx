@@ -34,12 +34,12 @@ export default function CustomerHomeScreen() {
   const recentJobs = jobs.slice(0, 3);
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
-      {/* Top Header with Logo and Location Bar */}
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
+      {/* 1. Compact Location Header with Notification Action */}
       <Header />
 
-      {/* Hero Search Section */}
-      <View style={styles.heroSection}>
+      {/* 2. Friendly, Simple Greeting & 3. Clean Search Field */}
+      <View style={styles.topSection}>
         <View style={styles.greetingRow}>
           <Text style={styles.greetingText}>
             {language === 'ta' ? 'வணக்கம் மதுரை!' : 'Vanakkam Madurai!'}
@@ -51,13 +51,13 @@ export default function CustomerHomeScreen() {
           </Text>
         </View>
 
-        {/* Prominent Search Bar */}
+        {/* Clean Minimalist Search Field */}
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => router.push('/(customer)/search')}
           style={styles.searchBar}
         >
-          <Ionicons name="search" size={20} color={Colors.textSecondary} />
+          <Ionicons name="search-outline" size={18} color={Colors.textSecondary} />
           <TextInput
             placeholder={t('searchPlaceholder')}
             placeholderTextColor={Colors.textMuted}
@@ -71,44 +71,12 @@ export default function CustomerHomeScreen() {
             onPress={handleSearchSubmit}
             style={styles.searchActionBtn}
           >
-            <Ionicons name="arrow-forward" size={16} color={Colors.brandBlack} />
+            <Ionicons name="arrow-forward" size={14} color={Colors.brandBlack} />
           </TouchableOpacity>
-        </TouchableOpacity>
-
-        {/* High-Converting Post a Job Action Banner */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          onPress={() => router.push('/(customer)/post-job')}
-          style={styles.postJobBanner}
-        >
-          <View style={styles.postBannerIconBox}>
-            <Ionicons name="megaphone" size={22} color={Colors.brandBlack} />
-          </View>
-          <View style={{ flex: 1, marginLeft: 12 }}>
-            <View style={styles.bannerTagRow}>
-              <View style={styles.badgeBanner}>
-                <Text style={styles.badgeBannerText}>
-                  {language === 'ta' ? 'உடனடி உதவி' : 'Fast Response'}
-                </Text>
-              </View>
-              <Text style={styles.timeTag}>
-                {language === 'ta' ? '1 நிமிடத்தில்' : 'In 1 minute'}
-              </Text>
-            </View>
-            <Text style={styles.postBannerTitle}>{t('postAJob')}</Text>
-            <Text style={styles.postBannerDesc}>{t('postAJobDesc')}</Text>
-          </View>
-
-          <View style={styles.bannerCta}>
-            <Ionicons name="add" size={16} color="#FFFFFF" />
-            <Text style={styles.bannerCtaText}>
-              {language === 'ta' ? 'பதிவிட' : 'Post'}
-            </Text>
-          </View>
         </TouchableOpacity>
       </View>
 
-      {/* Service Categories 4-Column Grid */}
+      {/* 4. Service Categories in a Balanced Grid */}
       <SectionHeader
         title={t('categories')}
         subtitle={
@@ -130,7 +98,34 @@ export default function CustomerHomeScreen() {
         ))}
       </View>
 
-      {/* Nearby Verified Workers */}
+      {/* 5. One Clear Post a Job Action (Minimalist White Surface) */}
+      <View style={styles.postJobWrapper}>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => router.push('/(customer)/post-job')}
+          style={styles.postJobCard}
+        >
+          <View style={styles.postIconCircle}>
+            <Ionicons name="megaphone-outline" size={20} color={Colors.brandBlack} />
+          </View>
+          <View style={styles.postTextCol}>
+            <Text style={styles.postTitle}>{t('postAJob')}</Text>
+            <Text style={styles.postDesc}>
+              {language === 'ta'
+                ? '1 நிமிடத்தில் பதிவிடுங்கள் • விரைவான பதில்'
+                : 'Get quotes from verified workers in 1 minute'}
+            </Text>
+          </View>
+          <View style={styles.postCtaBtn}>
+            <Ionicons name="add" size={15} color={Colors.brandBlack} style={{ marginRight: 2 }} />
+            <Text style={styles.postCtaText}>
+              {language === 'ta' ? 'பதிவிட' : 'Post'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* 6. Nearby Workers in Compact List */}
       <SectionHeader
         title={t('nearbyWorkers')}
         subtitle={
@@ -152,7 +147,7 @@ export default function CustomerHomeScreen() {
         ))}
       </View>
 
-      {/* Recent Job Openings */}
+      {/* 7. Relevant Local Job Recommendations */}
       <SectionHeader
         title={t('recentJobs')}
         subtitle={
@@ -174,28 +169,28 @@ export default function CustomerHomeScreen() {
         ))}
       </View>
 
-      <View style={{ height: 24 }} />
+      <View style={{ height: 20 }} />
     </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  heroSection: {
+  topSection: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 16,
+    paddingBottom: 14,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
   greetingRow: {
-    marginBottom: 12,
+    marginBottom: 10,
   },
   greetingText: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: Colors.brandBlack,
-    letterSpacing: 0.2,
+    fontSize: 20,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+    letterSpacing: 0.1,
   },
   subGreeting: {
     fontSize: 12,
@@ -205,13 +200,12 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F3',
-    borderRadius: Radius.lg,
-    borderWidth: 1.2,
+    backgroundColor: Colors.secondaryBg,
+    borderRadius: Radius.md,
+    borderWidth: 1,
     borderColor: Colors.border,
-    paddingHorizontal: 14,
-    height: 50,
-    marginBottom: 14,
+    paddingHorizontal: 12,
+    height: 44,
   },
   searchInput: {
     flex: 1,
@@ -221,88 +215,69 @@ const styles = StyleSheet.create({
   },
   searchActionBtn: {
     backgroundColor: Colors.brandYellow,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
-  },
-  postJobBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.brandYellowSoft,
-    borderWidth: 1.5,
-    borderColor: Colors.brandYellowDark,
-    borderRadius: Radius.lg,
-    padding: 14,
-    ...Shadows.subtle,
-  },
-  postBannerIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.brandYellow,
-    borderWidth: 1.5,
-    borderColor: Colors.brandBlack,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bannerTagRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 2,
-  },
-  badgeBanner: {
-    backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
-  },
-  badgeBannerText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: Colors.brandBlack,
-  },
-  timeTag: {
-    fontSize: 10,
-    color: Colors.textSecondary,
-    fontWeight: '600',
-  },
-  postBannerTitle: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: Colors.brandBlack,
-  },
-  postBannerDesc: {
-    fontSize: 11,
-    color: Colors.textSecondary,
-    marginTop: 1,
-  },
-  bannerCta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.brandBlack,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
-    gap: 3,
-    marginLeft: 6,
-  },
-  bannerCtaText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#FFFFFF',
   },
   categoriesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+  },
+  postJobWrapper: {
+    paddingHorizontal: 16,
+    marginTop: 6,
+    marginBottom: 6,
+  },
+  postJobCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.lg,
+    padding: 12,
+    ...Shadows.subtle,
+  },
+  postIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: Colors.secondaryBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  postTextCol: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  postTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+  },
+  postDesc: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    marginTop: 1,
+  },
+  postCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.brandYellow,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: Radius.sm,
+  },
+  postCtaText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: Colors.brandBlack,
   },
   listContainer: {
     paddingHorizontal: 16,

@@ -52,7 +52,7 @@ export default function BookingsScreen() {
   };
 
   return (
-    <ScreenWrapper backgroundColor="#F8F8F6">
+    <ScreenWrapper backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={language === 'ta' ? 'என் முன்பதிவுகள்' : 'My Bookings'}
@@ -70,7 +70,7 @@ export default function BookingsScreen() {
 
           return (
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={0.8}
               onPress={() => router.push(`/booking/${item.id}` as any)}
               style={styles.bookingCard}
             >
@@ -90,7 +90,7 @@ export default function BookingsScreen() {
 
               {/* Location */}
               <View style={styles.metaRow}>
-                <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
+                <Ionicons name="location-outline" size={13} color={Colors.textSecondary} />
                 <Text style={styles.metaText} numberOfLines={1}>
                   {locality}
                 </Text>
@@ -114,7 +114,7 @@ export default function BookingsScreen() {
                   onPress={() => handleCall(item.workerPhone)}
                   style={styles.callCircle}
                 >
-                  <Ionicons name="call" size={16} color={Colors.brandBlack} />
+                  <Ionicons name="call-outline" size={15} color={Colors.textPrimary} />
                 </TouchableOpacity>
               </View>
 
@@ -125,9 +125,9 @@ export default function BookingsScreen() {
                 <Text style={styles.amountText}>₹{item.amount}</Text>
                 <View style={styles.trackLink}>
                   <Text style={styles.trackLinkText}>
-                    {language === 'ta' ? 'கண்காணிப்பு விவரங்கள்' : 'Track Status'}
+                    {language === 'ta' ? 'கண்காணிப்பு' : 'Track Status'}
                   </Text>
-                  <Ionicons name="chevron-forward" size={14} color={Colors.brandBlack} />
+                  <Ionicons name="chevron-forward" size={13} color={Colors.brandBlack} />
                 </View>
               </View>
             </TouchableOpacity>
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
-    padding: 16,
-    marginBottom: 14,
+    padding: 14,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   topRow: {
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   bookingId: {
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
     color: Colors.textMuted,
     letterSpacing: 0.5,
   },
@@ -183,15 +183,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   serviceTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '800',
     color: Colors.textPrimary,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   metaText: {
     fontSize: 12,
@@ -209,15 +209,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   workerAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.brandYellow,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: Colors.secondaryBg,
+    borderWidth: 1,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
@@ -229,16 +231,16 @@ const styles = StyleSheet.create({
   otpNotice: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   otpValue: {
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   callCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: Colors.border,
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: Colors.border,
-    marginVertical: 12,
+    marginVertical: 10,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -256,7 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   amountText: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '900',
     color: Colors.textPrimary,
   },
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   trackLinkText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,
   },

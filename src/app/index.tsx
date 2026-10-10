@@ -11,7 +11,7 @@ export default function SplashScreen() {
   const { hasSeenOnboarding, role, language } = useApp();
 
   const [fadeAnim] = useState(() => new Animated.Value(0));
-  const [scaleAnim] = useState(() => new Animated.Value(0.92));
+  const [scaleAnim] = useState(() => new Animated.Value(0.95));
 
   const handleProceed = useCallback(() => {
     if (hasSeenOnboarding) {
@@ -29,12 +29,12 @@ export default function SplashScreen() {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 800,
+        duration: 700,
         useNativeDriver: true,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
-        friction: 6,
+        friction: 7,
         useNativeDriver: true,
       }),
     ]).start();
@@ -101,7 +101,7 @@ export default function SplashScreen() {
           fullWidth
         />
         <Text style={styles.copyright}>
-          MY VELAI • Madurai Local Marketplace v1.0
+          MY VELAI • Madurai Local Marketplace
         </Text>
       </View>
     </View>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingVertical: 40,
+    paddingVertical: 36,
   },
   content: {
     flex: 1,
@@ -123,53 +123,53 @@ const styles = StyleSheet.create({
   },
   textBlock: {
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 18,
   },
   maduraiTag: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: Colors.brandYellowDark,
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.textSecondary,
     letterSpacing: 2,
     textTransform: 'uppercase',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   tamilName: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '900',
     color: Colors.brandBlack,
     letterSpacing: 0.5,
   },
   tagline: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
     color: Colors.textSecondary,
     textAlign: 'center',
-    marginTop: 8,
-    maxWidth: 280,
-    lineHeight: 20,
+    marginTop: 6,
+    maxWidth: 260,
+    lineHeight: 18,
   },
   featurePills: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 28,
+    marginTop: 24,
     backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: Colors.border,
   },
   pill: {},
   pillText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '600',
     color: Colors.textPrimary,
   },
   pillDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.brandYellowDark,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: Colors.borderStrong,
     marginHorizontal: 8,
   },
   footer: {

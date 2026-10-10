@@ -24,7 +24,7 @@ export const Card: React.FC<CardProps> = ({
   if (onPress) {
     return (
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={0.8}
         onPress={onPress}
         style={containerStyle}
       >
@@ -38,7 +38,7 @@ export const Card: React.FC<CardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.cardBg,
+    backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
   },
   highlighted: {
     borderColor: Colors.brandYellow,
-    backgroundColor: '#FFFEF5',
+    backgroundColor: '#FFFFFF',
   },
 });

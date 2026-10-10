@@ -29,12 +29,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
         <View style={styles.tileIconBox}>
           <Ionicons
             name={(category.icon as any) || 'construct-outline'}
-            size={24}
+            size={22}
             color={Colors.brandBlack}
           />
-          {category.popular && (
-            <View style={styles.popularDot} />
-          )}
+          {category.popular && <View style={styles.popularDot} />}
         </View>
 
         <Text style={styles.tileName} numberOfLines={2}>
@@ -53,7 +51,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       <View style={styles.iconCircle}>
         <Ionicons
           name={(category.icon as any) || 'construct-outline'}
-          size={22}
+          size={20}
           color={Colors.brandBlack}
         />
       </View>
@@ -76,14 +74,14 @@ const styles = StyleSheet.create({
   tileContainer: {
     width: '23%',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   tileIconBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 16,
+    width: 56,
+    height: 56,
+    borderRadius: Radius.md,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
@@ -92,16 +90,16 @@ const styles = StyleSheet.create({
   },
   popularDot: {
     position: 'absolute',
-    top: 4,
-    right: 4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    top: 5,
+    right: 5,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: Colors.brandYellowDark,
   },
   tileName: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textPrimary,
     textAlign: 'center',
     marginTop: 6,
@@ -118,22 +116,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '48%',
     marginBottom: 12,
-    minHeight: 120,
+    minHeight: 110,
     ...Shadows.subtle,
   },
   compactCard: {
-    width: 110,
-    minHeight: 110,
-    marginRight: 10,
+    width: 105,
+    minHeight: 105,
+    marginRight: 8,
     marginBottom: 0,
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.brandYellowSoft,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.secondaryBg,
     borderWidth: 1,
-    borderColor: Colors.brandYellowLight,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
@@ -148,9 +146,9 @@ const styles = StyleSheet.create({
   },
   badge: {
     backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 8,
+    paddingHorizontal: 7,
     paddingVertical: 2,
-    borderRadius: Radius.round,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     borderColor: Colors.border,
   },

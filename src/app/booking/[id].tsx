@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   Text,
@@ -46,25 +47,25 @@ export default function BookingDetailScreen() {
       key: 'confirmed',
       label_en: 'Booking Confirmed',
       label_ta: 'முன்பதிவு உறுதியானது',
-      icon: 'receipt',
+      icon: 'receipt-outline',
     },
     {
       key: 'on_the_way',
       label_en: 'Worker En Route',
       label_ta: 'பணியாளர் கிளம்பிவிட்டார்',
-      icon: 'bicycle',
+      icon: 'bicycle-outline',
     },
     {
       key: 'in_progress',
       label_en: 'Work In Progress',
       label_ta: 'வேலை நடக்கிறது',
-      icon: 'construct',
+      icon: 'construct-outline',
     },
     {
       key: 'completed',
       label_en: 'Work Completed',
       label_ta: 'வேலை நிறைவடைந்தது',
-      icon: 'checkmark-circle',
+      icon: 'checkmark-circle-outline',
     },
   ];
 
@@ -126,7 +127,7 @@ export default function BookingDetailScreen() {
   };
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={t('bookingDetailsTitle')}
@@ -145,7 +146,7 @@ export default function BookingDetailScreen() {
             </View>
             <Badge
               label={booking.status.toUpperCase()}
-              variant={booking.status === 'completed' ? 'success' : 'yellow'}
+              variant={booking.status === 'completed' ? 'success' : 'neutral'}
             />
           </View>
         </View>
@@ -184,7 +185,7 @@ export default function BookingDetailScreen() {
                     >
                       <Ionicons
                         name={step.icon}
-                        size={14}
+                        size={13}
                         color={isDone ? '#171717' : Colors.textMuted}
                       />
                     </View>
@@ -226,7 +227,7 @@ export default function BookingDetailScreen() {
               onPress={handleAdvanceStep}
               style={styles.simulateStepBtn}
             >
-              <Ionicons name="play-forward" size={14} color={Colors.brandBlack} />
+              <Ionicons name="play-forward-outline" size={13} color={Colors.brandBlack} />
               <Text style={styles.simulateStepText}>
                 {booking.status === 'confirmed'
                   ? language === 'ta'
@@ -264,7 +265,7 @@ export default function BookingDetailScreen() {
               onPress={handleCallWorker}
               style={styles.callCircle}
             >
-              <Ionicons name="call" size={18} color={Colors.brandBlack} />
+              <Ionicons name="call-outline" size={16} color={Colors.textPrimary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -273,7 +274,7 @@ export default function BookingDetailScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{t('serviceAddress')}</Text>
           <View style={styles.metaRow}>
-            <Ionicons name="location-outline" size={16} color={Colors.textSecondary} />
+            <Ionicons name="location-outline" size={15} color={Colors.textSecondary} />
             <Text style={styles.addressText}>
               {language === 'ta' ? booking.locality_ta : booking.locality_en}
             </Text>
@@ -299,10 +300,8 @@ export default function BookingDetailScreen() {
           <Button
             title={t('cancelBooking')}
             onPress={handleCancel}
-            variant="outline"
+            variant="danger"
             size="md"
-            style={{ borderColor: Colors.error }}
-            textStyle={{ color: Colors.error }}
           />
         )}
       </View>
@@ -321,13 +320,13 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   notFoundText: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.textSecondary,
   },
   headerCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
     marginBottom: 12,
@@ -340,12 +339,12 @@ const styles = StyleSheet.create({
   },
   bookingIdText: {
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: '700',
     color: Colors.textMuted,
     letterSpacing: 0.5,
   },
   serviceTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
     marginTop: 4,
@@ -354,17 +353,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.brandYellowSoft,
-    borderWidth: 1.5,
-    borderColor: Colors.brandYellowDark,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Colors.border,
     borderRadius: Radius.lg,
-    padding: 16,
-    marginBottom: 14,
+    padding: 14,
+    marginBottom: 12,
+    ...Shadows.subtle,
   },
   otpTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
-    color: Colors.brandBlack,
+    color: Colors.textPrimary,
   },
   otpDesc: {
     fontSize: 11,
@@ -373,16 +373,14 @@ const styles = StyleSheet.create({
     lineHeight: 15,
   },
   otpBadge: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: Colors.brandYellowDark,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
+    backgroundColor: Colors.brandYellow,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Radius.sm,
     marginLeft: 10,
   },
   otpNumber: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: Colors.brandBlack,
     letterSpacing: 2,
@@ -390,14 +388,14 @@ const styles = StyleSheet.create({
   stepperCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 14,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
     marginBottom: 12,
@@ -411,39 +409,39 @@ const styles = StyleSheet.create({
   },
   stepLeftCol: {
     alignItems: 'center',
-    width: 28,
+    width: 26,
   },
   stepDot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: Colors.secondaryBg,
-    borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
+    borderWidth: 1,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   stepDotDone: {
     backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   stepDotCurrent: {
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: Colors.brandBlack,
   },
   stepLine: {
     width: 2,
-    height: 30,
+    height: 28,
     backgroundColor: Colors.border,
   },
   stepLineDone: {
-    backgroundColor: Colors.brandYellowDark,
+    backgroundColor: Colors.brandYellow,
   },
   stepRightCol: {
     flex: 1,
-    marginLeft: 12,
-    paddingTop: 3,
-    paddingBottom: 20,
+    marginLeft: 10,
+    paddingTop: 2,
+    paddingBottom: 18,
   },
   stepLabel: {
     fontSize: 13,
@@ -460,21 +458,21 @@ const styles = StyleSheet.create({
   },
   stepSub: {
     fontSize: 11,
-    color: Colors.brandYellowDark,
-    fontWeight: '600',
-    marginTop: 2,
+    color: Colors.textSecondary,
+    fontWeight: '500',
+    marginTop: 1,
   },
   simulateStepBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.secondaryBg,
-    borderRadius: Radius.md,
+    borderRadius: Radius.sm,
     borderWidth: 1,
     borderColor: Colors.border,
-    paddingVertical: 10,
+    paddingVertical: 9,
     gap: 6,
-    marginTop: 4,
+    marginTop: 2,
   },
   simulateStepText: {
     fontSize: 12,
@@ -484,10 +482,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 14,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   workerRow: {
@@ -495,35 +493,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   workerAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.brandYellow,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   workerAvatarText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   workerNameText: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   workerPhoneText: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   callCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.brandYellow,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -540,8 +540,8 @@ const styles = StyleSheet.create({
   landmarkText: {
     fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 4,
-    marginLeft: 20,
+    marginTop: 2,
+    marginLeft: 19,
   },
   amountRow: {
     flexDirection: 'row',
@@ -549,18 +549,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   amountLabel: {
-    fontSize: 13,
+    fontSize: 12,
     color: Colors.textSecondary,
   },
   amountValue: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     color: Colors.brandBlack,
   },
   paymentNote: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 6,
+    marginTop: 4,
     lineHeight: 16,
   },
 });

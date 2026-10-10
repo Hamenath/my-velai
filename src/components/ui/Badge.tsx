@@ -14,7 +14,7 @@ interface BadgeProps {
 
 export const Badge: React.FC<BadgeProps> = ({
   label,
-  variant = 'yellow',
+  variant = 'neutral',
   icon,
   style,
   textStyle,
@@ -36,21 +36,21 @@ export const Badge: React.FC<BadgeProps> = ({
       case 'info':
         return {
           bg: Colors.infoBg,
-          border: '#BFDBFE',
+          border: Colors.infoBorder,
           text: Colors.info,
         };
+      case 'yellow':
+        return {
+          bg: Colors.warningBg,
+          border: Colors.warningBorder,
+          text: '#854D0E',
+        };
       case 'neutral':
+      default:
         return {
           bg: Colors.secondaryBg,
           border: Colors.border,
           text: Colors.textSecondary,
-        };
-      case 'yellow':
-      default:
-        return {
-          bg: Colors.brandYellowSoft,
-          border: Colors.brandYellowLight,
-          text: '#854D0E',
         };
     }
   };
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: Radius.round,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     alignSelf: 'flex-start',
   },
@@ -100,6 +100,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   },
 });

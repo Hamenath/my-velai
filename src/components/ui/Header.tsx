@@ -28,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
+      {/* Top Navigation Row */}
       <View style={styles.topRow}>
         {onBack ? (
           <TouchableOpacity
@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
             onPress={onBack}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+            <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
           </TouchableOpacity>
         ) : (
           <Logo size="md" showSubtitle={false} />
@@ -53,11 +53,16 @@ export const Header: React.FC<HeaderProps> = ({
         <View style={styles.rightActions}>
           {showLanguageToggle && (
             <TouchableOpacity
-              activeOpacity={0.8}
+              activeOpacity={0.75}
               onPress={toggleLanguage}
               style={styles.langPill}
             >
-              <Ionicons name="language" size={13} color={Colors.brandBlack} style={{ marginRight: 4 }} />
+              <Ionicons
+                name="globe-outline"
+                size={13}
+                color={Colors.textPrimary}
+                style={{ marginRight: 4 }}
+              />
               <Text style={styles.langText}>
                 {language === 'ta' ? 'English' : 'தமிழ்'}
               </Text>
@@ -71,32 +76,35 @@ export const Header: React.FC<HeaderProps> = ({
               activeOpacity={0.7}
               style={styles.iconBtn}
             >
-              <Ionicons name="notifications-outline" size={22} color={Colors.textPrimary} />
+              <Ionicons name="notifications-outline" size={20} color={Colors.textPrimary} />
               <View style={styles.badgeDot} />
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      {/* Prominent Consumer-App Location Bar */}
+      {/* Compact Location Selector */}
       {showLocation && !title && (
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={0.8}
           onPress={() => setLocationModalVisible(true)}
           style={styles.locationBar}
         >
-          <View style={styles.locationPinBox}>
-            <Ionicons name="location" size={16} color={Colors.brandBlack} />
-          </View>
+          <Ionicons
+            name="location-outline"
+            size={16}
+            color={Colors.brandBlack}
+            style={{ marginRight: 6 }}
+          />
           <View style={styles.locationTexts}>
             <View style={styles.locationTitleRow}>
               <Text style={styles.locationMainText} numberOfLines={1}>
                 {localityName}, {language === 'ta' ? 'மதுரை' : 'Madurai'}
               </Text>
-              <Ionicons name="chevron-down" size={14} color={Colors.textPrimary} style={{ marginLeft: 3 }} />
+              <Ionicons name="chevron-down" size={13} color={Colors.textSecondary} style={{ marginLeft: 2 }} />
             </View>
             <Text style={styles.landmarkSubtitle} numberOfLines={1}>
-              {currentLocality.landmark} ({currentLocality.postalCode})
+              {currentLocality.landmark} • {currentLocality.postalCode}
             </Text>
           </View>
           <View style={styles.changeTag}>
@@ -128,18 +136,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    minHeight: 40,
+    minHeight: 38,
   },
   backButton: {
     padding: 6,
-    marginRight: 8,
+    marginRight: 6,
+    marginLeft: -4,
   },
   titleText: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
-    marginLeft: 6,
+    marginLeft: 4,
   },
   rightActions: {
     flexDirection: 'row',
@@ -148,17 +157,17 @@ const styles = StyleSheet.create({
   langPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.brandYellowSoft,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    borderColor: Colors.border,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
     borderRadius: Radius.round,
-    marginRight: 8,
+    marginRight: 6,
   },
   langText: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '700',
     color: Colors.brandBlack,
   },
   iconBtn: {
@@ -168,10 +177,10 @@ const styles = StyleSheet.create({
   badgeDot: {
     position: 'absolute',
     top: 5,
-    right: 6,
-    width: 7,
-    height: 7,
-    borderRadius: 4,
+    right: 5,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: Colors.error,
   },
   locationBar: {
@@ -182,17 +191,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingVertical: 7,
     marginTop: 8,
-  },
-  locationPinBox: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: Colors.brandYellow,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
   },
   locationTexts: {
     flex: 1,
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationMainText: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '700',
     color: Colors.textPrimary,
   },
   landmarkSubtitle: {
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
   changeTag: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: Colors.borderStrong,
-    borderRadius: Radius.sm,
+    borderColor: Colors.border,
+    borderRadius: Radius.xs,
     paddingHorizontal: 8,
     paddingVertical: 3,
     marginLeft: 6,

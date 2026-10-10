@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Colors, Radius } from '../constants/colors';
+import { Colors, Radius, Shadows } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Logo } from '../components/ui/Logo';
@@ -20,7 +20,7 @@ export default function LanguageSelectScreen() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Logo size="md" showSubtitle />
+          <Logo size="md" showSubtitle={false} />
         </View>
 
         {/* Title */}
@@ -140,40 +140,41 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   titleSection: {
-    marginBottom: 28,
+    marginBottom: 24,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
-    lineHeight: 28,
+    lineHeight: 26,
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 18,
   },
   optionsList: {
     flex: 1,
-    gap: 14,
+    gap: 12,
   },
   optionCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: 14,
     borderRadius: Radius.lg,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: Colors.border,
     backgroundColor: '#FFFFFF',
+    ...Shadows.subtle,
   },
   selectedCard: {
-    borderColor: Colors.brandYellowDark,
-    backgroundColor: Colors.brandYellowSoft,
+    borderColor: Colors.brandYellow,
+    backgroundColor: '#FFFFFF',
   },
   optionLeft: {
     flexDirection: 'row',
@@ -181,22 +182,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   flagCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
     borderWidth: 1,
     borderColor: Colors.border,
   },
   selectedFlagCircle: {
     backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   flagLetter: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
@@ -206,34 +207,34 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   recommendedBadge: {
-    backgroundColor: '#DCFCE7',
+    backgroundColor: Colors.successBg,
     paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingVertical: 1,
+    borderRadius: Radius.xs,
     borderWidth: 1,
-    borderColor: '#86EFAC',
+    borderColor: Colors.successBorder,
   },
   recommendedText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#16803D',
+    color: Colors.success,
   },
   langTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   langSub: {
     fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 3,
+    marginTop: 2,
     maxWidth: 210,
   },
   radioCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
     borderColor: Colors.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
@@ -243,9 +244,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandBlack,
   },
   radioDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: Colors.brandBlack,
   },
   footer: {

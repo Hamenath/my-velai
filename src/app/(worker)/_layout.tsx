@@ -13,27 +13,26 @@ export default function WorkerTabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors.brandBlack,
-        tabBarInactiveTintColor: Colors.textMuted,
+        tabBarInactiveTintColor: Colors.textSecondary,
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: Colors.border,
           height: Platform.OS === 'ios' ? 82 : 62,
-          paddingTop: 4,
-          paddingBottom: Platform.OS === 'ios' ? 22 : 6,
-          elevation: 6,
+          paddingTop: 6,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+          elevation: 2,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 3,
+          shadowOffset: { width: 0, height: -1 },
+          shadowOpacity: 0.03,
+          shadowRadius: 2,
         },
         tabBarIconStyle: {
-          marginTop: 2,
+          marginBottom: 1,
         },
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '700',
-          marginBottom: 2,
         },
       }}
     >
@@ -44,7 +43,7 @@ export default function WorkerTabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'briefcase' : 'briefcase-outline'}
-              size={22}
+              size={20}
               color={focused ? Colors.brandBlack : color}
             />
           ),
@@ -57,7 +56,7 @@ export default function WorkerTabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'search' : 'search-outline'}
-              size={22}
+              size={20}
               color={focused ? Colors.brandBlack : color}
             />
           ),
@@ -70,7 +69,7 @@ export default function WorkerTabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'document-text' : 'document-text-outline'}
-              size={22}
+              size={20}
               color={focused ? Colors.brandBlack : color}
             />
           ),
@@ -83,7 +82,7 @@ export default function WorkerTabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'wallet' : 'wallet-outline'}
-              size={22}
+              size={20}
               color={focused ? Colors.brandBlack : color}
             />
           ),
@@ -96,7 +95,7 @@ export default function WorkerTabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? 'person' : 'person-outline'}
-              size={22}
+              size={20}
               color={focused ? Colors.brandBlack : color}
             />
           ),

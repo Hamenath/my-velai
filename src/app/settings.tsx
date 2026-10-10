@@ -53,7 +53,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={language === 'ta' ? 'அமைப்புகள்' : 'Settings'}
@@ -73,7 +73,7 @@ export default function SettingsScreen() {
             {language === 'ta' && (
               <Ionicons
                 name="checkmark-circle"
-                size={22}
+                size={20}
                 color={Colors.brandYellowDark}
               />
             )}
@@ -90,7 +90,7 @@ export default function SettingsScreen() {
             {language === 'en' && (
               <Ionicons
                 name="checkmark-circle"
-                size={22}
+                size={20}
                 color={Colors.brandYellowDark}
               />
             )}
@@ -127,7 +127,7 @@ export default function SettingsScreen() {
                   : 'Tap to switch to Customer mode'}
               </Text>
             </View>
-            <Ionicons name="swap-horizontal" size={22} color={Colors.brandBlack} />
+            <Ionicons name="swap-horizontal" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
         </View>
 
@@ -147,7 +147,7 @@ export default function SettingsScreen() {
               </Text>
               <Text style={styles.rowSub}>{currentLocality.landmark}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
           </TouchableOpacity>
         </View>
 
@@ -168,8 +168,8 @@ export default function SettingsScreen() {
             <Switch
               value={notificationsEnabled}
               onValueChange={setNotificationsEnabled}
-              trackColor={{ false: '#D4D4D4', true: Colors.brandYellow }}
-              thumbColor={notificationsEnabled ? Colors.brandBlack : '#F5F5F5'}
+              trackColor={{ false: Colors.border, true: Colors.brandYellow }}
+              thumbColor={notificationsEnabled ? Colors.brandBlack : '#FFFFFF'}
             />
           </View>
         </View>
@@ -188,18 +188,18 @@ export default function SettingsScreen() {
                 {language === 'ta' ? 'மதுரை அலுவலக உதவி எண்' : 'Direct Helpline Desk'}
               </Text>
             </View>
-            <Ionicons name="call" size={20} color={Colors.brandBlack} />
+            <Ionicons name="call-outline" size={18} color={Colors.textPrimary} />
           </TouchableOpacity>
         </View>
 
         {/* Developer / Reset Options */}
-        <View style={{ marginTop: 24, marginBottom: 20 }}>
+        <View style={{ marginTop: 20, marginBottom: 20 }}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handleResetOnboarding}
             style={styles.resetBtn}
           >
-            <Ionicons name="reload" size={16} color={Colors.textSecondary} />
+            <Ionicons name="reload" size={15} color={Colors.textSecondary} />
             <Text style={styles.resetText}>
               {language === 'ta' ? 'அறிமுக வழிகாட்டியை மீண்டும் காண்க' : 'Replay Welcome Onboarding'}
             </Text>
@@ -221,11 +221,11 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   sectionHeader: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '700',
     color: Colors.textSecondary,
-    marginBottom: 8,
-    marginTop: 14,
+    marginBottom: 6,
+    marginTop: 12,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -241,32 +241,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: 13,
+    paddingHorizontal: 14,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: Colors.border,
   },
   rowTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   rowSub: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   resetBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 10,
     gap: 6,
   },
   resetText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,
   },

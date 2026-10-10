@@ -43,21 +43,12 @@ export const Button: React.FC<ButtonProps> = ({
   const getVariantStyles = (): { container: ViewStyle; text: TextStyle } => {
     switch (variant) {
       case 'secondary':
-        return {
-          container: {
-            backgroundColor: Colors.brandBlack,
-            borderColor: Colors.brandBlack,
-          },
-          text: {
-            color: '#FFFFFF',
-          },
-        };
       case 'outline':
         return {
           container: {
-            backgroundColor: Colors.primaryBg,
-            borderWidth: 1.5,
-            borderColor: Colors.borderStrong,
+            backgroundColor: '#FFFFFF',
+            borderColor: Colors.border,
+            borderWidth: 1,
           },
           text: {
             color: Colors.textPrimary,
@@ -68,6 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
           container: {
             backgroundColor: 'transparent',
             borderColor: 'transparent',
+            borderWidth: 0,
           },
           text: {
             color: Colors.textPrimary,
@@ -76,11 +68,12 @@ export const Button: React.FC<ButtonProps> = ({
       case 'danger':
         return {
           container: {
-            backgroundColor: Colors.error,
-            borderColor: Colors.error,
+            backgroundColor: Colors.errorBg,
+            borderColor: Colors.errorBorder,
+            borderWidth: 1,
           },
           text: {
-            color: '#FFFFFF',
+            color: Colors.error,
           },
         };
       case 'primary':
@@ -88,7 +81,8 @@ export const Button: React.FC<ButtonProps> = ({
         return {
           container: {
             backgroundColor: Colors.brandYellow,
-            borderColor: Colors.brandYellowDark,
+            borderColor: Colors.brandYellow,
+            borderWidth: 1,
           },
           text: {
             color: Colors.brandBlack,
@@ -102,36 +96,36 @@ export const Button: React.FC<ButtonProps> = ({
       case 'sm':
         return {
           container: {
-            paddingVertical: 8,
+            paddingVertical: 7,
             paddingHorizontal: 12,
-            minHeight: 36,
+            minHeight: 34,
             borderRadius: Radius.sm,
           },
           text: {
-            fontSize: 13,
-            fontWeight: '600',
+            fontSize: 12,
+            fontWeight: '700',
           },
         };
       case 'lg':
         return {
           container: {
-            paddingVertical: 14,
+            paddingVertical: 13,
             paddingHorizontal: 20,
-            minHeight: 52,
+            minHeight: 48,
             borderRadius: Radius.md,
           },
           text: {
-            fontSize: 16,
-            fontWeight: '700',
+            fontSize: 15,
+            fontWeight: '800',
           },
         };
       case 'md':
       default:
         return {
           container: {
-            paddingVertical: 11,
+            paddingVertical: 10,
             paddingHorizontal: 16,
-            minHeight: 46,
+            minHeight: 42,
             borderRadius: Radius.md,
           },
           text: {
@@ -147,7 +141,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <TouchableOpacity
-      activeOpacity={0.75}
+      activeOpacity={0.8}
       onPress={onPress}
       disabled={disabled || loading}
       style={[
@@ -162,7 +156,7 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'primary' ? Colors.brandBlack : '#FFFFFF'}
+          color={variant === 'primary' ? Colors.brandBlack : Colors.textPrimary}
         />
       ) : (
         <View style={styles.contentRow}>
@@ -186,7 +180,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
   },
   fullWidth: {
     width: '100%',
@@ -201,12 +194,12 @@ const styles = StyleSheet.create({
   },
   textBase: {
     textAlign: 'center',
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   },
   iconLeft: {
-    marginRight: 8,
+    marginRight: 6,
   },
   iconRight: {
-    marginLeft: 8,
+    marginLeft: 6,
   },
 });

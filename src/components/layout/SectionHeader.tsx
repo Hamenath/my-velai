@@ -30,7 +30,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           style={styles.actionBtn}
         >
           <Text style={styles.actionText}>{actionTitle}</Text>
-          <Ionicons name="chevron-forward" size={14} color={Colors.brandBlack} />
+          <Ionicons name="chevron-forward" size={13} color={Colors.brandBlack} />
         </TouchableOpacity>
       )}
     </View>
@@ -42,15 +42,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginBottom: 12,
-    marginTop: 20,
+    marginBottom: 10,
+    marginTop: 18,
     paddingHorizontal: 16,
   },
   titleWrapper: {
     flex: 1,
   },
   title: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
     letterSpacing: 0.1,
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   actionText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,
     marginRight: 2,

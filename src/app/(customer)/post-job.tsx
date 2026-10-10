@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -117,7 +117,7 @@ export default function PostJobScreen() {
   };
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header showLocation={false} title={t('postJobTitle')} />
 
       <View style={styles.formContainer}>
@@ -308,7 +308,7 @@ export default function PostJobScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.successCard}>
             <View style={styles.successIconCircle}>
-              <Ionicons name="checkmark-done" size={36} color={Colors.success} />
+              <Ionicons name="checkmark-done" size={32} color={Colors.success} />
             </View>
             <Text style={styles.modalSuccessTitle}>{t('postSuccess')}</Text>
             <Text style={styles.modalSuccessDesc}>{t('postSuccessDesc')}</Text>
@@ -319,7 +319,7 @@ export default function PostJobScreen() {
               variant="primary"
               size="md"
               fullWidth
-              style={{ marginTop: 16 }}
+              style={{ marginTop: 14 }}
             />
           </View>
         </View>
@@ -335,22 +335,23 @@ const styles = StyleSheet.create({
   },
   introCard: {
     backgroundColor: '#FFFFFF',
-    padding: 16,
+    padding: 14,
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     marginBottom: 16,
+    ...Shadows.subtle,
   },
   introTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   introSub: {
     fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 4,
-    lineHeight: 18,
+    marginTop: 2,
+    lineHeight: 17,
   },
   sectionLabel: {
     fontSize: 13,
@@ -359,12 +360,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   chipsScroll: {
-    paddingBottom: 12,
+    paddingBottom: 10,
   },
   typesRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   row: {
     flexDirection: 'row',
@@ -372,9 +373,9 @@ const styles = StyleSheet.create({
   },
   wageTypeBtn: {
     flex: 1,
-    height: 48,
+    height: 44,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.2,
+    borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Radius.md,
     alignItems: 'center',
@@ -382,54 +383,60 @@ const styles = StyleSheet.create({
   },
   wageTypeBtnActive: {
     backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   wageTypeText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   wageTypeTextActive: {
     color: Colors.brandBlack,
+    fontWeight: '700',
   },
   submitBtn: {
-    marginTop: 12,
+    marginTop: 10,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
   successCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: Radius.xl,
-    padding: 24,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: 20,
     alignItems: 'center',
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 320,
+    ...Shadows.card,
   },
   successIconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: Colors.successBg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: Colors.successBorder,
   },
   modalSuccessTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   modalSuccessDesc: {
-    fontSize: 13,
+    fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 19,
+    lineHeight: 18,
   },
 });

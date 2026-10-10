@@ -38,9 +38,7 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
       <View style={styles.headerRow}>
         {/* Avatar Initials with Online Status */}
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {name.charAt(0)}
-          </Text>
+          <Text style={styles.avatarText}>{name.charAt(0)}</Text>
           {worker.isAvailable && <View style={styles.onlineDot} />}
         </View>
 
@@ -53,7 +51,7 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
             {worker.isVerified && (
               <Ionicons
                 name="checkmark-circle"
-                size={16}
+                size={15}
                 color={Colors.success}
                 style={{ marginLeft: 4 }}
               />
@@ -103,11 +101,11 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
 
         <View style={styles.actions}>
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.75}
             onPress={handleCall}
             style={styles.callBtn}
           >
-            <Ionicons name="call" size={14} color={Colors.textPrimary} />
+            <Ionicons name="call-outline" size={13} color={Colors.textPrimary} />
             <Text style={styles.callText}>{t('callNow')}</Text>
           </TouchableOpacity>
 
@@ -126,10 +124,10 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 14,
-    padding: 16,
+    marginBottom: 12,
+    padding: 14,
     borderRadius: Radius.lg,
-    borderWidth: 1.2,
+    borderWidth: 1,
     borderColor: Colors.border,
     backgroundColor: '#FFFFFF',
     ...Shadows.subtle,
@@ -139,28 +137,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: Colors.brandYellow,
-    borderWidth: 1.5,
-    borderColor: Colors.brandBlack,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.secondaryBg,
+    borderWidth: 1,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   avatarText: {
-    fontSize: 22,
-    fontWeight: '900',
+    fontSize: 18,
+    fontWeight: '800',
     color: Colors.brandBlack,
   },
   onlineDot: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 13,
-    height: 13,
-    borderRadius: 6.5,
+    width: 11,
+    height: 11,
+    borderRadius: 6,
     backgroundColor: Colors.success,
     borderWidth: 2,
     borderColor: '#FFFFFF',
@@ -174,28 +172,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   category: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.textSecondary,
     marginTop: 1,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 3,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEF9C3',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: Radius.xs,
   },
   ratingText: {
     fontSize: 11,
@@ -205,14 +203,14 @@ const styles = StyleSheet.create({
   },
   reviewCount: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.textSecondary,
     marginLeft: 2,
   },
   dotSeparator: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textMuted,
-    marginHorizontal: 5,
+    marginHorizontal: 4,
   },
   metaText: {
     fontSize: 11,
@@ -229,19 +227,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondaryBg,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: Radius.sm,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     borderColor: Colors.border,
   },
   skillText: {
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   divider: {
     height: 1,
     backgroundColor: Colors.border,
-    marginVertical: 12,
+    marginVertical: 10,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -250,32 +248,32 @@ const styles = StyleSheet.create({
   },
   rateLabel: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   rateValue: {
-    fontSize: 16,
-    fontWeight: '900',
+    fontSize: 15,
+    fontWeight: '800',
     color: Colors.textPrimary,
   },
   rateUnit: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   actions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 6,
   },
   callBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
-    borderWidth: 1.2,
-    borderColor: Colors.borderStrong,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
     gap: 4,
   },
   callText: {
@@ -285,11 +283,11 @@ const styles = StyleSheet.create({
   },
   bookBtn: {
     backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
+    paddingHorizontal: 13,
+    paddingVertical: 7,
+    borderRadius: Radius.sm,
     borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   bookText: {
     fontSize: 12,

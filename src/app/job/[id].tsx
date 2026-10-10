@@ -85,7 +85,7 @@ export default function JobDetailsScreen() {
   };
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={t('jobDetailsTitle')}
@@ -96,7 +96,7 @@ export default function JobDetailsScreen() {
         {/* Main Job Header Card */}
         <View style={styles.card}>
           <View style={styles.badgeRow}>
-            <Badge label={categoryName} variant="yellow" />
+            <Badge label={categoryName} variant="neutral" />
             {job.isUrgent && (
               <Badge
                 label={language === 'ta' ? 'அவசர வேலை' : 'Urgent'}
@@ -125,7 +125,7 @@ export default function JobDetailsScreen() {
               </Text>
             </View>
             <View style={styles.workersNeededBadge}>
-              <Ionicons name="people" size={16} color={Colors.brandBlack} />
+              <Ionicons name="people-outline" size={14} color={Colors.textSecondary} />
               <Text style={styles.workersNeededText}>
                 {job.workersNeeded} {language === 'ta' ? 'நபர்கள் தேவை' : 'Workers'}
               </Text>
@@ -138,9 +138,9 @@ export default function JobDetailsScreen() {
           <Text style={styles.cardTitle}>{t('workLocation')}</Text>
           <View style={styles.locationRow}>
             <View style={styles.iconBox}>
-              <Ionicons name="location" size={20} color={Colors.brandBlack} />
+              <Ionicons name="location-outline" size={18} color={Colors.brandBlack} />
             </View>
-            <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.locName}>{locality}, Madurai</Text>
               <Text style={styles.landmarkText}>{job.landmark}</Text>
             </View>
@@ -152,9 +152,9 @@ export default function JobDetailsScreen() {
           <Text style={styles.cardTitle}>{t('workSchedule')}</Text>
           <View style={styles.locationRow}>
             <View style={styles.iconBox}>
-              <Ionicons name="time" size={20} color={Colors.brandBlack} />
+              <Ionicons name="calendar-outline" size={18} color={Colors.brandBlack} />
             </View>
-            <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.locName}>{job.date}</Text>
               <Text style={styles.landmarkText}>{job.time}</Text>
             </View>
@@ -176,7 +176,7 @@ export default function JobDetailsScreen() {
                 {job.customerName.charAt(0)}
               </Text>
             </View>
-            <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.customerName}>{job.customerName}</Text>
               <Text style={styles.customerPhone}>{job.customerPhone}</Text>
             </View>
@@ -185,7 +185,7 @@ export default function JobDetailsScreen() {
               onPress={handleCallCustomer}
               style={styles.callCircleBtn}
             >
-              <Ionicons name="call" size={18} color={Colors.brandBlack} />
+              <Ionicons name="call-outline" size={16} color={Colors.textPrimary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -193,7 +193,7 @@ export default function JobDetailsScreen() {
         {/* Applied Status Banner */}
         {existingApp || appliedSuccess ? (
           <View style={styles.appliedBanner}>
-            <Ionicons name="checkmark-circle" size={22} color={Colors.success} />
+            <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
             <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={styles.appliedBannerTitle}>{t('alreadyApplied')}</Text>
               <Text style={styles.appliedBannerSub}>
@@ -219,14 +219,14 @@ export default function JobDetailsScreen() {
         )}
       </View>
 
-      {/* Worker Application Modal (Step 11) */}
+      {/* Worker Application Modal */}
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{t('applyModalTitle')}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Ionicons name="close" size={22} color={Colors.textPrimary} />
+                <Ionicons name="close" size={20} color={Colors.textPrimary} />
               </TouchableOpacity>
             </View>
 
@@ -259,7 +259,7 @@ export default function JobDetailsScreen() {
               variant="primary"
               size="lg"
               fullWidth
-              style={{ marginTop: 8 }}
+              style={{ marginTop: 6 }}
             />
           </View>
         </View>
@@ -270,7 +270,7 @@ export default function JobDetailsScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.successBox}>
             <View style={styles.successIconCircle}>
-              <Ionicons name="checkmark-done" size={32} color={Colors.success} />
+              <Ionicons name="checkmark-done" size={28} color={Colors.success} />
             </View>
             <Text style={styles.successTitle}>{t('applicationSuccess')}</Text>
             <Text style={styles.successDesc}>{t('applicationSuccessDesc')}</Text>
@@ -280,7 +280,7 @@ export default function JobDetailsScreen() {
               variant="primary"
               size="md"
               fullWidth
-              style={{ marginTop: 16 }}
+              style={{ marginTop: 14 }}
             />
           </View>
         </View>
@@ -300,23 +300,23 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   notFoundText: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.textSecondary,
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 14,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    gap: 6,
+    marginBottom: 6,
   },
   postedTime: {
     fontSize: 11,
@@ -324,63 +324,93 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   jobTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
-    lineHeight: 24,
-    marginBottom: 14,
+    lineHeight: 22,
+    marginBottom: 12,
   },
   wageBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.brandYellowSoft,
+    backgroundColor: Colors.secondaryBg,
     borderWidth: 1,
-    borderColor: Colors.brandYellow,
-    padding: 12,
+    borderColor: Colors.border,
+    padding: 10,
     borderRadius: Radius.md,
   },
   wageBoxLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.textSecondary,
+    fontWeight: '600',
   },
   wageBoxAmount: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: Colors.brandBlack,
+    fontSize: 18,
+    fontWeight: '800',
+    color: Colors.textPrimary,
   },
   wageBoxUnit: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 12,
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   workersNeededBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: Radius.round,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     borderColor: Colors.border,
     gap: 4,
   },
   workersNeededText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
     color: Colors.brandBlack,
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.secondaryBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  locName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+  landmarkText: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    marginTop: 1,
+  },
+  descText: {
+    fontSize: 13,
+    color: Colors.textPrimary,
+    lineHeight: 19,
+  },
+  customerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  customerAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -390,92 +420,67 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
   },
-  locName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-  },
-  landmarkText: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  descText: {
-    fontSize: 13,
-    color: Colors.textPrimary,
-    lineHeight: 20,
-  },
-  customerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  customerAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.brandYellow,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   custAvatarText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   customerName: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   customerPhone: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   callCircleBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.brandYellow,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.border,
   },
   appliedBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.successBg,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: Colors.successBorder,
-    borderRadius: Radius.lg,
-    padding: 14,
-    marginBottom: 16,
+    borderRadius: Radius.md,
+    padding: 12,
+    marginBottom: 14,
   },
   appliedBannerTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: Colors.success,
   },
   appliedBannerSub: {
-    fontSize: 12,
-    color: '#15803D',
-    marginTop: 2,
+    fontSize: 11,
+    color: Colors.success,
+    marginTop: 1,
   },
   bottomActions: {
-    marginTop: 8,
+    marginTop: 6,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'flex-end',
   },
   modalSheet: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    paddingBottom: 36,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    padding: 18,
+    paddingBottom: 32,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -484,44 +489,49 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   modalSub: {
     fontSize: 12,
     color: Colors.textSecondary,
-    marginBottom: 16,
+    marginBottom: 14,
   },
   successBox: {
     backgroundColor: '#FFFFFF',
-    borderRadius: Radius.xl,
-    padding: 24,
+    borderRadius: Radius.lg,
+    padding: 20,
     alignItems: 'center',
     margin: 24,
     alignSelf: 'center',
     maxWidth: 320,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.card,
   },
   successIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: Colors.successBg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: Colors.successBorder,
   },
   successTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   successDesc: {
-    fontSize: 13,
+    fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 17,
   },
 });

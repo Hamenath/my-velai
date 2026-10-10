@@ -39,8 +39,8 @@ export const JobCard: React.FC<JobCardProps> = ({
       <View style={styles.topRow}>
         <Badge
           label={categoryName}
-          variant="yellow"
-          icon={<Ionicons name="briefcase" size={11} color="#854D0E" />}
+          variant="neutral"
+          icon={<Ionicons name="briefcase-outline" size={11} color={Colors.textSecondary} />}
         />
 
         <View style={styles.rightBadges}>
@@ -48,7 +48,7 @@ export const JobCard: React.FC<JobCardProps> = ({
             <Badge
               label={language === 'ta' ? 'அவசரம்' : 'Urgent'}
               variant="urgent"
-              icon={<Ionicons name="flame" size={11} color={Colors.error} />}
+              icon={<Ionicons name="flame-outline" size={11} color={Colors.error} />}
             />
           )}
           <Text style={styles.timeAgo}>{job.postedAt}</Text>
@@ -62,7 +62,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
       {/* Location & Landmark */}
       <View style={styles.metaRow}>
-        <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
+        <Ionicons name="location-outline" size={13} color={Colors.textSecondary} />
         <Text style={styles.metaText} numberOfLines={1}>
           {localityName} • {job.landmark}
         </Text>
@@ -70,7 +70,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
       {/* Date & Time */}
       <View style={styles.metaRow}>
-        <Ionicons name="calendar-outline" size={14} color={Colors.textSecondary} />
+        <Ionicons name="calendar-outline" size={13} color={Colors.textSecondary} />
         <Text style={styles.metaText} numberOfLines={1}>
           {job.date} • {job.time}
         </Text>
@@ -91,7 +91,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
         <View style={styles.actionGroup}>
           <View style={styles.applicantsBadge}>
-            <Ionicons name="people-outline" size={12} color={Colors.textSecondary} />
+            <Ionicons name="people-outline" size={11} color={Colors.textSecondary} />
             <Text style={styles.applicantsText}>
               {job.applicantsCount}/{job.workersNeeded}
             </Text>
@@ -114,10 +114,10 @@ export const JobCard: React.FC<JobCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 14,
-    padding: 16,
+    marginBottom: 12,
+    padding: 14,
     borderRadius: Radius.lg,
-    borderWidth: 1.2,
+    borderWidth: 1,
     borderColor: Colors.border,
     backgroundColor: '#FFFFFF',
     ...Shadows.subtle,
@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
-    lineHeight: 21,
+    lineHeight: 20,
     marginBottom: 8,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 4,
   },
   metaText: {
     fontSize: 12,
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: Colors.border,
-    marginVertical: 12,
+    marginVertical: 10,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -167,57 +167,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   wagePill: {
-    backgroundColor: Colors.brandYellowSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: Radius.md,
+    backgroundColor: Colors.secondaryBg,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: Radius.xs,
     borderWidth: 1,
-    borderColor: Colors.brandYellowLight,
+    borderColor: Colors.border,
   },
   wageLabel: {
     fontSize: 9,
-    fontWeight: '700',
-    color: '#854D0E',
+    fontWeight: '600',
+    color: Colors.textSecondary,
     textTransform: 'uppercase',
+    letterSpacing: 0.2,
   },
   wageValue: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: Colors.brandBlack,
+    fontSize: 15,
+    fontWeight: '800',
+    color: Colors.textPrimary,
   },
   wageSuffix: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   actionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   applicantsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: Radius.round,
+    paddingHorizontal: 7,
+    paddingVertical: 5,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     borderColor: Colors.border,
     gap: 3,
   },
   applicantsText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   applyBtn: {
     backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: Radius.md,
+    paddingHorizontal: 13,
+    paddingVertical: 7,
+    borderRadius: Radius.sm,
     borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   applyBtnText: {
     fontSize: 12,

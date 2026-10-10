@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -36,7 +36,7 @@ export default function CategoryScreen() {
   );
 
   return (
-    <ScreenWrapper backgroundColor="#F8F8F6">
+    <ScreenWrapper backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={catName}
@@ -49,7 +49,7 @@ export default function CategoryScreen() {
           <View style={styles.iconCircle}>
             <Ionicons
               name={(category.icon as any) || 'construct-outline'}
-              size={28}
+              size={24}
               color={Colors.brandBlack}
             />
           </View>
@@ -62,7 +62,7 @@ export default function CategoryScreen() {
         <View style={styles.statsPillRow}>
           <View style={styles.statsPill}>
             <Text style={styles.statsPillLabel}>
-              {language === 'ta' ? 'சராசரி தினக்கூலி:' : 'Avg. Daily Wage:'}
+              {language === 'ta' ? 'சராசரி கூலி:' : 'Avg. Daily Rate:'}
             </Text>
             <Text style={styles.statsPillVal}>₹{category.averageDailyRate}</Text>
           </View>
@@ -207,39 +207,39 @@ export default function CategoryScreen() {
 const styles = StyleSheet.create({
   heroCard: {
     backgroundColor: '#FFFFFF',
-    padding: 16,
+    padding: 14,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
   heroTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   iconCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: Colors.brandYellowSoft,
-    borderWidth: 1.5,
-    borderColor: Colors.brandYellowDark,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.secondaryBg,
+    borderWidth: 1,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   catTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   catDesc: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
-    lineHeight: 16,
+    marginTop: 1,
+    lineHeight: 15,
   },
   statsPillRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 8,
   },
   statsPill: {
     flex: 1,
@@ -247,9 +247,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: Colors.secondaryBg,
-    borderRadius: Radius.sm,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    borderRadius: Radius.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -259,13 +259,13 @@ const styles = StyleSheet.create({
   },
   statsPillVal: {
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '700',
     color: Colors.brandBlack,
   },
   segmentContainer: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 8,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
@@ -273,8 +273,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: Colors.secondaryBg,
     borderRadius: Radius.md,
-    padding: 3,
-    marginBottom: 10,
+    padding: 2,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -286,20 +286,17 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
   },
   activeSegmentBtn: {
-    backgroundColor: Colors.brandYellow,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    backgroundColor: '#FFFFFF',
+    ...Shadows.subtle,
   },
   segmentText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   activeSegmentText: {
     color: Colors.brandBlack,
+    fontWeight: '700',
   },
   localityScroll: {
     paddingBottom: 6,

@@ -50,7 +50,7 @@ export default function WorkerJobsScreen() {
   });
 
   return (
-    <ScreenWrapper backgroundColor="#F8F8F6">
+    <ScreenWrapper backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={language === 'ta' ? 'வேலை தேடல்' : 'Find Local Jobs'}
@@ -59,7 +59,7 @@ export default function WorkerJobsScreen() {
       <View style={styles.filterHeader}>
         {/* Search Input */}
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={Colors.textSecondary} />
+          <Ionicons name="search-outline" size={18} color={Colors.textSecondary} />
           <TextInput
             placeholder={
               language === 'ta'
@@ -73,7 +73,7 @@ export default function WorkerJobsScreen() {
           />
           {query.length > 0 && (
             <TouchableOpacity onPress={() => setQuery('')}>
-              <Ionicons name="close-circle" size={18} color={Colors.textMuted} />
+              <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
             </TouchableOpacity>
           )}
         </View>
@@ -184,13 +184,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     paddingHorizontal: 12,
-    height: 46,
-    marginBottom: 10,
+    height: 42,
+    marginBottom: 8,
   },
   searchInput: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.textPrimary,
   },
   scrollRow: {

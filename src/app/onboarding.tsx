@@ -15,19 +15,19 @@ export default function OnboardingScreen() {
 
   const slides = [
     {
-      icon: 'people' as const,
+      icon: 'people-outline' as const,
       title: t('feature1Title'),
       desc: t('feature1Desc'),
       highlight: language === 'ta' ? 'மதுரை முழுவதும்' : 'Across Madurai',
     },
     {
-      icon: 'cash' as const,
+      icon: 'cash-outline' as const,
       title: t('feature2Title'),
       desc: t('feature2Desc'),
       highlight: language === 'ta' ? 'இடைத்தரகர் கமிஷன் இல்லை' : 'Zero Middleman Fee',
     },
     {
-      icon: 'language' as const,
+      icon: 'language-outline' as const,
       title: t('feature3Title'),
       desc: t('feature3Desc'),
       highlight: language === 'ta' ? 'நம் தமிழ் மொழியில்' : 'Tamil-First Design',
@@ -61,7 +61,7 @@ export default function OnboardingScreen() {
               {language === 'ta' ? 'English' : 'தமிழ்'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.7} onPress={handleSkip}>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleSkip} style={styles.skipBtn}>
             <Text style={styles.skipText}>
               {language === 'ta' ? 'தவிர்' : 'Skip'}
             </Text>
@@ -74,7 +74,7 @@ export default function OnboardingScreen() {
         <View style={styles.iconCircle}>
           <Ionicons
             name={slides[activeSlide].icon}
-            size={44}
+            size={40}
             color={Colors.brandBlack}
           />
         </View>
@@ -129,25 +129,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
   topRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
   langBtn: {
-    backgroundColor: Colors.brandYellowSoft,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    borderColor: Colors.border,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
     borderRadius: Radius.round,
   },
   langBtnText: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '700',
     color: Colors.brandBlack,
+  },
+  skipBtn: {
+    paddingVertical: 4,
+    paddingHorizontal: 6,
   },
   skipText: {
     fontSize: 13,
@@ -158,63 +162,63 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 30,
+    paddingHorizontal: 28,
   },
   iconCircle: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: Colors.brandYellow,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#171717',
+    borderWidth: 1,
+    borderColor: Colors.border,
     marginBottom: 20,
   },
   highlightPill: {
-    backgroundColor: Colors.brandYellowSoft,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: Radius.round,
+    backgroundColor: Colors.secondaryBg,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: Radius.xs,
     borderWidth: 1,
-    borderColor: Colors.brandYellowLight,
+    borderColor: Colors.border,
     marginBottom: 12,
   },
   highlightText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#854D0E',
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.textSecondary,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
     textAlign: 'center',
-    marginBottom: 12,
-    lineHeight: 28,
+    marginBottom: 10,
+    lineHeight: 26,
   },
   desc: {
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 28,
+    lineHeight: 20,
+    marginBottom: 24,
   },
   indicatorRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   indicatorDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: Colors.borderStrong,
   },
   activeDot: {
-    width: 24,
-    height: 8,
-    borderRadius: 4,
+    width: 20,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: Colors.brandBlack,
   },
   footer: {

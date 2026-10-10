@@ -17,7 +17,7 @@ export const Chip: React.FC<ChipProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      activeOpacity={0.7}
+      activeOpacity={0.75}
       onPress={onPress}
       style={[
         styles.chip,
@@ -39,25 +39,24 @@ export const Chip: React.FC<ChipProps> = ({
 
 const styles = StyleSheet.create({
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
+    paddingHorizontal: 13,
+    paddingVertical: 6,
     borderRadius: Radius.round,
-    marginRight: 8,
-    marginBottom: 8,
+    marginRight: 6,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedChip: {
     backgroundColor: Colors.brandYellow,
-    borderColor: '#EAB308',
+    borderColor: Colors.brandYellow,
   },
   unselectedChip: {
     backgroundColor: '#FFFFFF',
     borderColor: Colors.border,
   },
   label: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
   },
   selectedLabel: {

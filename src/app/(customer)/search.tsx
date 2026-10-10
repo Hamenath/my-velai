@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -65,13 +65,13 @@ export default function SearchScreen() {
   });
 
   return (
-    <ScreenWrapper backgroundColor="#F8F8F6">
+    <ScreenWrapper backgroundColor={Colors.secondaryBg}>
       <Header showLocation={false} title={language === 'ta' ? 'தேடல் & வடிகட்டிகள்' : 'Search & Filters'} />
 
       {/* Search Input Box */}
       <View style={styles.searchHeader}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={Colors.textSecondary} />
+          <Ionicons name="search-outline" size={18} color={Colors.textSecondary} />
           <TextInput
             placeholder={t('searchPlaceholder')}
             placeholderTextColor={Colors.textMuted}
@@ -82,7 +82,7 @@ export default function SearchScreen() {
           />
           {query.length > 0 && (
             <TouchableOpacity onPress={() => setQuery('')}>
-              <Ionicons name="close-circle" size={18} color={Colors.textMuted} />
+              <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
             </TouchableOpacity>
           )}
         </View>
@@ -98,8 +98,8 @@ export default function SearchScreen() {
             ]}
           >
             <Ionicons
-              name="people"
-              size={15}
+              name="people-outline"
+              size={14}
               color={activeTab === 'workers' ? Colors.brandBlack : Colors.textSecondary}
             />
             <Text
@@ -121,8 +121,8 @@ export default function SearchScreen() {
             ]}
           >
             <Ionicons
-              name="briefcase"
-              size={15}
+              name="briefcase-outline"
+              size={14}
               color={activeTab === 'jobs' ? Colors.brandBlack : Colors.textSecondary}
             />
             <Text
@@ -131,7 +131,7 @@ export default function SearchScreen() {
                 activeTab === 'jobs' && styles.activeSegmentText,
               ]}
             >
-              {language === 'ta' ? 'வேலை வாய்ப்புகள்' : 'Job Openings'} ({filteredJobs.length})
+              {language === 'ta' ? 'வேலைகள்' : 'Job Openings'} ({filteredJobs.length})
             </Text>
           </TouchableOpacity>
         </View>
@@ -246,21 +246,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     paddingHorizontal: 12,
-    height: 46,
-    marginBottom: 12,
+    height: 42,
+    marginBottom: 10,
   },
   input: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.textPrimary,
   },
   segmentedControl: {
     flexDirection: 'row',
     backgroundColor: Colors.secondaryBg,
     borderRadius: Radius.md,
-    padding: 3,
-    marginBottom: 10,
+    padding: 2,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -274,20 +274,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   activeSegmentBtn: {
-    backgroundColor: Colors.brandYellow,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    backgroundColor: '#FFFFFF',
+    ...Shadows.subtle,
   },
   segmentText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   activeSegmentText: {
     color: Colors.brandBlack,
+    fontWeight: '700',
   },
   categoryScroll: {
     paddingBottom: 8,

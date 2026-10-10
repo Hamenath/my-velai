@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../constants/colors';
+import { Colors, Radius, Shadows } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Logo } from '../components/ui/Logo';
@@ -31,7 +31,7 @@ export default function RoleSelectScreen() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Logo size="md" showSubtitle />
+          <Logo size="md" showSubtitle={false} />
         </View>
 
         {/* Title */}
@@ -59,9 +59,9 @@ export default function RoleSelectScreen() {
                 ]}
               >
                 <Ionicons
-                  name="person"
-                  size={24}
-                  color={role === 'customer' ? Colors.brandBlack : Colors.textPrimary}
+                  name="person-outline"
+                  size={20}
+                  color={Colors.brandBlack}
                 />
               </View>
               <View style={styles.radioWrapper}>
@@ -81,13 +81,13 @@ export default function RoleSelectScreen() {
 
             <View style={styles.bulletsRow}>
               <View style={styles.bulletItem}>
-                <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
+                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
                 <Text style={styles.bulletText}>
                   {language === 'ta' ? 'வேலை பதிவு செய்ய' : 'Post Jobs'}
                 </Text>
               </View>
               <View style={styles.bulletItem}>
-                <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
+                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
                 <Text style={styles.bulletText}>
                   {language === 'ta' ? 'நேரடியாக அழைக்க' : 'Call Workers'}
                 </Text>
@@ -112,9 +112,9 @@ export default function RoleSelectScreen() {
                 ]}
               >
                 <Ionicons
-                  name="hammer"
-                  size={24}
-                  color={role === 'worker' ? Colors.brandBlack : Colors.textPrimary}
+                  name="construct-outline"
+                  size={20}
+                  color={Colors.brandBlack}
                 />
               </View>
               <View style={styles.radioWrapper}>
@@ -134,13 +134,13 @@ export default function RoleSelectScreen() {
 
             <View style={styles.bulletsRow}>
               <View style={styles.bulletItem}>
-                <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
+                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
                 <Text style={styles.bulletText}>
                   {language === 'ta' ? 'தினக்கூலி & பகுதிநேரம்' : 'Daily Wage & Tasks'}
                 </Text>
               </View>
               <View style={styles.bulletItem}>
-                <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
+                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
                 <Text style={styles.bulletText}>
                   {language === 'ta' ? 'நேரடி வருமானம்' : 'Direct Income'}
                 </Text>
@@ -180,10 +180,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
-    lineHeight: 28,
+    lineHeight: 26,
     marginBottom: 6,
   },
   subtitle: {
@@ -193,29 +193,30 @@ const styles = StyleSheet.create({
   },
   rolesList: {
     flex: 1,
-    gap: 16,
+    gap: 14,
   },
   roleCard: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Radius.lg,
-    padding: 18,
+    padding: 16,
+    ...Shadows.subtle,
   },
   selectedRoleCard: {
-    borderColor: Colors.brandYellowDark,
-    backgroundColor: '#FFFEF5',
+    borderColor: Colors.brandYellow,
+    backgroundColor: '#FFFFFF',
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   iconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
@@ -224,17 +225,17 @@ const styles = StyleSheet.create({
   },
   selectedIconBox: {
     backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   radioWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   radioCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
     borderColor: Colors.borderStrong,
     alignItems: 'center',
     justifyContent: 'center',
@@ -243,29 +244,29 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandBlack,
   },
   radioDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: Colors.brandBlack,
   },
   roleTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   roleDesc: {
     fontSize: 12,
     color: Colors.textSecondary,
-    lineHeight: 18,
-    marginBottom: 12,
+    lineHeight: 17,
+    marginBottom: 10,
   },
   bulletsRow: {
     flexDirection: 'row',
     gap: 14,
-    paddingTop: 10,
+    paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
+    borderTopColor: Colors.border,
   },
   bulletItem: {
     flexDirection: 'row',
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   },
   bulletText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textPrimary,
   },
   footer: {

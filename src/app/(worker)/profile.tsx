@@ -24,7 +24,7 @@ export default function WorkerProfileScreen() {
   };
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={language === 'ta' ? 'தொழிலாளி சுயவிவரம்' : 'Worker Profile'}
@@ -38,14 +38,14 @@ export default function WorkerProfileScreen() {
               <Text style={styles.avatarText}>தொ</Text>
             </View>
 
-            <View style={{ flex: 1, marginLeft: 14 }}>
+            <View style={{ flex: 1, marginLeft: 12 }}>
               <View style={styles.nameRow}>
                 <Text style={styles.name}>
                   {language === 'ta' ? 'முருகன் கருப்பையா' : 'Murugan Karuppiah'}
                 </Text>
                 <Ionicons
                   name="checkmark-circle"
-                  size={18}
+                  size={16}
                   color={Colors.success}
                   style={{ marginLeft: 4 }}
                 />
@@ -59,7 +59,7 @@ export default function WorkerProfileScreen() {
               <Text style={styles.phone}>+91 98421 77123</Text>
 
               <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={12} color="#EAB308" />
+                <Ionicons name="star" size={11} color="#EAB308" />
                 <Text style={styles.ratingText}>4.9</Text>
                 <Text style={styles.reviewsText}>
                   (84 {language === 'ta' ? 'மதிப்பீடுகள்' : 'reviews'})
@@ -70,10 +70,10 @@ export default function WorkerProfileScreen() {
 
           {/* Verification Pill */}
           <View style={styles.verifiedBanner}>
-            <Ionicons name="shield-checkmark" size={16} color={Colors.success} />
+            <Ionicons name="shield-checkmark" size={14} color={Colors.success} />
             <Text style={styles.verifiedText}>
               {language === 'ta'
-                ? 'ஆதார் & உள்ளூர் முகவரி சரிபார்க்கப்பட்டது'
+                ? 'ஆதார் & முகவரி சரிபார்க்கப்பட்டது'
                 : 'Aadhaar & Madurai Address Verified'}
             </Text>
           </View>
@@ -83,7 +83,7 @@ export default function WorkerProfileScreen() {
         <View style={styles.switchCard}>
           <View style={{ flex: 1 }}>
             <Text style={styles.switchTitle}>
-              {language === 'ta' ? 'தொழிலாளர்களை அழைக்க வேண்டுமா?' : 'Need to hire someone?'}
+              {language === 'ta' ? 'வேலை ஆட்கள் தேவையா?' : 'Need to hire someone?'}
             </Text>
             <Text style={styles.switchDesc}>
               {language === 'ta'
@@ -147,7 +147,7 @@ export default function WorkerProfileScreen() {
             style={styles.menuItem}
           >
             <View style={styles.menuIcon}>
-              <Ionicons name="language-outline" size={20} color={Colors.textPrimary} />
+              <Ionicons name="globe-outline" size={18} color={Colors.textPrimary} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.menuTitle}>{t('preferredLanguage')}</Text>
@@ -157,7 +157,7 @@ export default function WorkerProfileScreen() {
             </View>
             <View style={styles.langPill}>
               <Text style={styles.langPillText}>
-                {language === 'ta' ? 'Change to EN' : 'தமிழுக்கு மாறு'}
+                {language === 'ta' ? 'English' : 'தமிழ்'}
               </Text>
             </View>
           </TouchableOpacity>
@@ -169,12 +169,12 @@ export default function WorkerProfileScreen() {
             style={styles.menuItem}
           >
             <View style={styles.menuIcon}>
-              <Ionicons name="settings-outline" size={20} color={Colors.textPrimary} />
+              <Ionicons name="settings-outline" size={18} color={Colors.textPrimary} />
             </View>
             <Text style={[styles.menuTitle, { flex: 1 }]}>
               {language === 'ta' ? 'அமைப்புகள்' : 'Settings'}
             </Text>
-            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
           </TouchableOpacity>
 
           {/* Madurai Helpline */}
@@ -184,13 +184,13 @@ export default function WorkerProfileScreen() {
             style={[styles.menuItem, { borderBottomWidth: 0 }]}
           >
             <View style={styles.menuIcon}>
-              <Ionicons name="call-outline" size={20} color={Colors.textPrimary} />
+              <Ionicons name="call-outline" size={18} color={Colors.textPrimary} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.menuTitle}>{t('maduraiSupport')}</Text>
               <Text style={styles.menuSub}>{t('maduraiHelpline')}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
           </TouchableOpacity>
         </View>
       </View>
@@ -206,27 +206,27 @@ const styles = StyleSheet.create({
   profileCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 14,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   topInfo: {
     flexDirection: 'row',
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.brandYellow,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.brandYellowDark,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   avatarText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
@@ -247,17 +247,17 @@ const styles = StyleSheet.create({
   phone: {
     fontSize: 12,
     color: Colors.textMuted,
-    marginTop: 2,
+    marginTop: 1,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEF9C3',
     paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingVertical: 1,
+    borderRadius: Radius.xs,
     alignSelf: 'flex-start',
-    marginTop: 6,
+    marginTop: 4,
     gap: 3,
   },
   ratingText: {
@@ -273,11 +273,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.successBg,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: Radius.md,
-    marginTop: 14,
-    gap: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: Radius.xs,
+    marginTop: 12,
+    gap: 5,
     borderWidth: 1,
     borderColor: Colors.successBorder,
   },
@@ -290,42 +290,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.secondaryBg,
-    borderWidth: 1.5,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Radius.lg,
-    padding: 16,
-    marginBottom: 16,
+    padding: 14,
+    marginBottom: 14,
+    ...Shadows.subtle,
   },
   switchTitle: {
     fontSize: 14,
     fontWeight: '800',
-    color: Colors.brandBlack,
+    color: Colors.textPrimary,
   },
   switchDesc: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 3,
+    marginTop: 2,
   },
   sectionCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 16,
+    marginBottom: 14,
     ...Shadows.subtle,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   rateGrid: {
     flexDirection: 'row',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   rateBox: {
     flex: 1,
@@ -357,17 +358,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   skillPill: {
-    backgroundColor: Colors.brandYellowSoft,
+    backgroundColor: Colors.secondaryBg,
     borderWidth: 1,
-    borderColor: Colors.brandYellowLight,
+    borderColor: Colors.border,
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: Radius.sm,
+    paddingVertical: 3,
+    borderRadius: Radius.xs,
   },
   skillText: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#854D0E',
+    fontWeight: '600',
+    color: Colors.textSecondary,
   },
   menuSection: {
     backgroundColor: '#FFFFFF',
@@ -381,35 +382,37 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: 13,
+    paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+    borderBottomColor: Colors.border,
   },
   menuIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   menuTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   menuSub: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   langPill: {
-    backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: Radius.round,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.xs,
     borderWidth: 1,
     borderColor: Colors.border,
   },

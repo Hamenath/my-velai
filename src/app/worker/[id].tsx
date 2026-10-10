@@ -78,7 +78,7 @@ export default function WorkerDetailScreen() {
   };
 
   return (
-    <ScreenWrapper scrollable backgroundColor="#F8F8F6">
+    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={categoryName}
@@ -94,13 +94,13 @@ export default function WorkerDetailScreen() {
               {worker.isAvailable && <View style={styles.onlineDot} />}
             </View>
 
-            <View style={{ flex: 1, marginLeft: 14 }}>
+            <View style={{ flex: 1, marginLeft: 12 }}>
               <View style={styles.nameRow}>
                 <Text style={styles.name}>{name}</Text>
                 {worker.isVerified && (
                   <Ionicons
                     name="checkmark-circle"
-                    size={18}
+                    size={16}
                     color={Colors.success}
                     style={{ marginLeft: 4 }}
                   />
@@ -111,11 +111,11 @@ export default function WorkerDetailScreen() {
 
               <View style={styles.ratingRow}>
                 <View style={styles.ratingBadge}>
-                  <Ionicons name="star" size={12} color="#EAB308" />
+                  <Ionicons name="star" size={11} color="#EAB308" />
                   <Text style={styles.ratingText}>{worker.rating.toFixed(1)}</Text>
                 </View>
                 <Text style={styles.reviewsCount}>
-                  ({worker.reviewsCount} {language === 'ta' ? 'விமர்சனங்கள்' : 'reviews'})
+                  ({worker.reviewsCount} {language === 'ta' ? 'மதிப்பீடுகள்' : 'reviews'})
                 </Text>
               </View>
             </View>
@@ -181,7 +181,7 @@ export default function WorkerDetailScreen() {
           <View style={styles.skillsRow}>
             {skills.map((skill, index) => (
               <View key={index} style={styles.skillPill}>
-                <Ionicons name="construct-outline" size={12} color={Colors.brandBlack} />
+                <Ionicons name="construct-outline" size={11} color={Colors.textPrimary} />
                 <Text style={styles.skillText}>{skill}</Text>
               </View>
             ))}
@@ -195,7 +195,7 @@ export default function WorkerDetailScreen() {
           </Text>
           <Text style={styles.bioText}>{bio}</Text>
           <View style={styles.localityMeta}>
-            <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
+            <Ionicons name="location-outline" size={13} color={Colors.textSecondary} />
             <Text style={styles.localityText}>
               {locality}, Madurai
             </Text>
@@ -204,14 +204,14 @@ export default function WorkerDetailScreen() {
 
         {/* Verification Tag */}
         <View style={styles.verifiedCard}>
-          <Ionicons name="shield-checkmark" size={20} color={Colors.success} />
+          <Ionicons name="shield-checkmark-outline" size={18} color={Colors.success} />
           <View style={{ flex: 1, marginLeft: 10 }}>
             <Text style={styles.verifiedTitle}>
               {language === 'ta' ? 'சரிபார்க்கப்பட்ட தொழிலாளி' : 'Verified Professional'}
             </Text>
             <Text style={styles.verifiedDesc}>
               {language === 'ta'
-                ? 'அடையாள அட்டை மற்றும் மதுரை உள்ளூர் முகவரி சரிபார்க்கப்பட்டுள்ளது.'
+                ? 'அடையாள அட்டை மற்றும் மதுரை முகவரி சரிபார்க்கப்பட்டது.'
                 : 'Identity and Madurai local address confirmed.'}
             </Text>
           </View>
@@ -224,7 +224,7 @@ export default function WorkerDetailScreen() {
             onPress={handleCall}
             style={styles.callButton}
           >
-            <Ionicons name="call" size={18} color={Colors.textPrimary} />
+            <Ionicons name="call-outline" size={16} color={Colors.textPrimary} />
             <Text style={styles.callButtonText}>{t('callNow')}</Text>
           </TouchableOpacity>
 
@@ -243,7 +243,7 @@ export default function WorkerDetailScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <View style={styles.modalIconCircle}>
-              <Ionicons name="checkmark-done" size={32} color={Colors.success} />
+              <Ionicons name="checkmark-done" size={28} color={Colors.success} />
             </View>
             <Text style={styles.modalBoxTitle}>
               {language === 'ta' ? 'முன்பதிவு உறுதியானது!' : 'Booking Confirmed!'}
@@ -260,7 +260,7 @@ export default function WorkerDetailScreen() {
               variant="primary"
               size="md"
               fullWidth
-              style={{ marginTop: 16 }}
+              style={{ marginTop: 14 }}
             />
           </View>
         </View>
@@ -280,16 +280,16 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   notFoundText: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.textSecondary,
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
-    padding: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 14,
+    marginBottom: 12,
     ...Shadows.subtle,
   },
   profileRow: {
@@ -297,28 +297,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: Colors.brandYellow,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: Colors.brandYellowDark,
+    borderWidth: 1,
+    borderColor: Colors.border,
     position: 'relative',
   },
   avatarText: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   onlineDot: {
     position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    bottom: 1,
+    right: 1,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: Colors.success,
     borderWidth: 2,
     borderColor: '#FFFFFF',
@@ -328,45 +328,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   categorySub: {
-    fontSize: 13,
+    fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 6,
-    gap: 6,
+    marginTop: 4,
+    gap: 5,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEF9C3',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    gap: 3,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: Radius.xs,
+    gap: 2,
   },
   ratingText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
     color: '#854D0E',
   },
   reviewsCount: {
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.textSecondary,
   },
   statsGrid: {
     flexDirection: 'row',
     backgroundColor: Colors.secondaryBg,
     borderRadius: Radius.md,
-    marginTop: 16,
-    padding: 12,
+    marginTop: 14,
+    padding: 10,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -375,78 +375,78 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statVal: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   statLbl: {
     fontSize: 10,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
   vDivider: {
     width: 1,
     backgroundColor: Colors.border,
   },
   cardSectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   priceRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   priceItem: {
     flex: 1,
     backgroundColor: Colors.secondaryBg,
-    padding: 12,
+    padding: 10,
     borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.border,
   },
   priceLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.textSecondary,
   },
   priceValue: {
-    fontSize: 16,
-    fontWeight: '900',
+    fontSize: 15,
+    fontWeight: '800',
     color: Colors.brandBlack,
-    marginTop: 2,
+    marginTop: 1,
   },
   priceUnit: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   skillsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 6,
   },
   skillPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.brandYellowSoft,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: Radius.sm,
-    gap: 5,
+    backgroundColor: Colors.secondaryBg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: Radius.xs,
+    gap: 4,
     borderWidth: 1,
-    borderColor: Colors.brandYellowLight,
+    borderColor: Colors.border,
   },
   skillText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Colors.brandBlack,
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.textPrimary,
   },
   bioText: {
     fontSize: 13,
     color: Colors.textPrimary,
-    lineHeight: 20,
-    marginBottom: 8,
+    lineHeight: 19,
+    marginBottom: 6,
   },
   localityMeta: {
     flexDirection: 'row',
@@ -454,85 +454,91 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   localityText: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textSecondary,
   },
   verifiedCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.successBg,
-    borderWidth: 1.5,
-    borderColor: Colors.successBorder,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Colors.border,
     borderRadius: Radius.lg,
-    padding: 14,
-    marginBottom: 20,
+    padding: 12,
+    marginBottom: 16,
+    ...Shadows.subtle,
   },
   verifiedTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '800',
     color: Colors.success,
   },
   verifiedDesc: {
     fontSize: 11,
-    color: '#15803D',
+    color: Colors.textSecondary,
     marginTop: 1,
   },
   actionRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   callButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
-    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingHorizontal: 16,
     borderRadius: Radius.md,
-    minHeight: 52,
+    minHeight: 48,
     gap: 6,
   },
   callButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
   modalBox: {
     backgroundColor: '#FFFFFF',
-    borderRadius: Radius.xl,
-    padding: 24,
+    borderRadius: Radius.lg,
+    padding: 20,
     alignItems: 'center',
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 320,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.card,
   },
   modalIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: Colors.successBg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: Colors.successBorder,
   },
   modalBoxTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   modalBoxDesc: {
-    fontSize: 13,
+    fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 17,
   },
 });

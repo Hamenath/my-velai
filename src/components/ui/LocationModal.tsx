@@ -64,13 +64,13 @@ export const LocationModal: React.FC<LocationModalProps> = ({
                   </Text>
                 </View>
                 <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                  <Ionicons name="close" size={22} color={Colors.textPrimary} />
+                  <Ionicons name="close" size={20} color={Colors.textPrimary} />
                 </TouchableOpacity>
               </View>
 
               {/* Search */}
               <View style={styles.searchBox}>
-                <Ionicons name="search" size={18} color={Colors.textSecondary} />
+                <Ionicons name="search-outline" size={16} color={Colors.textSecondary} />
                 <TextInput
                   value={search}
                   onChangeText={setSearch}
@@ -98,7 +98,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({
                   const isSelected = item.id === currentLocality.id;
                   return (
                     <TouchableOpacity
-                      activeOpacity={0.7}
+                      activeOpacity={0.75}
                       onPress={() => handleSelect(item)}
                       style={[
                         styles.localityRow,
@@ -107,12 +107,12 @@ export const LocationModal: React.FC<LocationModalProps> = ({
                     >
                       <View style={styles.iconCircle}>
                         <Ionicons
-                          name="location"
-                          size={18}
+                          name="location-outline"
+                          size={16}
                           color={isSelected ? Colors.brandBlack : Colors.textSecondary}
                         />
                       </View>
-                      <View style={{ flex: 1, marginLeft: 12 }}>
+                      <View style={{ flex: 1, marginLeft: 10 }}>
                         <Text style={styles.localityName}>
                           {language === 'ta' ? item.name_ta : item.name_en}{' '}
                           <Text style={styles.pinCode}>({item.postalCode})</Text>
@@ -124,7 +124,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({
                       {isSelected && (
                         <Ionicons
                           name="checkmark-circle"
-                          size={22}
+                          size={20}
                           color={Colors.brandYellowDark}
                         />
                       )}
@@ -143,25 +143,27 @@ export const LocationModal: React.FC<LocationModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'flex-end',
   },
   sheet: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     paddingHorizontal: 20,
     paddingTop: 16,
     maxHeight: '80%',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
@@ -181,29 +183,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     paddingHorizontal: 12,
-    height: 44,
-    marginBottom: 16,
+    height: 42,
+    marginBottom: 14,
   },
   searchInput: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.textPrimary,
   },
   localityRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: Radius.md,
     marginBottom: 6,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: Colors.border,
   },
   selectedRow: {
-    backgroundColor: Colors.brandYellowSoft,
     borderColor: Colors.brandYellow,
+    backgroundColor: '#FFFFFF',
   },
   iconCircle: {
     width: 32,
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   localityName: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
@@ -226,6 +228,6 @@ const styles = StyleSheet.create({
   landmarkText: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
 });

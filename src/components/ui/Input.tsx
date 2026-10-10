@@ -49,7 +49,7 @@ export const Input: React.FC<InputProps> = ({
         <TextInput
           style={[
             styles.input,
-            multiline && { minHeight: (numberOfLines || 3) * 22, textAlignVertical: 'top' },
+            multiline && { minHeight: (numberOfLines || 3) * 20, textAlignVertical: 'top' },
             style,
           ]}
           placeholderTextColor={Colors.textMuted}
@@ -87,18 +87,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.2,
+    borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Radius.md,
     paddingHorizontal: 12,
-    minHeight: 48,
+    minHeight: 46,
   },
   multilineContainer: {
     alignItems: 'flex-start',
     paddingVertical: 10,
   },
   focused: {
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.textPrimary,
     backgroundColor: '#FFFFFF',
   },
   errorBorder: {

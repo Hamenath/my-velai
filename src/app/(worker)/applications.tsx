@@ -47,7 +47,7 @@ export default function WorkerApplicationsScreen() {
   };
 
   return (
-    <ScreenWrapper backgroundColor="#F8F8F6">
+    <ScreenWrapper backgroundColor={Colors.secondaryBg}>
       <Header
         showLocation={false}
         title={t('myApplications')}
@@ -95,7 +95,7 @@ export default function WorkerApplicationsScreen() {
 
           return (
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={0.8}
               onPress={() => router.push(`/job/${item.jobId}` as any)}
               style={styles.card}
             >
@@ -109,7 +109,7 @@ export default function WorkerApplicationsScreen() {
               </Text>
 
               <View style={styles.metaRow}>
-                <Ionicons name="location-outline" size={14} color={Colors.textSecondary} />
+                <Ionicons name="location-outline" size={13} color={Colors.textSecondary} />
                 <Text style={styles.metaText}>{locality}, Madurai</Text>
               </View>
 
@@ -136,7 +136,7 @@ export default function WorkerApplicationsScreen() {
                   <Text style={styles.linkText}>
                     {language === 'ta' ? 'வேலை விவரம்' : 'View Job'}
                   </Text>
-                  <Ionicons name="chevron-forward" size={14} color={Colors.brandBlack} />
+                  <Ionicons name="chevron-forward" size={13} color={Colors.brandBlack} />
                 </View>
               </View>
             </TouchableOpacity>
@@ -164,27 +164,28 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    gap: 8,
+    gap: 6,
   },
   tabBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
     borderRadius: Radius.round,
-    backgroundColor: Colors.secondaryBg,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: Colors.border,
   },
   activeTabBtn: {
     backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellowDark,
+    borderColor: Colors.brandYellow,
   },
   tabText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   activeTabText: {
     color: Colors.brandBlack,
+    fontWeight: '700',
   },
   listContainer: {
     padding: 16,
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
-    padding: 16,
+    padding: 14,
     marginBottom: 12,
     ...Shadows.subtle,
   },
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   timeAgo: {
     fontSize: 11,
@@ -211,15 +212,15 @@ const styles = StyleSheet.create({
   },
   jobTitle: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.textPrimary,
     lineHeight: 20,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   metaText: {
     fontSize: 12,
@@ -229,7 +230,9 @@ const styles = StyleSheet.create({
   noteBox: {
     backgroundColor: Colors.secondaryBg,
     padding: 8,
-    borderRadius: Radius.sm,
+    borderRadius: Radius.xs,
+    borderWidth: 1,
+    borderColor: Colors.border,
     marginBottom: 8,
   },
   noteLabel: {
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   rateValue: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
