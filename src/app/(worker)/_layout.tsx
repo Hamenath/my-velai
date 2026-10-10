@@ -18,22 +18,22 @@ export default function WorkerTabsLayout() {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: Colors.border,
-          height: Platform.OS === 'ios' ? 84 : 68,
-          paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 24 : 10,
-          elevation: 8,
+          height: Platform.OS === 'ios' ? 82 : 62,
+          paddingTop: 4,
+          paddingBottom: Platform.OS === 'ios' ? 22 : 6,
+          elevation: 6,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.05,
-          shadowRadius: 4,
+          shadowRadius: 3,
         },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '700',
+        tabBarIconStyle: {
           marginTop: 2,
         },
-        tabBarItemStyle: {
-          paddingVertical: 2,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '700',
+          marginBottom: 2,
         },
       }}
     >
