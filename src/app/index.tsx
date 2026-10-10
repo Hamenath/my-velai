@@ -1,17 +1,24 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import React, { useCallback } from 'react';
+import {
+  View,
+  StyleSheet,
+  Image,
+  useWindowDimensions,
+  StatusBar,
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import { Colors } from '../constants/colors';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, Radius } from '../constants/colors';
 import { useApp } from '../context/AppContext';
-import { Logo } from '../components/ui/Logo';
 import { Button } from '../components/ui/Button';
 
-export default function SplashScreen() {
-  const router = useRouter();
-  const { hasSeenOnboarding, role, language } = useApp();
+const APP_LOGO = require('../../assets/images/app-logo.png');
 
-  const [fadeAnim] = useState(() => new Animated.Value(0));
-  const [scaleAnim] = useState(() => new Animated.Value(0.95));
+export default function WelcomeScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const { hasSeenOnboarding, role, language } = useApp();
 
   const handleProceed = useCallback(() => {
     if (hasSeenOnboarding) {
@@ -25,84 +32,48 @@ export default function SplashScreen() {
     }
   }, [hasSeenOnboarding, role, router]);
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 700,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    const timer = setTimeout(() => {
-      handleProceed();
-    }, 2200);
-
-    return () => clearTimeout(timer);
-  }, [fadeAnim, scaleAnim, handleProceed]);
+  // Responsive, prominent logo sizing keeping original proportions and generous whitespace
+  const logoSize = Math.min(Math.max(width * 0.58, 200), 240);
 
   return (
-    <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.content,
-          {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
-        <Logo size="hero" showSubtitle={false} />
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: Math.max(insets.top, 24),
+          paddingBottom: Math.max(insets.bottom, 24),
+        },
+      ]}
+    >
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-        <View style={styles.textBlock}>
-          <Text style={styles.maduraiTag}>
-            {language === 'ta' ? 'மதுரை • தமிழ்நாடு' : 'MADURAI • TAMIL NADU'}
-          </Text>
-          <Text style={styles.tamilName}>என் வேலை</Text>
-          <Text style={styles.tagline}>
-            {language === 'ta'
-              ? 'மதுரையின் உள்ளூர் வேலைகள் மற்றும் சேவைகள்'
-              : 'Direct Local Jobs & Home Services'}
-          </Text>
-        </View>
+      {/* Hero Logo Area — centered in the upper/main portion of the screen */}
+      <View style={styles.heroSection}>
+        <Image
+          source={APP_LOGO}
+          style={[
+            styles.logoImage,
+            {
+              width: logoSize,
+              height: logoSize,
+            },
+          ]}
+          resizeMode="contain"
+          accessibilityLabel="MY VELAI"
+        />
+      </View>
 
-        <View style={styles.featurePills}>
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>
-              {language === 'ta' ? 'தினக்கூலி' : 'Daily Wage'}
-            </Text>
-          </View>
-          <View style={styles.pillDot} />
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>
-              {language === 'ta' ? 'எலக்ட்ரீஷியன்' : 'Electrician'}
-            </Text>
-          </View>
-          <View style={styles.pillDot} />
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>
-              {language === 'ta' ? 'பிளம்பர்' : 'Plumber'}
-            </Text>
-          </View>
-        </View>
-      </Animated.View>
-
-      <View style={styles.footer}>
+      {/* Primary Action Button pinned near the bottom */}
+      <View style={styles.footerSection}>
         <Button
           title={language === 'ta' ? 'தொடங்குங்கள்' : 'Get Started'}
           onPress={handleProceed}
           variant="primary"
           size="lg"
           fullWidth
+          style={styles.getStartedButton}
+          textStyle={styles.getStartedText}
         />
-        <Text style={styles.copyright}>
-          MY VELAI • Madurai Local Marketplace
-        </Text>
       </View>
     </View>
   );
@@ -114,71 +85,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingVertical: 36,
   },
-  content: {
+  heroSection: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 24,
   },
-  textBlock: {
-    alignItems: 'center',
-    marginTop: 18,
+  logoImage: {
+    borderRadius: 36,
   },
-  maduraiTag: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: Colors.textSecondary,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  tamilName: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: Colors.brandBlack,
-    letterSpacing: 0.5,
-  },
-  tagline: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    marginTop: 6,
-    maxWidth: 260,
-    lineHeight: 18,
-  },
-  featurePills: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 24,
-    backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  pill: {},
-  pillText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: Colors.textPrimary,
-  },
-  pillDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: Colors.borderStrong,
-    marginHorizontal: 8,
-  },
-  footer: {
+  footerSection: {
     width: '100%',
+    paddingBottom: 8,
+  },
+  getStartedButton: {
+    height: 56,
+    minHeight: 56,
+    borderRadius: Radius.lg,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  copyright: {
-    fontSize: 11,
-    color: Colors.textMuted,
-    marginTop: 12,
+  getStartedText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.brandBlack,
+    letterSpacing: 0.2,
   },
 });
