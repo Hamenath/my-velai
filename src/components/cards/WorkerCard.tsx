@@ -190,15 +190,17 @@ const styles = StyleSheet.create({
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF9C3',
+    backgroundColor: Colors.secondaryBg,
+    borderColor: Colors.border,
+    borderWidth: 1,
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: Radius.xs,
   },
   ratingText: {
     fontSize: 11,
-    fontWeight: '800',
-    color: '#854D0E',
+    fontWeight: '700',
+    color: Colors.textPrimary,
     marginLeft: 2,
   },
   reviewCount: {

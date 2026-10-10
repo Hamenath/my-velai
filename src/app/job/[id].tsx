@@ -44,7 +44,7 @@ export default function JobDetailsScreen() {
           <Button
             title={language === 'ta' ? 'பின்செல்ல' : 'Go Back'}
             onPress={() => router.back()}
-            variant="outline"
+            variant="secondary"
           />
         </View>
       </ScreenWrapper>

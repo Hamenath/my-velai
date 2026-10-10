@@ -35,7 +35,7 @@ export default function BookingDetailScreen() {
           <Button
             title={language === 'ta' ? 'பின்செல்ல' : 'Go Back'}
             onPress={() => router.back()}
-            variant="outline"
+            variant="secondary"
           />
         </View>
       </ScreenWrapper>
@@ -186,7 +186,7 @@ export default function BookingDetailScreen() {
                       <Ionicons
                         name={step.icon}
                         size={13}
-                        color={isDone ? '#171717' : Colors.textMuted}
+                        color={isDone ? Colors.textPrimary : Colors.textMuted}
                       />
                     </View>
                     {idx < steps.length - 1 && (

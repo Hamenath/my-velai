@@ -41,9 +41,9 @@ export const Badge: React.FC<BadgeProps> = ({
         };
       case 'yellow':
         return {
-          bg: Colors.warningBg,
-          border: Colors.warningBorder,
-          text: '#854D0E',
+          bg: Colors.secondaryBg,
+          border: Colors.border,
+          text: Colors.textPrimary,
         };
       case 'neutral':
       default:
