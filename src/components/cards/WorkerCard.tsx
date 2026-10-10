@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Worker } from '../../types';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { Card } from '../ui/Card';
 
@@ -36,7 +36,7 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
   return (
     <Card style={styles.card} onPress={onPress}>
       <View style={styles.headerRow}>
-        {/* Avatar Initials */}
+        {/* Avatar Initials with Online Status */}
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
             {name.charAt(0)}
@@ -71,7 +71,7 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
 
             <Text style={styles.dotSeparator}>•</Text>
 
-            <Text style={styles.metaText}>
+            <Text style={styles.metaText} numberOfLines={1}>
               {localityName} ({worker.distanceKm} {t('distance')})
             </Text>
           </View>
@@ -126,35 +126,41 @@ export const WorkerCard: React.FC<WorkerCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
+    marginBottom: 14,
+    padding: 16,
+    borderRadius: Radius.lg,
+    borderWidth: 1.2,
+    borderColor: Colors.border,
+    backgroundColor: '#FFFFFF',
+    ...Shadows.subtle,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.brandYellowSoft,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Colors.brandYellow,
     borderWidth: 1.5,
-    borderColor: Colors.brandYellow,
+    borderColor: Colors.brandBlack,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   avatarText: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 22,
+    fontWeight: '900',
     color: Colors.brandBlack,
   },
   onlineDot: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 13,
+    height: 13,
+    borderRadius: 6.5,
     backgroundColor: Colors.success,
     borderWidth: 2,
     borderColor: '#FFFFFF',
@@ -168,36 +174,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
     color: Colors.textPrimary,
   },
   category: {
     fontSize: 12,
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginTop: 1,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 3,
+    marginTop: 4,
   },
   ratingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEF9C3',
-    paddingHorizontal: 5,
-    paddingVertical: 1,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
   },
   ratingText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#854D0E',
     marginLeft: 2,
   },
   reviewCount: {
     fontSize: 10,
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginLeft: 2,
   },
@@ -209,6 +217,7 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 11,
     color: Colors.textSecondary,
+    flex: 1,
   },
   skillsRow: {
     flexDirection: 'row',
@@ -226,13 +235,13 @@ const styles = StyleSheet.create({
   },
   skillText: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     color: Colors.textSecondary,
   },
   divider: {
     height: 1,
     backgroundColor: Colors.border,
-    marginVertical: 10,
+    marginVertical: 12,
   },
   bottomRow: {
     flexDirection: 'row',
@@ -241,16 +250,17 @@ const styles = StyleSheet.create({
   },
   rateLabel: {
     fontSize: 10,
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   rateValue: {
-    fontSize: 15,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '900',
     color: Colors.textPrimary,
   },
   rateUnit: {
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   actions: {
@@ -260,12 +270,12 @@ const styles = StyleSheet.create({
   callBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
+    borderWidth: 1.2,
+    borderColor: Colors.borderStrong,
     gap: 4,
   },
   callText: {
@@ -275,15 +285,15 @@ const styles = StyleSheet.create({
   },
   bookBtn: {
     backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: Radius.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.brandYellowDark,
   },
   bookText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.brandBlack,
   },
 });

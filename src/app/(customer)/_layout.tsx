@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
+import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
@@ -17,13 +18,22 @@ export default function CustomerTabsLayout() {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: Colors.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 6,
+          height: Platform.OS === 'ios' ? 84 : 68,
+          paddingTop: 8,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 10,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: '700',
+          marginTop: 2,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 2,
         },
       }}
     >
@@ -57,11 +67,11 @@ export default function CustomerTabsLayout() {
         name="post-job"
         options={{
           title: t('tabPost'),
-          tabBarIcon: ({ color, focused }) => (
+          tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? 'add-circle' : 'add-circle-outline'}
-              size={25}
-              color={focused ? Colors.brandYellowDark : Colors.brandYellowDark}
+              size={26}
+              color={Colors.brandYellowDark}
             />
           ),
         }}

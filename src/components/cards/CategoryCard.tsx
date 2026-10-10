@@ -8,32 +8,57 @@ import { useApp } from '../../context/AppContext';
 interface CategoryCardProps {
   category: ServiceCategory;
   onPress: () => void;
-  compact?: boolean;
+  variant?: 'tile' | 'card' | 'compact';
 }
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({
   category,
   onPress,
-  compact = false,
+  variant = 'tile',
 }) => {
   const { language } = useApp();
   const name = language === 'ta' ? category.name_ta : category.name_en;
+
+  if (variant === 'tile') {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={onPress}
+        style={styles.tileContainer}
+      >
+        <View style={styles.tileIconBox}>
+          <Ionicons
+            name={(category.icon as any) || 'construct-outline'}
+            size={24}
+            color={Colors.brandBlack}
+          />
+          {category.popular && (
+            <View style={styles.popularDot} />
+          )}
+        </View>
+
+        <Text style={styles.tileName} numberOfLines={2}>
+          {name}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      style={[styles.card, compact && styles.compactCard]}
+      style={[styles.card, variant === 'compact' && styles.compactCard]}
     >
       <View style={styles.iconCircle}>
         <Ionicons
           name={(category.icon as any) || 'construct-outline'}
-          size={24}
+          size={22}
           color={Colors.brandBlack}
         />
       </View>
 
-      <Text style={styles.name} numberOfLines={2}>
+      <Text style={styles.cardName} numberOfLines={2}>
         {name}
       </Text>
 
@@ -48,6 +73,41 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
 };
 
 const styles = StyleSheet.create({
+  tileContainer: {
+    width: '23%',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  tileIconBox: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    ...Shadows.subtle,
+  },
+  popularDot: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.brandYellowDark,
+  },
+  tileName: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    textAlign: 'center',
+    marginTop: 6,
+    lineHeight: 14,
+    minHeight: 28,
+  },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.md,
@@ -58,7 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '48%',
     marginBottom: 12,
-    minHeight: 128,
+    minHeight: 120,
     ...Shadows.subtle,
   },
   compactCard: {
@@ -68,9 +128,9 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: Colors.brandYellowSoft,
     borderWidth: 1,
     borderColor: Colors.brandYellowLight,
@@ -78,13 +138,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 8,
   },
-  name: {
-    fontSize: 13,
+  cardName: {
+    fontSize: 12,
     fontWeight: '700',
     color: Colors.textPrimary,
     textAlign: 'center',
     marginBottom: 6,
-    lineHeight: 17,
+    lineHeight: 16,
   },
   badge: {
     backgroundColor: Colors.secondaryBg,

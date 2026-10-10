@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -48,19 +48,17 @@ export default function WorkerHomeScreen() {
       {/* Hero Availability Card */}
       <View style={styles.heroSection}>
         <View style={styles.topGreetingRow}>
-          <View>
-            <Text style={styles.greetingTitle}>
-              {language === 'ta' ? 'வணக்கம் தோழரே!' : 'Vanakkam Worker!'}
-            </Text>
-            <Text style={styles.localitySub}>
-              {language === 'ta'
-                ? `${currentLocality.name_ta} பகுதியில் புதிய வேலைகள் உள்ளன`
-                : `Active jobs waiting in ${currentLocality.name_en}`}
-            </Text>
-          </View>
+          <Text style={styles.greetingTitle}>
+            {language === 'ta' ? 'வணக்கம் தோழரே!' : 'Vanakkam Worker!'}
+          </Text>
+          <Text style={styles.localitySub}>
+            {language === 'ta'
+              ? `${currentLocality.name_ta} பகுதியில் புதிய வேலைகள் உள்ளன`
+              : `Active opportunities waiting in ${currentLocality.name_en}`}
+          </Text>
         </View>
 
-        {/* Availability Switcher */}
+        {/* Tactile Availability Switcher Card */}
         <View
           style={[
             styles.availabilityCard,
@@ -70,22 +68,51 @@ export default function WorkerHomeScreen() {
           <View style={styles.availLeft}>
             <View
               style={[
-                styles.statusDot,
-                { backgroundColor: isWorkerAvailable ? Colors.success : Colors.error },
+                styles.statusIconCircle,
+                { backgroundColor: isWorkerAvailable ? '#DCFCE7' : '#F4F4F2' },
               ]}
-            />
-            <View>
-              <Text style={styles.availTitle}>
-                {isWorkerAvailable ? t('availableNow') : t('busyNow')}
-              </Text>
+            >
+              <Ionicons
+                name={isWorkerAvailable ? 'radio-button-on' : 'pause-circle'}
+                size={20}
+                color={isWorkerAvailable ? Colors.success : Colors.textMuted}
+              />
+            </View>
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <View style={styles.availTitleRow}>
+                <Text style={styles.availTitle}>
+                  {isWorkerAvailable ? t('availableNow') : t('busyNow')}
+                </Text>
+                <View
+                  style={[
+                    styles.availBadge,
+                    { backgroundColor: isWorkerAvailable ? Colors.successBg : Colors.secondaryBg },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.availBadgeText,
+                      { color: isWorkerAvailable ? Colors.success : Colors.textSecondary },
+                    ]}
+                  >
+                    {isWorkerAvailable
+                      ? language === 'ta'
+                        ? 'ஆன்லைன்'
+                        : 'ONLINE'
+                      : language === 'ta'
+                      ? 'ஆஃப்லைன்'
+                      : 'OFFLINE'}
+                  </Text>
+                </View>
+              </View>
               <Text style={styles.availDesc}>
                 {isWorkerAvailable
                   ? language === 'ta'
                     ? 'வாடிக்கையாளர்கள் உங்களை அழைக்கலாம்'
                     : 'Customers can call & book you directly'
                   : language === 'ta'
-                    ? 'புதிய வேலை அழைப்புகள் வராது'
-                    : 'You will not appear in search results'}
+                  ? 'புதிய வேலை அழைப்புகள் தற்காலிகமாக நிறுத்தப்பட்டுள்ளது'
+                  : 'You will not appear in search results'}
               </Text>
             </View>
           </View>
@@ -106,8 +133,11 @@ export default function WorkerHomeScreen() {
             onPress={() => router.push('/(worker)/earnings')}
             style={styles.summaryCard}
           >
-            <View style={styles.cardIconCircle}>
-              <Ionicons name="wallet-outline" size={18} color={Colors.brandBlack} />
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconCircle}>
+                <Ionicons name="wallet" size={16} color={Colors.brandBlack} />
+              </View>
+              <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
             </View>
             <Text style={styles.summaryNumber}>₹4,850</Text>
             <Text style={styles.summaryLabel}>{t('thisWeek')}</Text>
@@ -119,8 +149,11 @@ export default function WorkerHomeScreen() {
             onPress={() => router.push('/(worker)/applications')}
             style={styles.summaryCard}
           >
-            <View style={[styles.cardIconCircle, { backgroundColor: '#DCFCE7' }]}>
-              <Ionicons name="document-text-outline" size={18} color={Colors.success} />
+            <View style={styles.cardHeader}>
+              <View style={[styles.cardIconCircle, { backgroundColor: '#DCFCE7' }]}>
+                <Ionicons name="document-text" size={16} color={Colors.success} />
+              </View>
+              <Ionicons name="chevron-forward" size={14} color={Colors.textMuted} />
             </View>
             <Text style={styles.summaryNumber}>
               {appliedCount + shortlistedCount + hiredCount}
@@ -145,7 +178,7 @@ export default function WorkerHomeScreen() {
             onPress={() => setActiveFilter('all')}
           />
           <Chip
-            label={t('urgent')}
+            label={'🔥 ' + t('urgent')}
             selected={activeFilter === 'urgent'}
             onPress={() => setActiveFilter('urgent')}
           />
@@ -190,7 +223,7 @@ export default function WorkerHomeScreen() {
         ))}
       </View>
 
-      <View style={{ height: 32 }} />
+      <View style={{ height: 24 }} />
     </ScreenWrapper>
   );
 }
@@ -208,7 +241,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   greetingTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '900',
     color: Colors.brandBlack,
   },
@@ -224,37 +257,56 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
     borderRadius: Radius.lg,
-    padding: 12,
+    padding: 14,
     marginBottom: 14,
+    ...Shadows.subtle,
   },
   availableBorder: {
-    borderColor: Colors.success,
+    borderColor: '#86EFAC',
     backgroundColor: '#F0FDF4',
   },
   busyBorder: {
     borderColor: Colors.border,
-    backgroundColor: Colors.secondaryBg,
+    backgroundColor: '#F9FAFB',
   },
   availLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-  },
-  statusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
     marginRight: 10,
   },
+  statusIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  availTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   availTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
+  },
+  availBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  availBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   availDesc: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 1,
+    marginTop: 2,
+    lineHeight: 15,
   },
   summaryGrid: {
     flexDirection: 'row',
@@ -268,17 +320,22 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     padding: 12,
   },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   cardIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: Colors.brandYellow,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
   },
   summaryNumber: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '900',
     color: Colors.brandBlack,
   },
@@ -286,6 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 2,
+    fontWeight: '600',
   },
   filtersSection: {
     backgroundColor: '#FFFFFF',

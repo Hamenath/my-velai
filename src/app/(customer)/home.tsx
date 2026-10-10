@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -16,7 +16,6 @@ import { SectionHeader } from '../../components/layout/SectionHeader';
 import { CategoryCard } from '../../components/cards/CategoryCard';
 import { WorkerCard } from '../../components/cards/WorkerCard';
 import { JobCard } from '../../components/cards/JobCard';
-import { Button } from '../../components/ui/Button';
 
 export default function CustomerHomeScreen() {
   const router = useRouter();
@@ -36,22 +35,20 @@ export default function CustomerHomeScreen() {
 
   return (
     <ScreenWrapper scrollable backgroundColor="#F8F8F6">
-      {/* Top Header */}
+      {/* Top Header with Logo and Location Bar */}
       <Header />
 
-      {/* Greeting & Post Job Quick Banner */}
+      {/* Hero Search Section */}
       <View style={styles.heroSection}>
         <View style={styles.greetingRow}>
-          <View>
-            <Text style={styles.greetingText}>
-              {language === 'ta' ? 'வணக்கம் மதுரை!' : 'Vanakkam Madurai!'}
-            </Text>
-            <Text style={styles.subGreeting}>
-              {language === 'ta'
-                ? `${currentLocality.name_ta} பகுதியில் வேலைகளைக் கண்டறியுங்கள்`
-                : `Need trusted workers around ${currentLocality.name_en}?`}
-            </Text>
-          </View>
+          <Text style={styles.greetingText}>
+            {language === 'ta' ? 'வணக்கம் மதுரை!' : 'Vanakkam Madurai!'}
+          </Text>
+          <Text style={styles.subGreeting}>
+            {language === 'ta'
+              ? `${currentLocality.name_ta} பகுதியில் வேலைகளைக் கண்டறியுங்கள்`
+              : `Find trusted local workers around ${currentLocality.name_en}`}
+          </Text>
         </View>
 
         {/* Prominent Search Bar */}
@@ -70,7 +67,7 @@ export default function CustomerHomeScreen() {
             style={styles.searchInput}
           />
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.8}
             onPress={handleSearchSubmit}
             style={styles.searchActionBtn}
           >
@@ -78,43 +75,56 @@ export default function CustomerHomeScreen() {
           </TouchableOpacity>
         </TouchableOpacity>
 
-        {/* Post a Job Banner */}
-        <View style={styles.postJobBanner}>
-          <View style={{ flex: 1 }}>
-            <View style={styles.badgeBanner}>
-              <Text style={styles.badgeBannerText}>
-                {language === 'ta' ? 'உடனடி உதவி' : 'Fast Response'}
+        {/* High-Converting Post a Job Action Banner */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => router.push('/(customer)/post-job')}
+          style={styles.postJobBanner}
+        >
+          <View style={styles.postBannerIconBox}>
+            <Ionicons name="megaphone" size={22} color={Colors.brandBlack} />
+          </View>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <View style={styles.bannerTagRow}>
+              <View style={styles.badgeBanner}>
+                <Text style={styles.badgeBannerText}>
+                  {language === 'ta' ? 'உடனடி உதவி' : 'Fast Response'}
+                </Text>
+              </View>
+              <Text style={styles.timeTag}>
+                {language === 'ta' ? '1 நிமிடத்தில்' : 'In 1 minute'}
               </Text>
             </View>
             <Text style={styles.postBannerTitle}>{t('postAJob')}</Text>
             <Text style={styles.postBannerDesc}>{t('postAJobDesc')}</Text>
           </View>
-          <Button
-            title={language === 'ta' ? 'பதிவிட' : 'Post'}
-            onPress={() => router.push('/(customer)/post-job')}
-            variant="secondary"
-            size="sm"
-            style={styles.bannerBtn}
-          />
-        </View>
+
+          <View style={styles.bannerCta}>
+            <Ionicons name="add" size={16} color="#FFFFFF" />
+            <Text style={styles.bannerCtaText}>
+              {language === 'ta' ? 'பதிவிட' : 'Post'}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
-      {/* Service Categories Section */}
+      {/* Service Categories 4-Column Grid */}
       <SectionHeader
         title={t('categories')}
         subtitle={
           language === 'ta'
             ? 'தேவையான சேவையைத் தேர்ந்தெடுக்கவும்'
-            : 'Select the service you need'
+            : 'Explore services across Madurai'
         }
         actionTitle={t('viewAll')}
         onAction={() => router.push('/(customer)/search')}
       />
       <View style={styles.categoriesGrid}>
-        {categories.slice(0, 6).map((cat) => (
+        {categories.map((cat) => (
           <CategoryCard
             key={cat.id}
             category={cat}
+            variant="tile"
             onPress={() => router.push(`/category/${cat.id}` as any)}
           />
         ))}
@@ -148,7 +158,7 @@ export default function CustomerHomeScreen() {
         subtitle={
           language === 'ta'
             ? 'வாடிக்கையாளர்கள் தற்போது பதிவிட்ட வேலைகள்'
-            : 'Recently posted jobs in Madurai'
+            : 'Recently posted opportunities'
         }
         actionTitle={t('viewAll')}
         onAction={() => router.push('/(customer)/search')}
@@ -164,7 +174,7 @@ export default function CustomerHomeScreen() {
         ))}
       </View>
 
-      <View style={{ height: 32 }} />
+      <View style={{ height: 24 }} />
     </ScreenWrapper>
   );
 }
@@ -179,13 +189,10 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   greetingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 12,
   },
   greetingText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '900',
     color: Colors.brandBlack,
     letterSpacing: 0.2,
@@ -198,12 +205,12 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.secondaryBg,
-    borderRadius: Radius.md,
+    backgroundColor: '#F5F5F3',
+    borderRadius: Radius.lg,
     borderWidth: 1.2,
     borderColor: Colors.border,
-    paddingHorizontal: 12,
-    height: 48,
+    paddingHorizontal: 14,
+    height: 50,
     marginBottom: 14,
   },
   searchInput: {
@@ -214,34 +221,57 @@ const styles = StyleSheet.create({
   },
   searchActionBtn: {
     backgroundColor: Colors.brandYellow,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.brandYellowDark,
   },
   postJobBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: Colors.brandYellowSoft,
     borderWidth: 1.5,
-    borderColor: Colors.brandYellow,
+    borderColor: Colors.brandYellowDark,
     borderRadius: Radius.lg,
     padding: 14,
+    ...Shadows.subtle,
+  },
+  postBannerIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.brandYellow,
+    borderWidth: 1.5,
+    borderColor: Colors.brandBlack,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bannerTagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
   },
   badgeBanner: {
     backgroundColor: Colors.brandYellow,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: Colors.brandYellowDark,
   },
   badgeBannerText: {
     fontSize: 10,
     fontWeight: '800',
     color: Colors.brandBlack,
+  },
+  timeTag: {
+    fontSize: 10,
+    color: Colors.textSecondary,
+    fontWeight: '600',
   },
   postBannerTitle: {
     fontSize: 15,
@@ -251,10 +281,22 @@ const styles = StyleSheet.create({
   postBannerDesc: {
     fontSize: 11,
     color: Colors.textSecondary,
-    marginTop: 2,
+    marginTop: 1,
   },
-  bannerBtn: {
-    paddingHorizontal: 16,
+  bannerCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.brandBlack,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
+    gap: 3,
+    marginLeft: 6,
+  },
+  bannerCtaText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   categoriesGrid: {
     flexDirection: 'row',

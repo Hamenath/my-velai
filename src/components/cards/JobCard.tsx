@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Job } from '../../types';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
@@ -81,7 +81,7 @@ export const JobCard: React.FC<JobCardProps> = ({
 
       {/* Bottom Row: Wage & Action */}
       <View style={styles.bottomRow}>
-        <View>
+        <View style={styles.wagePill}>
           <Text style={styles.wageLabel}>{t('wageOffered')}</Text>
           <Text style={styles.wageValue}>
             ₹{job.wageRate}
@@ -114,7 +114,13 @@ export const JobCard: React.FC<JobCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
+    marginBottom: 14,
+    padding: 16,
+    borderRadius: Radius.lg,
+    borderWidth: 1.2,
+    borderColor: Colors.border,
+    backgroundColor: '#FFFFFF',
+    ...Shadows.subtle,
   },
   topRow: {
     flexDirection: 'row',
@@ -130,12 +136,13 @@ const styles = StyleSheet.create({
   timeAgo: {
     fontSize: 11,
     color: Colors.textMuted,
+    fontWeight: '500',
   },
   title: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.textPrimary,
-    lineHeight: 20,
+    lineHeight: 21,
     marginBottom: 8,
   },
   metaRow: {
@@ -152,25 +159,35 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: Colors.border,
-    marginVertical: 10,
+    marginVertical: 12,
   },
   bottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  wagePill: {
+    backgroundColor: Colors.brandYellowSoft,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.brandYellowLight,
+  },
   wageLabel: {
-    fontSize: 11,
-    color: Colors.textSecondary,
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#854D0E',
+    textTransform: 'uppercase',
   },
   wageValue: {
     fontSize: 16,
-    fontWeight: '800',
-    color: Colors.textPrimary,
+    fontWeight: '900',
+    color: Colors.brandBlack,
   },
   wageSuffix: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   actionGroup: {
@@ -183,7 +200,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.secondaryBg,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: Radius.round,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -191,20 +208,20 @@ const styles = StyleSheet.create({
   },
   applicantsText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: Colors.textSecondary,
   },
   applyBtn: {
     backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: Radius.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.brandYellowDark,
   },
   applyBtnText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.brandBlack,
   },
 });
