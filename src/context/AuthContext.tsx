@@ -1,19 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signOut as fbSignOut,
   signInAnonymously,
   User,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { profileService } from '../services/profileService';
-import { adminService } from '../services/adminService';
 import { googleAuthService } from '../services/googleAuthService';
 import {
   UserProfileDoc,
-  CreateProfileInput,
   UpdateProfileInput,
   UserRole,
 } from '../types';
@@ -21,7 +17,6 @@ import {
 interface AuthContextType {
   user: User | null;
   profile: UserProfileDoc | null;
-  isAdmin: boolean;
   isLoading: boolean;
   isProfileLoading: boolean;
   isSigningOut: boolean;
@@ -29,8 +24,6 @@ interface AuthContextType {
   setAuthError: (err: string | null) => void;
 
   signInWithGoogle: () => Promise<User>;
-  signInWithEmail: (email: string, pass: string) => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, profileInput: CreateProfileInput) => Promise<UserProfileDoc>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<UserProfileDoc | null>;
   updateProfile: (updates: UpdateProfileInput) => Promise<UserProfileDoc>;
@@ -42,13 +35,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfileDoc | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isProfileLoading, setIsProfileLoading] = useState<boolean>(false);
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // Synchronize Firebase Auth state, admin status, and load real Firestore profile
+  // Synchronize Firebase Auth state and load Firestore profile
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -57,12 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (currentUser) {
         setIsProfileLoading(true);
         try {
-          const [loadedProfile, adminStatus] = await Promise.all([
-            profileService.getProfile(currentUser.uid),
-            adminService.checkAdminStatus(currentUser),
-          ]);
+          const loadedProfile = await profileService.getProfile(currentUser.uid);
           setProfile(loadedProfile);
-          setIsAdmin(adminStatus);
         } catch (err: any) {
           console.error('[AuthContext] Failed to load Firestore profile:', err);
           setAuthError(err?.message || 'Failed to load profile');
@@ -71,7 +59,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         setProfile(null);
-        setIsAdmin(false);
         setIsProfileLoading(false);
       }
 
@@ -80,44 +67,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => unsubscribe();
   }, []);
-
-  const signInWithEmail = async (email: string, pass: string) => {
-    setAuthError(null);
-    setIsProfileLoading(true);
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email.trim(), pass);
-      const loadedProfile = await profileService.getProfile(cred.user.uid);
-      setProfile(loadedProfile);
-    } catch (err: any) {
-      setAuthError(err?.message || 'Login failed');
-      throw err;
-    } finally {
-      setIsProfileLoading(false);
-    }
-  };
-
-  const signUpWithEmail = async (
-    email: string,
-    pass: string,
-    profileInput: CreateProfileInput
-  ): Promise<UserProfileDoc> => {
-    setAuthError(null);
-    setIsProfileLoading(true);
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email.trim(), pass);
-      const newProfile = await profileService.createProfile(cred.user.uid, {
-        ...profileInput,
-        email: email.trim(),
-      });
-      setProfile(newProfile);
-      return newProfile;
-    } catch (err: any) {
-      setAuthError(err?.message || 'Registration failed');
-      throw err;
-    } finally {
-      setIsProfileLoading(false);
-    }
-  };
 
   const signInWithGoogle = async (): Promise<User> => {
     setAuthError(null);
@@ -228,15 +177,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         profile,
-        isAdmin,
         isLoading,
         isProfileLoading,
         isSigningOut,
         authError,
         setAuthError,
         signInWithGoogle,
-        signInWithEmail,
-        signUpWithEmail,
         signOut,
         refreshProfile,
         updateProfile,

@@ -31,7 +31,7 @@ export default function SettingsScreen() {
     setHasSeenOnboarding,
     t,
   } = useApp();
-  const { user, isSigningOut, signOut, isAdmin } = useAuth();
+  const { user, isSigningOut, signOut } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
@@ -261,40 +261,6 @@ export default function SettingsScreen() {
           )}
         </View>
 
-        {/* Owner & Admin Console */}
-        <Text style={styles.sectionHeader}>
-          {language === 'ta' ? 'நிர்வாகக் குழு' : 'Owner & Admin Console'}
-        </Text>
-        <View style={styles.card}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => router.push('/admin')}
-            style={styles.settingRow}
-          >
-            <View style={{ flex: 1, paddingRight: 12 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                <Text style={styles.rowTitle}>
-                  {language === 'ta' ? 'நிர்வாகக் குழு (Admin Console)' : 'Admin Dashboard'}
-                </Text>
-                <View style={[styles.adminBadge, isAdmin && styles.adminBadgeActive]}>
-                  <Text style={[styles.adminBadgeText, isAdmin && styles.adminBadgeTextActive]}>
-                    {isAdmin ? 'AUTHORIZED' : 'RESTRICTED'}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.rowSub}>
-                {language === 'ta'
-                  ? 'பயனர், வேலை மற்றும் தொழிலாளர் சரிபார்ப்பு மேலாண்மை'
-                  : 'Platform metrics, job moderation & worker verification'}
-              </Text>
-            </View>
-            <Ionicons
-              name={isAdmin ? 'shield-checkmark' : 'shield-outline'}
-              size={20}
-              color={isAdmin ? Colors.brandBlack : Colors.textMuted}
-            />
-          </TouchableOpacity>
-        </View>
 
         {/* Developer / Reset Options */}
         <View style={{ marginTop: 20, marginBottom: 20 }}>
@@ -380,28 +346,6 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     marginTop: 2,
     lineHeight: 16,
-  },
-  adminBadge: {
-    backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  adminBadgeActive: {
-    backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellowDark,
-  },
-  adminBadgeText: {
-    fontFamily: FontFamilies.primary,
-    fontSize: 9,
-    fontWeight: '800',
-    color: Colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  adminBadgeTextActive: {
-    color: Colors.brandBlack,
   },
   resetBtn: {
     flexDirection: 'row',

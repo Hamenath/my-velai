@@ -4,16 +4,16 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
-  ActivityIndicator,
-  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
+import { profileService } from '../../services/profileService';
+import { GoogleButton } from '../ui/GoogleButton';
 import { UserRole } from '../../types';
 
 interface AuthModalProps {
@@ -27,77 +27,45 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   targetRole,
 }) => {
-  const { language, currentLocality } = useApp();
-  const { signInWithEmail, signUpWithEmail, signInQuickTest } = useAuth();
-
-  const [mode, setMode] = useState<'signin' | 'signup'>('signup');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const router = useRouter();
+  const { language, setRole, setHasSeenOnboarding } = useApp();
+  const { signInWithGoogle, signInQuickTest } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
+  const handleGoogleSignIn = async () => {
     setErrorMsg(null);
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanPass = password.trim();
-
-    if (!cleanEmail || !cleanEmail.includes('@')) {
-      setErrorMsg(language === 'ta' ? 'சரியான மின்னஞ்சலை உள்ளிடவும்.' : 'Please enter a valid email.');
-      return;
-    }
-    if (cleanPass.length < 6) {
-      setErrorMsg(
-        language === 'ta'
-          ? 'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.'
-          : 'Password must be at least 6 characters.'
-      );
-      return;
-    }
-
-    if (mode === 'signup' && name.trim().length < 2) {
-      setErrorMsg(language === 'ta' ? 'உங்கள் முழு பெயரை உள்ளிடவும்.' : 'Please enter your full name.');
-      return;
-    }
-
     setIsLoading(true);
     try {
-      if (mode === 'signup') {
-        await signUpWithEmail(cleanEmail, cleanPass, {
-          displayName: name.trim(),
-          phone: phone.trim() || null,
-          role: targetRole,
-          localityId: currentLocality.id,
-          locality_en: currentLocality.name_en,
-          locality_ta: currentLocality.name_ta,
-          language,
-          trade_en: targetRole === 'worker' ? 'Daily Wage Worker' : undefined,
-          trade_ta: targetRole === 'worker' ? 'தினக்கூலி பணியாளர்' : undefined,
-          dailyRate: targetRole === 'worker' ? 750 : undefined,
-          hourlyRate: targetRole === 'worker' ? 120 : undefined,
-          skills: targetRole === 'worker' ? ['General Help'] : undefined,
+      const user = await signInWithGoogle();
+
+      // Check for an existing profile — returning user
+      const existingProfile = await profileService.getProfile(user.uid);
+      if (existingProfile) {
+        setRole(existingProfile.role);
+        setHasSeenOnboarding(true);
+        onClose();
+        if (existingProfile.role === 'worker') {
+          router.replace('/(worker)/home');
+        } else {
+          router.replace('/(customer)/home');
+        }
+      } else {
+        // New user: go to profile setup
+        onClose();
+        router.replace({
+          pathname: '/profile-setup',
+          params: {
+            role: targetRole,
+            name: user.displayName || '',
+            email: user.email || '',
+          },
         });
-      } else {
-        await signInWithEmail(cleanEmail, cleanPass);
       }
-      onClose();
     } catch (err: any) {
-      const msg = err?.message || 'Authentication failed';
-      if (msg.includes('auth/email-already-in-use')) {
-        setErrorMsg(
-          language === 'ta'
-            ? 'இந்த மின்னஞ்சல் ஏற்கனவே பதிவு செய்யப்பட்டுள்ளது. உள்நுழையவும்.'
-            : 'Email already registered. Please sign in.'
-        );
-      } else if (msg.includes('auth/invalid-credential') || msg.includes('auth/wrong-password')) {
-        setErrorMsg(
-          language === 'ta'
-            ? 'தவறான மின்னஞ்சல் அல்லது கடவுச்சொல்.'
-            : 'Invalid email or password.'
-        );
-      } else {
+      const msg = err?.message || 'Google sign-in failed. Please try again.';
+      if (!msg.toLowerCase().includes('cancelled') && !msg.toLowerCase().includes('closed')) {
         setErrorMsg(msg);
       }
     } finally {
@@ -121,8 +89,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (msg.includes('auth/operation-not-allowed') || msg.includes('admin-restricted-operation')) {
         setErrorMsg(
           language === 'ta'
-            ? 'அனானிமஸ் உள்நுழைவு Firebase கன்சோலில் முடக்கப்பட்டுள்ளது. மேலே உள்ள மின்னஞ்சல் மூலம் பதிவு செய்யவும்.'
-            : 'Anonymous sign-in is disabled in Firebase Console. Please register using Email/Password above.'
+            ? 'அனானிமஸ் உள்நுழைவு Firebase கன்சோலில் முடக்கப்பட்டுள்ளது. Google மூலம் உள்நுழையவும்.'
+            : 'Anonymous sign-in is disabled in Firebase Console. Please use Google Sign-In.'
         );
       } else {
         setErrorMsg(err?.message || 'Quick sign-in failed');
@@ -134,18 +102,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.overlay}
-      >
+      <View style={styles.overlay}>
         <View style={styles.sheet}>
           {/* Header */}
           <View style={styles.header}>
             <View>
               <Text style={styles.title}>
-                {mode === 'signup'
-                  ? language === 'ta' ? 'புதிய கணக்கை உருவாக்கவும்' : 'Create Real Firebase Account'
-                  : language === 'ta' ? 'கணக்கில் உள்நுழையவும்' : 'Sign In to MY VELAI'}
+                {language === 'ta' ? 'MY VELAI இல் உள்நுழைக' : 'Sign In to MY VELAI'}
               </Text>
               <Text style={styles.subtitle}>
                 {targetRole === 'worker'
@@ -158,26 +121,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </TouchableOpacity>
           </View>
 
-          {/* Mode Tabs */}
-          <View style={styles.tabsRow}>
-            <TouchableOpacity
-              onPress={() => { setMode('signup'); setErrorMsg(null); }}
-              style={[styles.tabBtn, mode === 'signup' && styles.tabBtnActive]}
-            >
-              <Text style={[styles.tabText, mode === 'signup' && styles.tabTextActive]}>
-                {language === 'ta' ? 'பதிவு செய்ய' : 'Register'}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => { setMode('signin'); setErrorMsg(null); }}
-              style={[styles.tabBtn, mode === 'signin' && styles.tabBtnActive]}
-            >
-              <Text style={[styles.tabText, mode === 'signin' && styles.tabTextActive]}>
-                {language === 'ta' ? 'உள்நுழைக' : 'Sign In'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           {/* Error Banner */}
           {errorMsg ? (
             <View style={styles.errorBox}>
@@ -186,86 +129,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </View>
           ) : null}
 
-          {/* Inputs */}
+          {/* Google Sign-In */}
           <View style={styles.form}>
-            {mode === 'signup' ? (
-              <>
-                <Text style={styles.label}>{language === 'ta' ? 'பெயர்' : 'Full Name'} *</Text>
-                <TextInput
-                  value={name}
-                  onChangeText={setName}
-                  placeholder={language === 'ta' ? 'உங்கள் பெயர்' : 'Your name'}
-                  placeholderTextColor={Colors.textMuted}
-                  style={styles.input}
-                />
-                <Text style={styles.label}>{language === 'ta' ? 'மொபைல் எண்' : 'Phone'} (Optional)</Text>
-                <TextInput
-                  value={phone}
-                  onChangeText={setPhone}
-                  placeholder="+91 94432 10000"
-                  placeholderTextColor={Colors.textMuted}
-                  keyboardType="phone-pad"
-                  style={styles.input}
-                />
-              </>
-            ) : null}
+            <Text style={styles.hint}>
+              {language === 'ta'
+                ? 'கடவுச்சொற்கள் தேவையில்லை. உங்கள் Google கணக்குடன் பாதுகாப்பாக உள்நுழையவும்.'
+                : 'No password needed. Sign in securely with your Google account.'}
+            </Text>
 
-            <Text style={styles.label}>{language === 'ta' ? 'மின்னஞ்சல்' : 'Email'} *</Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="name@example.com"
-              placeholderTextColor={Colors.textMuted}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              style={styles.input}
+            <GoogleButton
+              onPress={handleGoogleSignIn}
+              loading={isLoading}
+              title={language === 'ta' ? 'Google மூலம் தொடரவும்' : 'Continue with Google'}
+              loadingText={language === 'ta' ? 'Google உடன் இணைக்கப்படுகிறது...' : 'Connecting to Google...'}
             />
 
-            <Text style={styles.label}>{language === 'ta' ? 'கடவுச்சொல்' : 'Password'} *</Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••"
-              placeholderTextColor={Colors.textMuted}
-              secureTextEntry
-              style={styles.input}
-            />
-
-            {/* Submit Button */}
-            <TouchableOpacity
-              onPress={handleSubmit}
-              disabled={isLoading}
-              style={[styles.submitBtn, isLoading && { opacity: 0.7 }]}
-              activeOpacity={0.8}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color={Colors.brandBlack} />
-              ) : (
-                <Text style={styles.submitBtnText}>
-                  {mode === 'signup'
-                    ? language === 'ta' ? 'பதிவு செய்து சுயவிவரத்தை உருவாக்க' : 'Create & Save Profile'
-                    : language === 'ta' ? 'உள்நுழைக' : 'Sign In'}
+            {/* Development-only quick test */}
+            {__DEV__ && (
+              <TouchableOpacity
+                onPress={handleQuickTest}
+                disabled={isLoading}
+                style={styles.quickTestBtn}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="flash" size={15} color={Colors.brandBlack} />
+                <Text style={styles.quickTestText}>
+                  {language === 'ta'
+                    ? 'விரைவு சோதனை (DEV)'
+                    : 'Instant Test Sign In (DEV only)'}
                 </Text>
-              )}
-            </TouchableOpacity>
-
-            {/* Quick Test Button */}
-            <TouchableOpacity
-              onPress={handleQuickTest}
-              disabled={isLoading}
-              style={styles.quickTestBtn}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="flash" size={15} color={Colors.brandBlack} />
-              <Text style={styles.quickTestText}>
-                {language === 'ta'
-                  ? 'விரைவு சோதனை: 1-கிளிக் சோதனை கணக்கு'
-                  : 'Instant 1-Click Test Sign In (Firestore Verified)'}
-              </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 };
@@ -311,33 +208,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabsRow: {
-    flexDirection: 'row',
-    backgroundColor: Colors.secondaryBg,
-    borderRadius: Radius.md,
-    padding: 3,
-    marginBottom: 14,
-  },
-  tabBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderRadius: Radius.sm,
-  },
-  tabBtnActive: {
-    backgroundColor: '#FFFFFF',
-    ...Shadows.subtle,
-  },
-  tabText: {
-    fontFamily: FontFamilies.primary,
-    fontSize: 13,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
-  tabTextActive: {
-    color: Colors.textPrimary,
-    fontWeight: '800',
-  },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -357,40 +227,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   form: {
-    gap: 6,
+    gap: 10,
   },
-  label: {
+  hint: {
     fontFamily: FontFamilies.primary,
-    fontSize: 12,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-    marginTop: 6,
-    marginBottom: 2,
-  },
-  input: {
-    fontFamily: FontFamilies.primary,
-    backgroundColor: Colors.secondaryBg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.md,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
-    fontSize: 14,
-    color: Colors.textPrimary,
-  },
-  submitBtn: {
-    backgroundColor: Colors.brandYellow,
-    height: 48,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 14,
-  },
-  submitBtnText: {
-    fontFamily: FontFamilies.primary,
-    fontSize: 14,
-    fontWeight: '800',
-    color: Colors.brandBlack,
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 4,
   },
   quickTestBtn: {
     flexDirection: 'row',
@@ -401,7 +246,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.secondaryBg,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginTop: 8,
+    marginTop: 4,
     gap: 6,
   },
   quickTestText: {
