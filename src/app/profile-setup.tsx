@@ -24,15 +24,17 @@ import { UserRole } from '../types';
 
 export default function ProfileSetupScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ phone?: string; name?: string; role?: string }>();
+  const params = useLocalSearchParams<{ phone?: string; name?: string; role?: string; email?: string }>();
   const { localities, currentLocality, language, setHasSeenOnboarding, setRole } = useApp();
   const { user, refreshProfile } = useAuth();
 
   const role = (params.role as UserRole) || 'customer';
-  const verifiedPhone = params.phone || user?.phoneNumber || '+91 87787 07086';
+  const verifiedPhone = params.phone || user?.phoneNumber || '';
 
-  // Common Profile Fields
-  const [displayName, setDisplayName] = useState(params.name || (role === 'worker' ? 'தொழிலாளி' : 'வாடிக்கையாளர்'));
+  // Common Profile Fields: prefill from Google Auth or params
+  const [displayName, setDisplayName] = useState(
+    params.name || user?.displayName || (role === 'worker' ? 'தொழிலாளி' : 'வாடிக்கையாளர்')
+  );
   const [selectedLocalityId, setSelectedLocalityId] = useState(currentLocality.id);
 
   // Worker-Specific Fields
@@ -120,7 +122,9 @@ export default function ProfileSetupScreen() {
 
       await profileService.createProfile(activeUser.uid, {
         displayName: displayName.trim(),
-        phone: verifiedPhone,
+        email: activeUser.email || params.email || null,
+        phone: verifiedPhone || null,
+        avatarUrl: activeUser.photoURL || undefined,
         role,
         language,
         localityId: selectedLocality.id,

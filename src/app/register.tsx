@@ -1,296 +1,222 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, FontFamilies } from '../constants/colors';
+import { Colors, Radius, FontFamilies, Shadows } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Header } from '../components/ui/Header';
-import { Button } from '../components/ui/Button';
-import { phoneAuthService } from '../services/phoneAuthService';
+import { GoogleButton } from '../components/ui/GoogleButton';
+import { profileService } from '../services/profileService';
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const { role, language } = useApp();
-  const { sendPhoneOtp } = useAuth();
+  const { role, setRole, language, setHasSeenOnboarding } = useApp();
+  const { signInWithGoogle } = useAuth();
 
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Field validation states
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      try {
-        phoneAuthService.getRecaptchaVerifier();
-      } catch {}
-    }
-  }, []);
-
-  const validate = (): boolean => {
-    let isValid = true;
-    setNameError(null);
-    setPhoneError(null);
-    setErrorMessage(null);
-
-    const trimmedName = name.trim();
-    if (!trimmedName || trimmedName.length < 2) {
-      setNameError(
-        language === 'ta'
-          ? 'தயவுசெய்து உங்கள் முழு பெயரை உள்ளிடவும் (குறைந்தது 2 எழுத்துகள்).'
-          : 'Please enter your full name (at least 2 characters).'
-      );
-      isValid = false;
-    }
-
-    const cleanDigits = phone.replace(/[^\d]/g, '');
-    if (!cleanDigits) {
-      setPhoneError(
-        language === 'ta'
-          ? 'தயவுசெய்து உங்கள் 10-இலக்க கைபேசி எண்ணை உள்ளிடவும்.'
-          : 'Please enter your 10-digit mobile number.'
-      );
-      isValid = false;
-    } else if (!phoneAuthService.isValidIndianMobile(cleanDigits)) {
-      setPhoneError(
-        language === 'ta'
-          ? 'சரியான 10-இலக்க கைபேசி எண்ணை உள்ளிடவும் (6, 7, 8 அல்லது 9-ல் தொடங்க வேண்டும்).'
-          : 'Please enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.'
-      );
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
-  const handleSendOtp = async () => {
-    if (!validate()) return;
-
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMessage(null);
 
-    const fullPhone = phoneAuthService.formatToE164(phone);
-
     try {
-      await sendPhoneOtp(fullPhone);
-      // Navigate to OTP verification screen passing verified params
-      router.push({
-        pathname: '/otp-verify',
-        params: {
-          phone: fullPhone,
-          name: name.trim(),
-          role,
-        },
-      });
+      const user = await signInWithGoogle();
+
+      // Retrieve existing Firestore profile using the permanent Firebase UID
+      const existingProfile = await profileService.getProfile(user.uid);
+
+      if (existingProfile) {
+        // Returning user: restore their established profile role and go straight to home
+        setRole(existingProfile.role);
+        setHasSeenOnboarding(true);
+
+        if (existingProfile.role === 'worker') {
+          router.replace('/(worker)/home');
+        } else {
+          router.replace('/(customer)/home');
+        }
+      } else {
+        // New user: retain the selected role and navigate to profile setup
+        setRole(role);
+        router.replace({
+          pathname: '/profile-setup',
+          params: {
+            role,
+            name: user.displayName || '',
+            email: user.email || '',
+          },
+        });
+      }
     } catch (err: any) {
-      setErrorMessage(
-        err?.message ||
-          (language === 'ta'
-            ? 'OTP அனுப்புவதில் தோல்வி. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.'
-            : 'Failed to send OTP. Please verify your mobile number and try again.')
-      );
+      const msg = err?.message || 'Google sign-in failed. Please try again.';
+      // Don't display an aggressive error banner if the user intentionally dismissed the popup
+      if (!msg.toLowerCase().includes('cancelled') && !msg.toLowerCase().includes('closed')) {
+        setErrorMessage(msg);
+      }
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleUseTestNumber = () => {
-    setName(role === 'worker' ? 'கதிரவன் (Worker)' : 'செந்தில் (Customer)');
-    setPhone('8778707086');
-    setNameError(null);
-    setPhoneError(null);
   };
 
   return (
     <ScreenWrapper backgroundColor="#FFFFFF">
       <Header
         showLocation={false}
-        title={language === 'ta' ? 'பதிவு செய்தல்' : 'Registration'}
+        title={language === 'ta' ? 'உள்நுழைக / பதிவு செய்க' : 'Sign In / Register'}
         onBack={() => router.back()}
       />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{ flex: 1 }}
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Selected Account Type Pill */}
-          <View style={styles.roleCard}>
-            <View style={styles.roleCardLeft}>
-              <View style={styles.roleIconBox}>
-                <Ionicons
-                  name={role === 'worker' ? 'briefcase' : 'people'}
-                  size={18}
-                  color={Colors.brandBlack}
-                />
-              </View>
-              <View>
-                <Text style={styles.roleLabel}>
-                  {language === 'ta' ? 'தேர்ந்தெடுக்கப்பட்ட கணக்கு' : 'Selected Account'}
-                </Text>
-                <Text style={styles.roleValue}>
-                  {role === 'worker'
-                    ? language === 'ta'
-                      ? 'வேலை தேடுபவர் (Worker)'
-                      : 'Find Work (Worker)'
-                    : language === 'ta'
-                    ? 'ஆட்கள் தேவை (Customer)'
-                    : 'Hire Workers (Customer)'}
-                </Text>
-              </View>
-            </View>
-
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('/role-select')}
-              style={styles.changeRoleBtn}
-            >
-              <Text style={styles.changeRoleText}>
-                {language === 'ta' ? 'மாற்றுக' : 'Change'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Heading */}
-          <View style={styles.headingSection}>
-            <Text style={styles.title}>
-              {language === 'ta' ? 'உங்கள் விவரங்களை உள்ளிடவும்' : 'Enter Your Details'}
-            </Text>
-            <Text style={styles.subtitle}>
-              {language === 'ta'
-                ? 'உங்கள் கைபேசி எண்ணை சரிபார்க்க 6-இலக்க OTP அனுப்பப்படும். கடவுச்சொல் தேவையில்லை.'
-                : "We'll send a 6-digit OTP to verify your mobile number. No password required."}
-            </Text>
-          </View>
-
-          {/* Error Banner */}
-          {errorMessage && (
-            <View style={styles.errorBanner}>
-              <Ionicons name="alert-circle" size={18} color={Colors.error} />
-              <Text style={styles.errorBannerText}>{errorMessage}</Text>
-            </View>
-          )}
-
-          {/* Full Name Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              {language === 'ta' ? 'முழு பெயர்' : 'Full Name'}{' '}
-              <Text style={{ color: Colors.error }}>*</Text>
-            </Text>
-            <View style={[styles.inputWrapper, nameError && styles.inputErrorBorder]}>
+        {/* Selected Account Type Card */}
+        <View style={styles.roleCard}>
+          <View style={styles.roleCardLeft}>
+            <View style={styles.roleIconBox}>
               <Ionicons
-                name="person-outline"
+                name={role === 'worker' ? 'briefcase' : 'people'}
                 size={18}
-                color={Colors.textSecondary}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.textInput}
-                placeholder={language === 'ta' ? 'எ.கா: ரமேஷ் குமார்' : 'e.g. Ramesh Kumar'}
-                placeholderTextColor={Colors.textMuted}
-                value={name}
-                onChangeText={(val) => {
-                  setName(val);
-                  if (nameError) setNameError(null);
-                }}
-                autoCapitalize="words"
-                editable={!isLoading}
+                color={Colors.brandBlack}
               />
             </View>
-            {nameError && <Text style={styles.fieldErrorText}>{nameError}</Text>}
-          </View>
-
-          {/* Mobile Number Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>
-              {language === 'ta' ? 'கைபேசி எண்' : 'Mobile Number'}{' '}
-              <Text style={{ color: Colors.error }}>*</Text>
-            </Text>
-            <View style={[styles.inputWrapper, phoneError && styles.inputErrorBorder]}>
-              {/* Country Code Pill */}
-              <View style={styles.countryCodeBadge}>
-                <Text style={styles.flagText}>🇮🇳</Text>
-                <Text style={styles.countryCodeText}>+91</Text>
-              </View>
-
-              <TextInput
-                style={styles.textInput}
-                placeholder={language === 'ta' ? '98765 43210' : '98765 43210'}
-                placeholderTextColor={Colors.textMuted}
-                value={phone}
-                onChangeText={(val) => {
-                  setPhone(val.replace(/[^\d]/g, '').slice(0, 10));
-                  if (phoneError) setPhoneError(null);
-                }}
-                keyboardType="phone-pad"
-                maxLength={10}
-                editable={!isLoading}
-              />
-            </View>
-            {phoneError && <Text style={styles.fieldErrorText}>{phoneError}</Text>}
-          </View>
-
-          {/* Quick Development Test Card */}
-          {__DEV__ && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={handleUseTestNumber}
-              style={styles.testHintCard}
-            >
-              <View style={styles.testHintHeader}>
-                <Ionicons name="sparkles" size={14} color={Colors.brandBlack} />
-                <Text style={styles.testHintTitle}>
-                  {language === 'ta' ? 'விரைவு சோதனை எண் (Quick Test)' : 'Quick Test Available'}
-                </Text>
-              </View>
-              <Text style={styles.testHintDesc}>
-                {language === 'ta'
-                  ? 'தானாக நிரப்ப தட்டவும்: +91 87787 07086 (சோதனை OTP: 123456)'
-                  : 'Tap to autofill: +91 87787 07086 (Test OTP: 123456)'}
+            <View>
+              <Text style={styles.roleLabel}>
+                {language === 'ta' ? 'தேர்ந்தெடுக்கப்பட்ட கணக்கு' : 'Selected Account'}
               </Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Submit Action */}
-          <View style={styles.actionContainer}>
-            <Button
-              title={
-                isLoading
+              <Text style={styles.roleValue}>
+                {role === 'worker'
                   ? language === 'ta'
-                    ? 'OTP அனுப்பப்படுகிறது...'
-                    : 'Sending OTP...'
+                    ? 'வேலை தேடுபவர் (Worker)'
+                    : 'Find Work (Worker)'
                   : language === 'ta'
-                  ? 'OTP அனுப்புக'
-                  : 'Send OTP'
-              }
-              onPress={handleSendOtp}
-              variant="primary"
-              size="lg"
-              fullWidth
-              disabled={isLoading}
-              style={styles.submitBtn}
-              textStyle={styles.submitBtnText}
-            />
+                  ? 'ஆட்கள் தேவை (Customer)'
+                  : 'Hire Workers (Customer)'}
+              </Text>
+            </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push('/role-select')}
+            style={styles.changeRoleBtn}
+            accessibilityRole="button"
+            accessibilityLabel={language === 'ta' ? 'கணக்கு வகையை மாற்றுக' : 'Change account type'}
+          >
+            <Text style={styles.changeRoleText}>
+              {language === 'ta' ? 'மாற்றுக' : 'Change'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Heading Section */}
+        <View style={styles.headingSection}>
+          <View style={styles.badgeRow}>
+            <View style={styles.googleIconBadge}>
+              <Ionicons name="logo-google" size={26} color="#EA4335" />
+            </View>
+          </View>
+
+          <Text style={styles.title}>
+            {language === 'ta'
+              ? 'Google மூலம் எளிதாக இணையுங்கள்'
+              : 'Sign In with Google'}
+          </Text>
+          <Text style={styles.subtitle}>
+            {language === 'ta'
+              ? 'கடவுச்சொற்கள் அல்லது OTP தேவையில்லை. உங்கள் Google கணக்குடன் ஒரே தட்டலில் தொடங்குங்கள்.'
+              : 'No passwords or OTP codes required. One tap to connect directly with local opportunities in Madurai.'}
+          </Text>
+        </View>
+
+        {/* Error Banner */}
+        {errorMessage && (
+          <View style={styles.errorBanner}>
+            <Ionicons name="alert-circle" size={18} color={Colors.error} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
+          </View>
+        )}
+
+        {/* Primary Action: Continue with Google */}
+        <View style={styles.actionContainer}>
+          <GoogleButton
+            onPress={handleGoogleSignIn}
+            loading={isLoading}
+            title={language === 'ta' ? 'Google மூலம் தொடரவும்' : 'Continue with Google'}
+            loadingText={language === 'ta' ? 'Google உடன் இணைக்கப்படுகிறது...' : 'Connecting to Google...'}
+          />
+        </View>
+
+        {/* Security and Feature Highlights */}
+        <View style={styles.highlightsContainer}>
+          <View style={styles.highlightCard}>
+            <View style={styles.highlightIcon}>
+              <Ionicons name="flash-outline" size={18} color={Colors.brandBlack} />
+            </View>
+            <View style={styles.highlightTextCol}>
+              <Text style={styles.highlightTitle}>
+                {language === 'ta' ? 'உடனடி அணுகல்' : 'Instant & Frictionless'}
+              </Text>
+              <Text style={styles.highlightDesc}>
+                {language === 'ta'
+                  ? 'SMS தாமதங்கள் அல்லது சிக்கல்கள் இன்றி உடனடியாக உள்நுழையவும்.'
+                  : 'Skip SMS delays, quota issues, and forgotten codes completely.'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.highlightCard}>
+            <View style={styles.highlightIcon}>
+              <Ionicons name="shield-checkmark-outline" size={18} color={Colors.brandBlack} />
+            </View>
+            <View style={styles.highlightTextCol}>
+              <Text style={styles.highlightTitle}>
+                {language === 'ta' ? 'நம்பகமான அடையாளம்' : 'Verified Google Identity'}
+              </Text>
+              <Text style={styles.highlightDesc}>
+                {language === 'ta'
+                  ? 'பாதுகாப்பான Firebase அங்கீகாரம் உங்கள் சுயவிவரத்தைப் பாதுகாக்கும்.'
+                  : 'Industry-standard Firebase Authentication protects your profile.'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.highlightCard}>
+            <View style={styles.highlightIcon}>
+              <Ionicons name="location-outline" size={18} color={Colors.brandBlack} />
+            </View>
+            <View style={styles.highlightTextCol}>
+              <Text style={styles.highlightTitle}>
+                {language === 'ta' ? 'உள்ளூர் மதுரை நெட்வொர்க்' : 'Madurai Local Network'}
+              </Text>
+              <Text style={styles.highlightDesc}>
+                {language === 'ta'
+                  ? 'மாட்டுத்தாவணி, அண்ணா நகர், சிம்மக்கல் மற்றும் சுற்றியுள்ள பகுதிகள்.'
+                  : 'Direct marketplace for Mattuthavani, Anna Nagar, Simmakkal, and more.'}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Privacy Terms Notice */}
+        <View style={styles.footerNotice}>
+          <Ionicons name="lock-closed-outline" size={12} color={Colors.textMuted} />
+          <Text style={styles.footerNoticeText}>
+            {language === 'ta'
+              ? 'தொடர்வதன் மூலம், MY VELAI விதிமுறைகள் மற்றும் தனியுரிமைக் கொள்கையை ஏற்கிறீர்கள்.'
+              : 'By continuing, you agree to MY VELAI Terms of Service and Privacy Policy.'}
+          </Text>
+        </View>
+      </ScrollView>
     </ScreenWrapper>
   );
 }
@@ -309,7 +235,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandYellow,
     borderRadius: Radius.lg,
     padding: 12,
-    marginBottom: 20,
+    marginBottom: 24,
+    ...Shadows.subtle,
   },
   roleCardLeft: {
     flexDirection: 'row',
@@ -353,20 +280,39 @@ const styles = StyleSheet.create({
     color: Colors.brandBlack,
   },
   headingSection: {
-    marginBottom: 24,
+    alignItems: 'center',
+    textAlign: 'center',
+    marginBottom: 28,
+  },
+  badgeRow: {
+    marginBottom: 16,
+  },
+  googleIconBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Shadows.subtle,
   },
   title: {
     fontFamily: FontFamilies.primary,
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '900',
     color: Colors.brandBlack,
-    marginBottom: 6,
+    textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
     fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
-    lineHeight: 18,
+    textAlign: 'center',
+    lineHeight: 19,
+    paddingHorizontal: 12,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -376,7 +322,7 @@ const styles = StyleSheet.create({
     borderColor: '#FECACA',
     borderRadius: Radius.md,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 20,
     gap: 8,
   },
   errorBannerText: {
@@ -387,106 +333,60 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '600',
   },
-  inputGroup: {
-    marginBottom: 18,
+  actionContainer: {
+    marginBottom: 28,
   },
-  label: {
-    fontFamily: FontFamilies.primary,
-    fontSize: 13,
-    fontWeight: '800',
-    color: Colors.brandBlack,
-    marginBottom: 8,
+  highlightsContainer: {
+    gap: 12,
+    marginBottom: 28,
   },
-  inputWrapper: {
+  highlightCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    height: 52,
-    backgroundColor: Colors.secondaryBg,
-    borderRadius: Radius.md,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    paddingHorizontal: 14,
-  },
-  inputErrorBorder: {
-    borderColor: Colors.error,
-    backgroundColor: '#FFF5F5',
-  },
-  inputIcon: {
-    marginRight: 10,
-  },
-  countryCodeBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 10,
-    marginRight: 10,
-    borderRightWidth: 1,
-    borderRightColor: Colors.border,
-    gap: 4,
-  },
-  flagText: {
-    fontSize: 16,
-  },
-  countryCodeText: {
-    fontFamily: FontFamilies.primary,
-    fontSize: 15,
-    fontWeight: '800',
-    color: Colors.brandBlack,
-  },
-  textInput: {
-    flex: 1,
-    height: '100%',
-    fontFamily: FontFamilies.primary,
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.brandBlack,
-  },
-  fieldErrorText: {
-    fontFamily: FontFamilies.primary,
-    fontSize: 11,
-    color: Colors.error,
-    marginTop: 5,
-    fontWeight: '600',
-  },
-  testHintCard: {
+    alignItems: 'flex-start',
     backgroundColor: Colors.secondaryBg,
     borderRadius: Radius.md,
     padding: 12,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 24,
-    borderStyle: 'dashed',
+    gap: 10,
   },
-  testHintHeader: {
-    flexDirection: 'row',
+  highlightIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FEF08A',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 3,
+    justifyContent: 'center',
+    marginTop: 2,
   },
-  testHintTitle: {
+  highlightTextCol: {
+    flex: 1,
+  },
+  highlightTitle: {
     fontFamily: FontFamilies.primary,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
     color: Colors.brandBlack,
+    marginBottom: 2,
   },
-  testHintDesc: {
+  highlightDesc: {
     fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
-    fontWeight: '600',
+    lineHeight: 15,
   },
-  actionContainer: {
-    marginTop: 8,
+  footerNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
   },
-  submitBtn: {
-    height: 54,
-    minHeight: 54,
-    borderRadius: Radius.lg,
-    backgroundColor: Colors.brandYellow,
-  },
-  submitBtnText: {
+  footerNoticeText: {
     fontFamily: FontFamilies.primary,
-    fontSize: 16,
-    fontWeight: '800',
-    color: Colors.brandBlack,
+    fontSize: 11,
+    color: Colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 15,
   },
 });

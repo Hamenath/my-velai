@@ -28,7 +28,6 @@ export default function RootLayout() {
           <Stack.Screen name="language-select" options={{ headerShown: false }} />
           <Stack.Screen name="role-select" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ headerShown: false }} />
-          <Stack.Screen name="otp-verify" options={{ headerShown: false }} />
           <Stack.Screen name="profile-setup" options={{ headerShown: false }} />
           <Stack.Screen name="(customer)" options={{ headerShown: false }} />
           <Stack.Screen name="(worker)" options={{ headerShown: false }} />
@@ -37,7 +36,6 @@ export default function RootLayout() {
           <Stack.Screen name="category/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="booking/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="settings" options={{ headerShown: false }} />
-          <Stack.Screen name="admin" options={{ headerShown: false }} />
         </Stack>
         </AppProvider>
       </AuthProvider>

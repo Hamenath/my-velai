@@ -10,7 +10,7 @@ import {
 import { auth } from '../lib/firebase';
 import { profileService } from '../services/profileService';
 import { adminService } from '../services/adminService';
-import { phoneAuthService } from '../services/phoneAuthService';
+import { googleAuthService } from '../services/googleAuthService';
 import {
   UserProfileDoc,
   CreateProfileInput,
@@ -28,10 +28,9 @@ interface AuthContextType {
   authError: string | null;
   setAuthError: (err: string | null) => void;
 
+  signInWithGoogle: () => Promise<User>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string, profileInput: CreateProfileInput) => Promise<UserProfileDoc>;
-  sendPhoneOtp: (phone: string) => Promise<boolean>;
-  verifyPhoneOtp: (otp: string) => Promise<User>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<UserProfileDoc | null>;
   updateProfile: (updates: UpdateProfileInput) => Promise<UserProfileDoc>;
@@ -120,35 +119,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const sendPhoneOtp = async (phone: string): Promise<boolean> => {
+  const signInWithGoogle = async (): Promise<User> => {
     setAuthError(null);
     setIsLoading(true);
     try {
-      const sent = await phoneAuthService.sendOtp(phone);
-      return sent;
+      const googleUser = await googleAuthService.signInWithGoogle();
+      setUser(googleUser);
+      // Attempt to load existing profile for this user
+      const existingProfile = await profileService.getProfile(googleUser.uid);
+      setProfile(existingProfile);
+      return googleUser;
     } catch (err: any) {
-      setAuthError(err?.message || 'Failed to send OTP');
+      const msg = err?.message || 'Google sign-in failed';
+      setAuthError(msg);
       throw err;
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const verifyPhoneOtp = async (otp: string): Promise<User> => {
-    setAuthError(null);
-    setIsProfileLoading(true);
-    try {
-      const verifiedUser = await phoneAuthService.verifyOtp(otp);
-      setUser(verifiedUser);
-      // Attempt to load existing profile for this user
-      const existingProfile = await profileService.getProfile(verifiedUser.uid);
-      setProfile(existingProfile);
-      return verifiedUser;
-    } catch (err: any) {
-      setAuthError(err?.message || 'Failed to verify OTP');
-      throw err;
-    } finally {
-      setIsProfileLoading(false);
     }
   };
 
@@ -248,10 +234,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isSigningOut,
         authError,
         setAuthError,
+        signInWithGoogle,
         signInWithEmail,
         signUpWithEmail,
-        sendPhoneOtp,
-        verifyPhoneOtp,
         signOut,
         refreshProfile,
         updateProfile,

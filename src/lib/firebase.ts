@@ -56,11 +56,6 @@ try {
   authInstance = getAuth(app);
 }
 
-// Enable official Firebase testing settings in development to allow configured test phone numbers on Web
-if (Platform.OS === 'web' && __DEV__ && authInstance?.settings) {
-  authInstance.settings.appVerificationDisabledForTesting = true;
-}
-
 export const auth: Auth = authInstance;
 
 // Initialize Cloud Firestore
