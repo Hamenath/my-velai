@@ -10,14 +10,17 @@ import { Header } from '../../components/ui/Header';
 import { Button } from '../../components/ui/Button';
 import { EditProfileModal } from '../../components/profile/EditProfileModal';
 import { AuthModal } from '../../components/profile/AuthModal';
+import { LogoutConfirmModal } from '../../components/profile/LogoutConfirmModal';
 
 export default function WorkerProfileScreen() {
   const router = useRouter();
   const { setRole, language, toggleLanguage, t } = useApp();
-  const { user, profile, isProfileLoading, signOut } = useAuth();
+  const { user, profile, isProfileLoading, isSigningOut, signOut } = useAuth();
 
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const handleSwitchToCustomer = () => {
     setRole('customer');
@@ -30,44 +33,35 @@ export default function WorkerProfileScreen() {
     });
   };
 
-  const handleSignOut = () => {
-    Alert.alert(
-      t('logout'),
-      language === 'ta' ? 'நிச்சயமாக வெளியேற விரும்புகிறீர்களா?' : 'Are you sure you want to log out?',
-      [
-        { text: language === 'ta' ? 'ரத்து' : 'Cancel', style: 'cancel' },
-        {
-          text: t('logout'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut();
-            } catch (err: any) {
-              Alert.alert('Error', err?.message || 'Failed to sign out');
-            }
-          },
-        },
-      ]
-    );
+  const handleOpenLogout = () => {
+    setLogoutError(null);
+    setLogoutModalVisible(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setLogoutError(null);
+    try {
+      await signOut();
+      setLogoutModalVisible(false);
+    } catch (err: any) {
+      setLogoutError(err?.message || (language === 'ta' ? 'வெளியேறுவதில் தோல்வி' : 'Sign out failed'));
+    }
   };
 
   // Determine active display data
-  const displayName = profile?.displayName || (language === 'ta' ? 'முருகன் கருப்பையா' : 'Murugan Karuppiah');
-  const trade = language === 'ta'
-    ? (profile?.trade_ta || profile?.trade_en || 'எலக்ட்ரீஷியன் & வயரிங் நிபுணர்')
-    : (profile?.trade_en || 'Electrician & Wiring Specialist');
-  const phone = profile?.phone || user?.email || '+91 98421 77123';
-  const dailyRate = profile?.dailyRate ?? 850;
-  const hourlyRate = profile?.hourlyRate ?? 150;
+  const displayName = profile?.displayName || (user ? (language === 'ta' ? 'மதுரை தொழிலாளி' : 'Madurai Worker') : (language === 'ta' ? 'விருந்தினர் தொழிலாளி' : 'Guest Worker'));
+  const trade = profile
+    ? (language === 'ta' ? (profile.trade_ta || profile.trade_en || 'பொது பணியாளர்') : (profile.trade_en || 'General Worker'))
+    : (user ? (language === 'ta' ? 'பொது பணியாளர்' : 'General Worker') : (language === 'ta' ? 'தொழில் அமைக்கப்படவில்லை' : 'Profile not set up'));
+  const phone = profile?.phone || profile?.email || user?.email || (language === 'ta' ? 'கணக்கு இணைக்கப்படவில்லை' : 'No account connected');
+  const dailyRate = profile?.dailyRate ?? (user ? 750 : 0);
+  const hourlyRate = profile?.hourlyRate ?? (user ? 120 : 0);
   const skills = profile?.skills && profile.skills.length > 0
     ? profile.skills
-    : [
-        language === 'ta' ? 'வீட்டு வயரிங்' : 'House Wiring',
-        language === 'ta' ? 'இன்வெர்ட்டர்' : 'Inverter Setup',
-        language === 'ta' ? 'மின்விசிறி சரிசெய்தல்' : 'Fan Repair',
-        language === 'ta' ? 'MCB பாக்ஸ்' : 'MCB Panels',
-      ];
-  const avatarLetter = (displayName[0] || 'தொ').toUpperCase();
+    : (user
+        ? [language === 'ta' ? 'பொது வேலைகள்' : 'General Help']
+        : [language === 'ta' ? 'பதிவு செய்து திறன்களை சேர்க்கவும்' : 'Sign in to add skills']);
+  const avatarLetter = (displayName[0] || (user ? 'தொ' : 'W')).toUpperCase();
 
   return (
     <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
@@ -114,35 +108,46 @@ export default function WorkerProfileScreen() {
               <Text style={styles.trade}>{trade}</Text>
               <Text style={styles.phone}>{phone}</Text>
 
-              <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={11} color="#EAB308" />
-                <Text style={styles.ratingText}>4.9</Text>
-                <Text style={styles.reviewsText}>
-                  (84 {language === 'ta' ? 'மதிப்பீடுகள்' : 'reviews'})
-                </Text>
-              </View>
+              {user && profile ? (
+                <View style={styles.ratingBadge}>
+                  <Ionicons name="star" size={11} color="#EAB308" />
+                  <Text style={styles.ratingText}>5.0</Text>
+                  <Text style={styles.reviewsText}>
+                    ({language === 'ta' ? 'புதியவர்' : 'New Worker'})
+                  </Text>
+                </View>
+              ) : (
+                <View style={[styles.ratingBadge, { backgroundColor: Colors.secondaryBg }]}>
+                  <Ionicons name="person-outline" size={11} color={Colors.textSecondary} />
+                  <Text style={[styles.ratingText, { color: Colors.textSecondary }]}>
+                    {language === 'ta' ? 'விருந்தினர் நிலை' : 'Guest Mode'}
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* Edit Button */}
-            {user && profile ? (
-              <TouchableOpacity
-                onPress={() => setEditModalVisible(true)}
-                style={styles.editBtn}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="create-outline" size={16} color={Colors.brandBlack} />
-                <Text style={styles.editBtnText}>{t('editProfile')}</Text>
-              </TouchableOpacity>
-            ) : null}
+            <TouchableOpacity
+              onPress={() => setEditModalVisible(true)}
+              style={styles.editBtn}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="create-outline" size={16} color={Colors.brandBlack} />
+              <Text style={styles.editBtnText}>{t('editProfile')}</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Verification Pill */}
-          <View style={styles.verifiedBanner}>
-            <Ionicons name="shield-checkmark" size={14} color={Colors.success} />
-            <Text style={styles.verifiedText}>
-              {language === 'ta'
-                ? 'ஆதார் & முகவரி சரிபார்க்கப்பட்டது'
-                : 'Aadhaar & Madurai Address Verified'}
+          <View style={[styles.verifiedBanner, !user && { backgroundColor: Colors.secondaryBg }]}>
+            <Ionicons
+              name={user ? 'shield-checkmark' : 'shield-outline'}
+              size={14}
+              color={user ? Colors.success : Colors.textSecondary}
+            />
+            <Text style={[styles.verifiedText, !user && { color: Colors.textSecondary }]}>
+              {user
+                ? (language === 'ta' ? 'ஆதார் & முகவரி சரிபார்க்கப்பட்டது' : 'Aadhaar & Madurai Address Verified')
+                : (language === 'ta' ? 'சரிபார்ப்புக்கு உள்நுழையவும்' : 'Sign in to verify profile')}
             </Text>
           </View>
         </View>
@@ -215,13 +220,17 @@ export default function WorkerProfileScreen() {
               <Text style={styles.rateLabel}>
                 {language === 'ta' ? 'தினக்கூலி' : 'Daily Wage'}
               </Text>
-              <Text style={styles.rateValue}>₹{dailyRate} / {language === 'ta' ? 'நாள்' : 'day'}</Text>
+              <Text style={styles.rateValue}>
+                {dailyRate > 0 ? `₹${dailyRate} / ${language === 'ta' ? 'நாள்' : 'day'}` : '—'}
+              </Text>
             </View>
             <View style={styles.rateBox}>
               <Text style={styles.rateLabel}>
                 {language === 'ta' ? 'மணிநேர கூலி' : 'Hourly Rate'}
               </Text>
-              <Text style={styles.rateValue}>₹{hourlyRate} / {language === 'ta' ? 'மணி' : 'hr'}</Text>
+              <Text style={styles.rateValue}>
+                {hourlyRate > 0 ? `₹${hourlyRate} / ${language === 'ta' ? 'மணி' : 'hr'}` : '—'}
+              </Text>
             </View>
           </View>
 
@@ -296,16 +305,20 @@ export default function WorkerProfileScreen() {
           {user ? (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={handleSignOut}
+              onPress={handleOpenLogout}
               style={[styles.menuItem, { borderBottomWidth: 0 }]}
             >
               <View style={[styles.menuIcon, { backgroundColor: Colors.errorBg }]}>
-                <Ionicons name="log-out-outline" size={18} color={Colors.error} />
+                {isSigningOut ? (
+                  <ActivityIndicator size="small" color={Colors.error} />
+                ) : (
+                  <Ionicons name="log-out-outline" size={18} color={Colors.error} />
+                )}
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.menuTitle, { color: Colors.error }]}>{t('logout')}</Text>
                 <Text style={styles.menuSub}>
-                  {user.email ? user.email : 'Anonymous / Test Session'}
+                  {user.email ? user.email : (language === 'ta' ? 'அனானிமஸ் / சோதனை அமர்வு' : 'Anonymous / Test Session')}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
@@ -326,6 +339,16 @@ export default function WorkerProfileScreen() {
         visible={authModalVisible}
         onClose={() => setAuthModalVisible(false)}
         targetRole="worker"
+      />
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        visible={logoutModalVisible}
+        onClose={() => setLogoutModalVisible(false)}
+        onConfirm={handleConfirmLogout}
+        isLoading={isSigningOut}
+        userEmail={user?.email || (user ? 'Anonymous User' : null)}
+        errorMessage={logoutError}
       />
     </ScreenWrapper>
   );

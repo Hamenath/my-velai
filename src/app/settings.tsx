@@ -7,14 +7,18 @@ import {
   Switch,
   Alert,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Radius, Shadows } from '../constants/colors';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Header } from '../components/ui/Header';
 import { LocationModal } from '../components/ui/LocationModal';
+import { LogoutConfirmModal } from '../components/profile/LogoutConfirmModal';
+import { AuthModal } from '../components/profile/AuthModal';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -27,9 +31,28 @@ export default function SettingsScreen() {
     setHasSeenOnboarding,
     t,
   } = useApp();
+  const { user, isSigningOut, signOut } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+
+  const handleOpenLogout = () => {
+    setLogoutError(null);
+    setLogoutModalVisible(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setLogoutError(null);
+    try {
+      await signOut();
+      setLogoutModalVisible(false);
+    } catch (err: any) {
+      setLogoutError(err?.message || (language === 'ta' ? 'வெளியேறுவதில் தோல்வி' : 'Sign out failed'));
+    }
+  };
 
   const handleToggleRole = () => {
     const nextRole = role === 'customer' ? 'worker' : 'customer';
@@ -192,6 +215,52 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Account & Authentication */}
+        <Text style={styles.sectionHeader}>
+          {language === 'ta' ? 'கணக்கு மேலாண்மை' : 'Account & Security'}
+        </Text>
+        <View style={styles.card}>
+          {user ? (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleOpenLogout}
+              style={styles.settingRow}
+            >
+              <View>
+                <Text style={[styles.rowTitle, { color: Colors.error }]}>
+                  {t('logout')}
+                </Text>
+                <Text style={styles.rowSub}>
+                  {user.email || (language === 'ta' ? 'அனானிமஸ் கணக்கு' : 'Anonymous / Test Account')}
+                </Text>
+              </View>
+              {isSigningOut ? (
+                <ActivityIndicator size="small" color={Colors.error} />
+              ) : (
+                <Ionicons name="log-out-outline" size={20} color={Colors.error} />
+              )}
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => setAuthModalVisible(true)}
+              style={styles.settingRow}
+            >
+              <View>
+                <Text style={[styles.rowTitle, { color: Colors.brandBlack }]}>
+                  {language === 'ta' ? 'உள்நுழைக / பதிவு செய்ய' : 'Sign In / Register'}
+                </Text>
+                <Text style={styles.rowSub}>
+                  {language === 'ta'
+                    ? 'சுயவிவரத்தை கிளவுடில் சேமிக்க'
+                    : 'Save Profile to Cloud Firestore'}
+                </Text>
+              </View>
+              <Ionicons name="log-in-outline" size={20} color={Colors.brandBlack} />
+            </TouchableOpacity>
+          )}
+        </View>
+
         {/* Developer / Reset Options */}
         <View style={{ marginTop: 20, marginBottom: 20 }}>
           <TouchableOpacity
@@ -210,6 +279,21 @@ export default function SettingsScreen() {
       <LocationModal
         visible={locationModalVisible}
         onClose={() => setLocationModalVisible(false)}
+      />
+
+      <AuthModal
+        visible={authModalVisible}
+        onClose={() => setAuthModalVisible(false)}
+        targetRole={role}
+      />
+
+      <LogoutConfirmModal
+        visible={logoutModalVisible}
+        onClose={() => setLogoutModalVisible(false)}
+        onConfirm={handleConfirmLogout}
+        isLoading={isSigningOut}
+        userEmail={user?.email || (user ? 'Anonymous User' : null)}
+        errorMessage={logoutError}
       />
     </ScreenWrapper>
   );

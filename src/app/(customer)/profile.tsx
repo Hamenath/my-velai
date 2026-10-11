@@ -10,14 +10,17 @@ import { Header } from '../../components/ui/Header';
 import { Button } from '../../components/ui/Button';
 import { EditProfileModal } from '../../components/profile/EditProfileModal';
 import { AuthModal } from '../../components/profile/AuthModal';
+import { LogoutConfirmModal } from '../../components/profile/LogoutConfirmModal';
 
 export default function CustomerProfileScreen() {
   const router = useRouter();
   const { setRole, currentLocality, language, toggleLanguage, t } = useApp();
-  const { user, profile, isProfileLoading, signOut } = useAuth();
+  const { user, profile, isProfileLoading, isSigningOut, signOut } = useAuth();
 
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const handleSwitchToWorker = () => {
     setRole('worker');
@@ -30,34 +33,28 @@ export default function CustomerProfileScreen() {
     });
   };
 
-  const handleSignOut = () => {
-    Alert.alert(
-      t('logout'),
-      language === 'ta' ? 'நிச்சயமாக வெளியேற விரும்புகிறீர்களா?' : 'Are you sure you want to log out?',
-      [
-        { text: language === 'ta' ? 'ரத்து' : 'Cancel', style: 'cancel' },
-        {
-          text: t('logout'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut();
-            } catch (err: any) {
-              Alert.alert('Error', err?.message || 'Failed to sign out');
-            }
-          },
-        },
-      ]
-    );
+  const handleOpenLogout = () => {
+    setLogoutError(null);
+    setLogoutModalVisible(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setLogoutError(null);
+    try {
+      await signOut();
+      setLogoutModalVisible(false);
+    } catch (err: any) {
+      setLogoutError(err?.message || (language === 'ta' ? 'வெளியேறுவதில் தோல்வி' : 'Sign out failed'));
+    }
   };
 
   // Determine active display data
-  const displayName = profile?.displayName || (language === 'ta' ? 'மதுரை வாடிக்கையாளர்' : 'Madurai Customer');
-  const displayContact = profile?.phone || profile?.email || user?.email || '+91 94432 10000';
+  const displayName = profile?.displayName || (user ? (language === 'ta' ? 'மதுரை வாடிக்கையாளர்' : 'Madurai Customer') : (language === 'ta' ? 'விருந்தினர் வாடிக்கையாளர்' : 'Guest Customer'));
+  const displayContact = profile?.phone || profile?.email || user?.email || (language === 'ta' ? 'கணக்கு இணைக்கப்படவில்லை' : 'No account connected');
   const displayLocality = profile
     ? (language === 'ta' ? profile.locality_ta : profile.locality_en)
     : (language === 'ta' ? currentLocality.name_ta : currentLocality.name_en);
-  const avatarLetter = (displayName[0] || 'வ').toUpperCase();
+  const avatarLetter = (displayName[0] || (user ? 'வ' : 'G')).toUpperCase();
 
   return (
     <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
@@ -100,16 +97,14 @@ export default function CustomerProfileScreen() {
           </View>
 
           {/* Edit Profile Action */}
-          {user && profile ? (
-            <TouchableOpacity
-              onPress={() => setEditModalVisible(true)}
-              style={styles.editBtn}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="create-outline" size={16} color={Colors.brandBlack} />
-              <Text style={styles.editBtnText}>{t('editProfile')}</Text>
-            </TouchableOpacity>
-          ) : null}
+          <TouchableOpacity
+            onPress={() => setEditModalVisible(true)}
+            style={styles.editBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="create-outline" size={16} color={Colors.brandBlack} />
+            <Text style={styles.editBtnText}>{t('editProfile')}</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Unauthenticated / Guest Account Prompt */}
@@ -241,16 +236,20 @@ export default function CustomerProfileScreen() {
           {user ? (
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={handleSignOut}
+              onPress={handleOpenLogout}
               style={[styles.menuItem, { borderBottomWidth: 0 }]}
             >
               <View style={[styles.menuIcon, { backgroundColor: Colors.errorBg }]}>
-                <Ionicons name="log-out-outline" size={18} color={Colors.error} />
+                {isSigningOut ? (
+                  <ActivityIndicator size="small" color={Colors.error} />
+                ) : (
+                  <Ionicons name="log-out-outline" size={18} color={Colors.error} />
+                )}
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.menuTitle, { color: Colors.error }]}>{t('logout')}</Text>
                 <Text style={styles.menuSub}>
-                  {user.email ? user.email : 'Anonymous / Test Session'}
+                  {user.email ? user.email : (language === 'ta' ? 'அனானிமஸ் / சோதனை அமர்வு' : 'Anonymous / Test Session')}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
@@ -276,6 +275,16 @@ export default function CustomerProfileScreen() {
         visible={authModalVisible}
         onClose={() => setAuthModalVisible(false)}
         targetRole="customer"
+      />
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        visible={logoutModalVisible}
+        onClose={() => setLogoutModalVisible(false)}
+        onConfirm={handleConfirmLogout}
+        isLoading={isSigningOut}
+        userEmail={user?.email || (user ? 'Anonymous User' : null)}
+        errorMessage={logoutError}
       />
     </ScreenWrapper>
   );

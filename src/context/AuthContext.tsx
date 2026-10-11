@@ -21,6 +21,7 @@ interface AuthContextType {
   profile: UserProfileDoc | null;
   isLoading: boolean;
   isProfileLoading: boolean;
+  isSigningOut: boolean;
   authError: string | null;
   setAuthError: (err: string | null) => void;
 
@@ -39,6 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfileDoc | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isProfileLoading, setIsProfileLoading] = useState<boolean>(false);
+  const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Synchronize Firebase Auth state and load real Firestore profile
@@ -109,13 +111,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     setAuthError(null);
+    setIsSigningOut(true);
     try {
       await fbSignOut(auth);
-      setProfile(null);
+      // Clear profile and user state only after fbSignOut successfully completes
       setUser(null);
+      setProfile(null);
     } catch (err: any) {
-      setAuthError(err?.message || 'Sign out failed');
+      const msg = err?.message || 'Sign out failed';
+      setAuthError(msg);
       throw err;
+    } finally {
+      setIsSigningOut(false);
     }
   };
 
@@ -194,6 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         profile,
         isLoading,
         isProfileLoading,
+        isSigningOut,
         authError,
         setAuthError,
         signInWithEmail,

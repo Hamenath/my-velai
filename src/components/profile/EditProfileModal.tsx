@@ -52,17 +52,19 @@ const EditProfileContent: React.FC<{
   onClose: () => void;
 }> = ({ profile, onClose }) => {
   const { localities, language, t } = useApp();
-  const { updateProfile } = useAuth();
+  const { user, updateProfile } = useAuth();
 
-  const [displayName, setDisplayName] = useState(profile?.displayName || '');
+  const [displayName, setDisplayName] = useState(
+    profile?.displayName || (language === 'ta' ? 'மதுரை பயனர்' : 'Madurai User')
+  );
   const [phone, setPhone] = useState(profile?.phone || '');
   const [localityId, setLocalityId] = useState(
     profile?.localityId || localities[0]?.id || 'loc-mattuthavani'
   );
   const [trade, setTrade] = useState(
     language === 'ta'
-      ? profile?.trade_ta || profile?.trade_en || ''
-      : profile?.trade_en || ''
+      ? profile?.trade_ta || profile?.trade_en || 'பொது பணியாளர்'
+      : profile?.trade_en || 'General Worker'
   );
   const [dailyRate, setDailyRate] = useState(
     profile?.dailyRate ? String(profile.dailyRate) : '750'
@@ -75,10 +77,20 @@ const EditProfileContent: React.FC<{
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const isWorker = profile?.role === 'worker';
+  const isWorker = profile ? profile.role === 'worker' : false;
 
   const handleSave = async () => {
     setErrorMessage(null);
+
+    // Security check: Must be signed in to write private profile data
+    if (!user) {
+      setErrorMessage(
+        language === 'ta'
+          ? 'அங்கீகாரம் தேவை: சுயவிவரத்தை மாற்ற நீங்கள் உள்நுழைய வேண்டும். விருந்தினர் பயன்முறையில் கிளவுட் மாற்றம் நிராகரிக்கப்பட்டது (Permission Denied).'
+          : 'Permission Denied: You must be authenticated to write private profile data. Guest write operations are blocked by security rules.'
+      );
+      return;
+    }
 
     // Validation
     const trimmedName = displayName.trim();
