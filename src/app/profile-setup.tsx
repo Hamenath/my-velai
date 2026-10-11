@@ -20,7 +20,6 @@ import { Header } from '../components/ui/Header';
 import { Button } from '../components/ui/Button';
 import { profileService } from '../services/profileService';
 import { auth } from '../lib/firebase';
-import { signInAnonymously } from 'firebase/auth';
 import { UserRole } from '../types';
 
 export default function ProfileSetupScreen() {
@@ -30,7 +29,7 @@ export default function ProfileSetupScreen() {
   const { user, refreshProfile } = useAuth();
 
   const role = (params.role as UserRole) || 'customer';
-  const verifiedPhone = params.phone || user?.phoneNumber || '+91 94432 10000';
+  const verifiedPhone = params.phone || user?.phoneNumber || '+91 87787 07086';
 
   // Common Profile Fields
   const [displayName, setDisplayName] = useState(params.name || (role === 'worker' ? 'தொழிலாளி' : 'வாடிக்கையாளர்'));
@@ -107,20 +106,10 @@ export default function ProfileSetupScreen() {
       return;
     }
 
-    let activeUser = user;
+    const activeUser = user || auth.currentUser;
     if (!activeUser) {
-      if (__DEV__) {
-        try {
-          const anonCred = await signInAnonymously(auth);
-          activeUser = anonCred.user;
-        } catch {
-          setErrorMessage('User session not found. Please restart registration.');
-          return;
-        }
-      } else {
-        setErrorMessage('User session not found. Please restart registration.');
-        return;
-      }
+      setErrorMessage('User session not found. Please restart registration.');
+      return;
     }
 
     setIsLoading(true);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -32,6 +32,14 @@ export default function RegisterScreen() {
   // Field validation states
   const [nameError, setNameError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      try {
+        phoneAuthService.getRecaptchaVerifier();
+      } catch {}
+    }
+  }, []);
 
   const validate = (): boolean => {
     let isValid = true;
@@ -102,7 +110,7 @@ export default function RegisterScreen() {
 
   const handleUseTestNumber = () => {
     setName(role === 'worker' ? 'கதிரவன் (Worker)' : 'செந்தில் (Customer)');
-    setPhone('9443210000');
+    setPhone('8778707086');
     setNameError(null);
     setPhoneError(null);
   };
@@ -240,23 +248,25 @@ export default function RegisterScreen() {
           </View>
 
           {/* Quick Development Test Card */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={handleUseTestNumber}
-            style={styles.testHintCard}
-          >
-            <View style={styles.testHintHeader}>
-              <Ionicons name="sparkles" size={14} color={Colors.brandBlack} />
-              <Text style={styles.testHintTitle}>
-                {language === 'ta' ? 'விரைவு சோதனை எண் (Quick Test)' : 'Quick Test Available'}
+          {__DEV__ && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleUseTestNumber}
+              style={styles.testHintCard}
+            >
+              <View style={styles.testHintHeader}>
+                <Ionicons name="sparkles" size={14} color={Colors.brandBlack} />
+                <Text style={styles.testHintTitle}>
+                  {language === 'ta' ? 'விரைவு சோதனை எண் (Quick Test)' : 'Quick Test Available'}
+                </Text>
+              </View>
+              <Text style={styles.testHintDesc}>
+                {language === 'ta'
+                  ? 'தானாக நிரப்ப தட்டவும்: +91 87787 07086 (சோதனை OTP: 123456)'
+                  : 'Tap to autofill: +91 87787 07086 (Test OTP: 123456)'}
               </Text>
-            </View>
-            <Text style={styles.testHintDesc}>
-              {language === 'ta'
-                ? 'தானாக நிரப்ப தட்டவும்: +91 94432 10000 (சோதனை OTP: 123456)'
-                : 'Tap to autofill: +91 94432 10000 (Test OTP: 123456)'}
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
 
           {/* Submit Action */}
           <View style={styles.actionContainer}>

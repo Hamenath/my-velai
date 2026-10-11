@@ -28,7 +28,7 @@ export default function OtpVerifyScreen() {
   const { language, setRole, setHasSeenOnboarding } = useApp();
   const { verifyPhoneOtp, sendPhoneOtp } = useAuth();
 
-  const phone = params.phone || '+919443210000';
+  const phone = params.phone || '+918778707086';
   const name = params.name || '';
   const role = (params.role as UserRole) || 'customer';
 
@@ -194,8 +194,8 @@ export default function OtpVerifyScreen() {
             </Text>
           </View>
 
-          {/* Dev Test Notice */}
-          {phoneAuthService.isDevSessionActive() && (
+          {/* Quick test notice for Firebase Console test number */}
+          {Boolean(__DEV__ && phone.includes('8778707086')) && (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
@@ -207,8 +207,8 @@ export default function OtpVerifyScreen() {
               <Ionicons name="sparkles" size={15} color={Colors.brandBlack} />
               <Text style={styles.devBannerText}>
                 {language === 'ta'
-                  ? 'சோதனை முறை செயலில் உள்ளது: குறியீடு 123456 ஐ நிரப்ப தட்டவும்'
-                  : 'Dev Test Mode Active: Tap to fill code 123456'}
+                  ? 'சோதனை எண் (+91 87787 07086): குறியீடு 123456 ஐ நிரப்ப தட்டவும்'
+                  : 'Firebase Test Number (+91 87787 07086): Tap to fill OTP 123456'}
               </Text>
             </TouchableOpacity>
           )}
