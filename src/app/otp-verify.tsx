@@ -194,6 +194,25 @@ export default function OtpVerifyScreen() {
             </Text>
           </View>
 
+          {/* Dev Test Notice */}
+          {phoneAuthService.isDevSessionActive() && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                setDigits(['1', '2', '3', '4', '5', '6']);
+                inputRefs.current[5]?.focus();
+              }}
+              style={styles.devBanner}
+            >
+              <Ionicons name="sparkles" size={15} color={Colors.brandBlack} />
+              <Text style={styles.devBannerText}>
+                {language === 'ta'
+                  ? 'சோதனை முறை செயலில் உள்ளது: குறியீடு 123456 ஐ நிரப்ப தட்டவும்'
+                  : 'Dev Test Mode Active: Tap to fill code 123456'}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           {/* Error Banner */}
           {errorMessage && (
             <View style={styles.errorBanner}>
@@ -332,6 +351,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 18,
     paddingHorizontal: 16,
+  },
+  devBanner: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEFCE8',
+    borderWidth: 1.5,
+    borderColor: Colors.brandYellow,
+    borderRadius: Radius.md,
+    padding: 12,
+    marginBottom: 16,
+    gap: 8,
+  },
+  devBannerText: {
+    fontFamily: FontFamilies.primary,
+    fontSize: 12,
+    color: Colors.brandBlack,
+    fontWeight: '700',
+    flex: 1,
   },
   errorBanner: {
     width: '100%',

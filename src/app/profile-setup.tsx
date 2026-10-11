@@ -19,12 +19,14 @@ import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Header } from '../components/ui/Header';
 import { Button } from '../components/ui/Button';
 import { profileService } from '../services/profileService';
+import { auth } from '../lib/firebase';
+import { signInAnonymously } from 'firebase/auth';
 import { UserRole } from '../types';
 
 export default function ProfileSetupScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ phone?: string; name?: string; role?: string }>();
-  const { localities, currentLocality, language, setHasSeenOnboarding } = useApp();
+  const { localities, currentLocality, language, setHasSeenOnboarding, setRole } = useApp();
   const { user, refreshProfile } = useAuth();
 
   const role = (params.role as UserRole) || 'customer';
@@ -105,9 +107,20 @@ export default function ProfileSetupScreen() {
       return;
     }
 
-    if (!user) {
-      setErrorMessage('User session not found. Please restart registration.');
-      return;
+    let activeUser = user;
+    if (!activeUser) {
+      if (__DEV__) {
+        try {
+          const anonCred = await signInAnonymously(auth);
+          activeUser = anonCred.user;
+        } catch {
+          setErrorMessage('User session not found. Please restart registration.');
+          return;
+        }
+      } else {
+        setErrorMessage('User session not found. Please restart registration.');
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -116,7 +129,7 @@ export default function ProfileSetupScreen() {
       const activeTrade = workerTrades.find((t) => t.name_en === selectedTrade) || workerTrades[0];
       const rateNum = Number(dailyRate) || 750;
 
-      await profileService.createProfile(user.uid, {
+      await profileService.createProfile(activeUser.uid, {
         displayName: displayName.trim(),
         phone: verifiedPhone,
         role,
@@ -135,8 +148,9 @@ export default function ProfileSetupScreen() {
         experienceYears: role === 'worker' ? experienceYears : undefined,
       });
 
-      // Synchronize in-memory auth profile
+      // Synchronize in-memory auth profile and role state
       await refreshProfile();
+      setRole(role);
       setHasSeenOnboarding(true);
 
       // Navigate to respective role home screen

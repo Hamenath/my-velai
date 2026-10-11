@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { language } = useApp();
+  const { language, hasSeenOnboarding } = useApp();
   const { user, profile } = useAuth();
 
   const [buttonReady, setButtonReady] = useState(false);
@@ -193,9 +193,14 @@ export default function WelcomeScreen() {
       }
       return;
     }
-    // New or unauthenticated user: begin onboarding carousel
+    // If user has already completed onboarding but is not logged in, go to role selection
+    if (hasSeenOnboarding) {
+      router.replace('/role-select');
+      return;
+    }
+    // First time user: start 3-screen onboarding carousel
     router.replace('/onboarding');
-  }, [buttonReady, user, profile, router]);
+  }, [buttonReady, user, profile, hasSeenOnboarding, router]);
 
   // Geometric layout dimensions
   const ringSize = Math.min(Math.max(width * 0.72, 230), 280);

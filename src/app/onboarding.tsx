@@ -80,10 +80,12 @@ export default function OnboardingScreen() {
 
   const handleNext = () => {
     if (currentIndex < SLIDES.length - 1) {
+      const nextIndex = currentIndex + 1;
       flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
+        index: nextIndex,
         animated: true,
       });
+      setCurrentIndex(nextIndex);
     } else {
       handleFinishOnboarding();
     }
@@ -91,10 +93,12 @@ export default function OnboardingScreen() {
 
   const handleBack = () => {
     if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
       flatListRef.current?.scrollToIndex({
-        index: currentIndex - 1,
+        index: prevIndex,
         animated: true,
       });
+      setCurrentIndex(prevIndex);
     }
   };
 
@@ -273,6 +277,11 @@ export default function OnboardingScreen() {
         onScroll={handleScroll}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         scrollEventThrottle={16}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
         renderItem={({ item }) => (
           <View style={[styles.slideItem, { width }]}>
             {/* Minimalist Graphic Area */}
@@ -307,8 +316,13 @@ export default function OnboardingScreen() {
           {SLIDES.map((_, idx) => {
             const isActive = idx === currentIndex;
             return (
-              <View
+              <TouchableOpacity
                 key={idx}
+                activeOpacity={0.7}
+                onPress={() => {
+                  flatListRef.current?.scrollToIndex({ index: idx, animated: true });
+                  setCurrentIndex(idx);
+                }}
                 style={[
                   styles.dot,
                   isActive ? styles.activeDot : styles.inactiveDot,

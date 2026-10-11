@@ -2,6 +2,7 @@ import {
   signInWithPhoneNumber,
   RecaptchaVerifier,
   ConfirmationResult,
+  signInAnonymously,
   User,
 } from 'firebase/auth';
 import { Platform } from 'react-native';
@@ -9,6 +10,7 @@ import { auth } from '../lib/firebase';
 
 let recaptchaVerifier: RecaptchaVerifier | null = null;
 let activeConfirmationResult: ConfirmationResult | null = null;
+let activeDevSession: { phoneNumber: string; expectedCode: string } | null = null;
 
 /**
  * Service managing real Firebase Phone Authentication across Web and Native.
@@ -92,10 +94,32 @@ export const phoneAuthService = {
   },
 
   /**
+   * Indicates whether a development fallback session is active
+   */
+  isDevSessionActive(): boolean {
+    return activeDevSession !== null || __DEV__;
+  },
+
+  /**
    * Sends real Firebase Phone OTP
    */
   async sendOtp(phoneNumber: string): Promise<boolean> {
     const formatted = this.formatToE164(phoneNumber);
+
+    // In local development (__DEV__), when testing with designated development numbers,
+    // initialize test verification session so developers and automated tests can verify end-to-end without being blocked by Google reCAPTCHA bot challenges.
+    const DEV_TEST_NUMBERS = ['+919443210000', '+918778707086'];
+    if (__DEV__ && DEV_TEST_NUMBERS.includes(formatted)) {
+      console.log(
+        `[phoneAuthService] Development test number (${formatted}) detected: initializing test verification session.`
+      );
+      activeDevSession = {
+        phoneNumber: formatted,
+        expectedCode: '123456',
+      };
+      activeConfirmationResult = null;
+      return true;
+    }
 
     if (Platform.OS === 'web') {
       const verifier = this.getRecaptchaVerifier();
@@ -105,6 +129,7 @@ export const phoneAuthService = {
       try {
         const confirmation = await signInWithPhoneNumber(auth, formatted, verifier);
         activeConfirmationResult = confirmation;
+        activeDevSession = null;
         return true;
       } catch (err: any) {
         // Reset verifier on error so subsequent requests can re-initialize cleanly
@@ -114,11 +139,38 @@ export const phoneAuthService = {
           } catch {}
           recaptchaVerifier = null;
         }
+
+        // When Phone Authentication is not toggled ON in Firebase Console (or region blocked):
+        // In development (__DEV__), provide seamless fallback to test session (123456)
+        // so the full onboarding, OTP validation, profile creation, and navigation can be tested.
+        if (err?.code === 'auth/operation-not-allowed' && __DEV__) {
+          console.warn(
+            '[phoneAuthService] Phone Authentication is not enabled in Firebase Console (auth/operation-not-allowed). Falling back to Dev Test Session with OTP: 123456.'
+          );
+          activeDevSession = {
+            phoneNumber: formatted,
+            expectedCode: '123456',
+          };
+          activeConfirmationResult = null;
+          return true;
+        }
+
         throw this.mapFirebaseError(err);
       }
     } else {
       // Native iOS / Android handling
-      // Note: Full native background SMS requires an EAS Development Build with SafetyNet/Play Integrity SHA-256 registered in Firebase Console.
+      // In development mode, allow test session for quick simulation if native SMS is not configured yet
+      if (__DEV__) {
+        console.warn(
+          '[phoneAuthService] Native SMS: falling back to Dev Test Session in Expo development environment.'
+        );
+        activeDevSession = {
+          phoneNumber: formatted,
+          expectedCode: '123456',
+        };
+        activeConfirmationResult = null;
+        return true;
+      }
       throw new Error(
         'Native SMS verification requires an EAS Development Build with SHA-256 fingerprint registered in Firebase Console. Please test via the Web preview at http://localhost:8082 or register a development client.'
       );
@@ -129,7 +181,21 @@ export const phoneAuthService = {
    * Verifies the 6-digit OTP code against the active Firebase confirmation session
    */
   async verifyOtp(otpCode: string): Promise<User> {
+    if (activeDevSession) {
+      if (otpCode.trim() !== activeDevSession.expectedCode) {
+        throw new Error('Incorrect verification code. Please check the 6-digit code and try again.');
+      }
+      // Sign in anonymously to obtain a real Firebase user with a UID for Firestore profile creation
+      const anonCred = await signInAnonymously(auth);
+      activeDevSession = null;
+      return anonCred.user;
+    }
+
     if (!activeConfirmationResult) {
+      if (__DEV__ && otpCode.trim() === '123456') {
+        const anonCred = await signInAnonymously(auth);
+        return anonCred.user;
+      }
       throw new Error('No active verification session. Please request a new OTP.');
     }
     try {
@@ -148,6 +214,11 @@ export const phoneAuthService = {
     const code = err?.code || '';
     const message = err?.message || '';
 
+    if (code === 'auth/operation-not-allowed') {
+      return new Error(
+        'Phone Authentication is not enabled for this region in your Firebase Console project. In Firebase Console → Authentication → Sign-in method, enable "Phone", configure SMS region policy for India (+91), or add "+91 94432 10000" under "Phone numbers for testing".'
+      );
+    }
     if (code === 'auth/invalid-phone-number') {
       return new Error('Invalid phone number format. Please enter a valid 10-digit mobile number.');
     }
@@ -155,7 +226,9 @@ export const phoneAuthService = {
       return new Error('Mobile number is required.');
     }
     if (code === 'auth/quota-exceeded') {
-      return new Error('SMS quota exceeded for today on Firebase free tier. For instant testing, please use test number +91 94432 10000 with code 123456.');
+      return new Error(
+        'SMS quota exceeded for today on Firebase free tier. For instant testing, please use test number +91 94432 10000 with code 123456.'
+      );
     }
     if (code === 'auth/too-many-requests') {
       return new Error('Too many attempts. Please wait a minute before requesting another OTP.');
@@ -172,3 +245,4 @@ export const phoneAuthService = {
     return new Error(message || 'Authentication error occurred. Please try again.');
   },
 };
+
