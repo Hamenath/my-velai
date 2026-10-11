@@ -1,16 +1,23 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Radius, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
 import { Button } from '../../components/ui/Button';
+import { EditProfileModal } from '../../components/profile/EditProfileModal';
+import { AuthModal } from '../../components/profile/AuthModal';
 
 export default function WorkerProfileScreen() {
   const router = useRouter();
   const { setRole, language, toggleLanguage, t } = useApp();
+  const { user, profile, isProfileLoading, signOut } = useAuth();
+
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
 
   const handleSwitchToCustomer = () => {
     setRole('customer');
@@ -23,6 +30,45 @@ export default function WorkerProfileScreen() {
     });
   };
 
+  const handleSignOut = () => {
+    Alert.alert(
+      t('logout'),
+      language === 'ta' ? 'நிச்சயமாக வெளியேற விரும்புகிறீர்களா?' : 'Are you sure you want to log out?',
+      [
+        { text: language === 'ta' ? 'ரத்து' : 'Cancel', style: 'cancel' },
+        {
+          text: t('logout'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut();
+            } catch (err: any) {
+              Alert.alert('Error', err?.message || 'Failed to sign out');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  // Determine active display data
+  const displayName = profile?.displayName || (language === 'ta' ? 'முருகன் கருப்பையா' : 'Murugan Karuppiah');
+  const trade = language === 'ta'
+    ? (profile?.trade_ta || profile?.trade_en || 'எலக்ட்ரீஷியன் & வயரிங் நிபுணர்')
+    : (profile?.trade_en || 'Electrician & Wiring Specialist');
+  const phone = profile?.phone || user?.email || '+91 98421 77123';
+  const dailyRate = profile?.dailyRate ?? 850;
+  const hourlyRate = profile?.hourlyRate ?? 150;
+  const skills = profile?.skills && profile.skills.length > 0
+    ? profile.skills
+    : [
+        language === 'ta' ? 'வீட்டு வயரிங்' : 'House Wiring',
+        language === 'ta' ? 'இன்வெர்ட்டர்' : 'Inverter Setup',
+        language === 'ta' ? 'மின்விசிறி சரிசெய்தல்' : 'Fan Repair',
+        language === 'ta' ? 'MCB பாக்ஸ்' : 'MCB Panels',
+      ];
+  const avatarLetter = (displayName[0] || 'தொ').toUpperCase();
+
   return (
     <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
       <Header
@@ -31,32 +77,42 @@ export default function WorkerProfileScreen() {
       />
 
       <View style={styles.container}>
+        {/* Loading Indicator */}
+        {isProfileLoading ? (
+          <View style={styles.loadingBar}>
+            <ActivityIndicator size="small" color={Colors.brandBlack} />
+            <Text style={styles.loadingText}>
+              {language === 'ta' ? 'தொழிலாளி சுயவிவரம் ஏற்றப்படுகிறது...' : 'Loading Worker Profile...'}
+            </Text>
+          </View>
+        ) : null}
+
         {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.topInfo}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>தொ</Text>
+              <Text style={styles.avatarText}>{avatarLetter}</Text>
             </View>
 
             <View style={{ flex: 1, marginLeft: 12 }}>
               <View style={styles.nameRow}>
-                <Text style={styles.name}>
-                  {language === 'ta' ? 'முருகன் கருப்பையா' : 'Murugan Karuppiah'}
-                </Text>
+                <Text style={styles.name}>{displayName}</Text>
                 <Ionicons
                   name="checkmark-circle"
                   size={16}
                   color={Colors.success}
                   style={{ marginLeft: 4 }}
                 />
+                {user && profile ? (
+                  <View style={styles.syncedPill}>
+                    <Ionicons name="cloud-done" size={10} color={Colors.success} />
+                    <Text style={styles.syncedText}>Cloud</Text>
+                  </View>
+                ) : null}
               </View>
 
-              <Text style={styles.trade}>
-                {language === 'ta'
-                  ? 'எலக்ட்ரீஷியன் & வயரிங் நிபுணர்'
-                  : 'Electrician & Wiring Specialist'}
-              </Text>
-              <Text style={styles.phone}>+91 98421 77123</Text>
+              <Text style={styles.trade}>{trade}</Text>
+              <Text style={styles.phone}>{phone}</Text>
 
               <View style={styles.ratingBadge}>
                 <Ionicons name="star" size={11} color="#EAB308" />
@@ -66,6 +122,18 @@ export default function WorkerProfileScreen() {
                 </Text>
               </View>
             </View>
+
+            {/* Edit Button */}
+            {user && profile ? (
+              <TouchableOpacity
+                onPress={() => setEditModalVisible(true)}
+                style={styles.editBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="create-outline" size={16} color={Colors.brandBlack} />
+                <Text style={styles.editBtnText}>{t('editProfile')}</Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
 
           {/* Verification Pill */}
@@ -78,6 +146,35 @@ export default function WorkerProfileScreen() {
             </Text>
           </View>
         </View>
+
+        {/* Unauthenticated / Guest Account Prompt */}
+        {!user ? (
+          <View style={styles.authPromptCard}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.authBadge}>
+                <Ionicons name="shield-outline" size={12} color={Colors.brandBlack} />
+                <Text style={styles.authBadgeText}>Cloud Firestore</Text>
+              </View>
+              <Text style={styles.authPromptTitle}>
+                {language === 'ta'
+                  ? 'சுயவிவரத்தை கிளவுடில் சேமிக்க'
+                  : 'Save Worker Profile to Firestore'}
+              </Text>
+              <Text style={styles.authPromptDesc}>
+                {language === 'ta'
+                  ? 'கணக்கை உருவாக்கி உங்கள் கூலி, திறன்கள் மற்றும் வேலைகளைப் பாதுகாக்கவும்.'
+                  : 'Register or sign in to persist your rates, skills, and jobs.'}
+              </Text>
+            </View>
+            <Button
+              title={language === 'ta' ? 'உள்நுழைக / பதிவு' : 'Sign In / Register'}
+              onPress={() => setAuthModalVisible(true)}
+              variant="primary"
+              size="sm"
+              style={{ marginLeft: 10 }}
+            />
+          </View>
+        ) : null}
 
         {/* Switch to Customer Mode */}
         <View style={styles.switchCard}>
@@ -102,22 +199,29 @@ export default function WorkerProfileScreen() {
 
         {/* My Skills & Rates */}
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>
-            {language === 'ta' ? 'என் திறன்கள் மற்றும் கூலி' : 'My Skills & Rates'}
-          </Text>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>
+              {language === 'ta' ? 'என் திறன்கள் மற்றும் கூலி' : 'My Skills & Rates'}
+            </Text>
+            {user && profile ? (
+              <TouchableOpacity onPress={() => setEditModalVisible(true)}>
+                <Text style={styles.editSectionLink}>{t('editProfile')}</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
 
           <View style={styles.rateGrid}>
             <View style={styles.rateBox}>
               <Text style={styles.rateLabel}>
                 {language === 'ta' ? 'தினக்கூலி' : 'Daily Wage'}
               </Text>
-              <Text style={styles.rateValue}>₹850 / {language === 'ta' ? 'நாள்' : 'day'}</Text>
+              <Text style={styles.rateValue}>₹{dailyRate} / {language === 'ta' ? 'நாள்' : 'day'}</Text>
             </View>
             <View style={styles.rateBox}>
               <Text style={styles.rateLabel}>
                 {language === 'ta' ? 'மணிநேர கூலி' : 'Hourly Rate'}
               </Text>
-              <Text style={styles.rateValue}>₹150 / {language === 'ta' ? 'மணி' : 'hr'}</Text>
+              <Text style={styles.rateValue}>₹{hourlyRate} / {language === 'ta' ? 'மணி' : 'hr'}</Text>
             </View>
           </View>
 
@@ -125,12 +229,7 @@ export default function WorkerProfileScreen() {
             {language === 'ta' ? 'செயலிலுள்ள திறன்கள்:' : 'Active Skills:'}
           </Text>
           <View style={styles.skillsRow}>
-            {[
-              language === 'ta' ? 'வீட்டு வயரிங்' : 'House Wiring',
-              language === 'ta' ? 'இன்வெர்ட்டர்' : 'Inverter Setup',
-              language === 'ta' ? 'மின்விசிறி சரிசெய்தல்' : 'Fan Repair',
-              language === 'ta' ? 'MCB பாக்ஸ்' : 'MCB Panels',
-            ].map((skill, idx) => (
+            {skills.map((skill, idx) => (
               <View key={idx} style={styles.skillPill}>
                 <Text style={styles.skillText}>{skill}</Text>
               </View>
@@ -181,7 +280,7 @@ export default function WorkerProfileScreen() {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handleCallSupport}
-            style={[styles.menuItem, { borderBottomWidth: 0 }]}
+            style={[styles.menuItem, !user && { borderBottomWidth: 0 }]}
           >
             <View style={styles.menuIcon}>
               <Ionicons name="call-outline" size={18} color={Colors.textPrimary} />
@@ -192,8 +291,42 @@ export default function WorkerProfileScreen() {
             </View>
             <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
           </TouchableOpacity>
+
+          {/* Sign Out Option (if authenticated) */}
+          {user ? (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={handleSignOut}
+              style={[styles.menuItem, { borderBottomWidth: 0 }]}
+            >
+              <View style={[styles.menuIcon, { backgroundColor: Colors.errorBg }]}>
+                <Ionicons name="log-out-outline" size={18} color={Colors.error} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: Colors.error }]}>{t('logout')}</Text>
+                <Text style={styles.menuSub}>
+                  {user.email ? user.email : 'Anonymous / Test Session'}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            </TouchableOpacity>
+          ) : null}
         </View>
       </View>
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        visible={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        profile={profile}
+      />
+
+      {/* Auth Modal for Sign In / Registration */}
+      <AuthModal
+        visible={authModalVisible}
+        onClose={() => setAuthModalVisible(false)}
+        targetRole="worker"
+      />
     </ScreenWrapper>
   );
 }
@@ -233,11 +366,109 @@ const styles = StyleSheet.create({
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
   },
   name: {
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
+  },
+  syncedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.successBg,
+    borderColor: Colors.successBorder,
+    borderWidth: 1,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: Radius.xs,
+    gap: 3,
+  },
+  syncedText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: Colors.success,
+  },
+  editBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.brandYellow,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: Radius.sm,
+    gap: 4,
+  },
+  editBtnText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: Colors.brandBlack,
+  },
+  loadingBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.md,
+    padding: 8,
+    marginBottom: 12,
+    gap: 8,
+  },
+  loadingText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  authPromptCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Colors.brandYellowDark,
+    borderRadius: Radius.lg,
+    padding: 14,
+    marginBottom: 14,
+    ...Shadows.subtle,
+  },
+  authBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.brandYellow,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Radius.xs,
+    marginBottom: 4,
+    gap: 3,
+  },
+  authBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: Colors.brandBlack,
+  },
+  authPromptTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+  },
+  authPromptDesc: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    marginTop: 2,
+    lineHeight: 15,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  editSectionLink: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.brandYellowDark,
   },
   trade: {
     fontSize: 12,

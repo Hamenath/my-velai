@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import { AuthProvider } from '../context/AuthContext';
 import { AppProvider } from '../context/AppContext';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -14,7 +15,8 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <AppProvider>
+      <AuthProvider>
+        <AppProvider>
         <Stack
           screenOptions={{
             headerShown: false,
@@ -33,7 +35,8 @@ export default function RootLayout() {
           <Stack.Screen name="booking/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="settings" options={{ headerShown: false }} />
         </Stack>
-      </AppProvider>
+        </AppProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

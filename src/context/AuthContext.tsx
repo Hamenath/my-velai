@@ -1,0 +1,218 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut as fbSignOut,
+  signInAnonymously,
+  User,
+} from 'firebase/auth';
+import { auth } from '../lib/firebase';
+import { profileService } from '../services/profileService';
+import {
+  UserProfileDoc,
+  CreateProfileInput,
+  UpdateProfileInput,
+  UserRole,
+} from '../types';
+
+interface AuthContextType {
+  user: User | null;
+  profile: UserProfileDoc | null;
+  isLoading: boolean;
+  isProfileLoading: boolean;
+  authError: string | null;
+  setAuthError: (err: string | null) => void;
+
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, profileInput: CreateProfileInput) => Promise<UserProfileDoc>;
+  signOut: () => Promise<void>;
+  refreshProfile: () => Promise<UserProfileDoc | null>;
+  updateProfile: (updates: UpdateProfileInput) => Promise<UserProfileDoc>;
+  signInQuickTest: (role: UserRole, displayName?: string) => Promise<UserProfileDoc>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfileDoc | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isProfileLoading, setIsProfileLoading] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  // Synchronize Firebase Auth state and load real Firestore profile
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      setAuthError(null);
+
+      if (currentUser) {
+        setIsProfileLoading(true);
+        try {
+          const loadedProfile = await profileService.getProfile(currentUser.uid);
+          setProfile(loadedProfile);
+        } catch (err: any) {
+          console.error('[AuthContext] Failed to load Firestore profile:', err);
+          setAuthError(err?.message || 'Failed to load profile');
+        } finally {
+          setIsProfileLoading(false);
+        }
+      } else {
+        setProfile(null);
+        setIsProfileLoading(false);
+      }
+
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const signInWithEmail = async (email: string, pass: string) => {
+    setAuthError(null);
+    setIsProfileLoading(true);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email.trim(), pass);
+      const loadedProfile = await profileService.getProfile(cred.user.uid);
+      setProfile(loadedProfile);
+    } catch (err: any) {
+      setAuthError(err?.message || 'Login failed');
+      throw err;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  const signUpWithEmail = async (
+    email: string,
+    pass: string,
+    profileInput: CreateProfileInput
+  ): Promise<UserProfileDoc> => {
+    setAuthError(null);
+    setIsProfileLoading(true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email.trim(), pass);
+      const newProfile = await profileService.createProfile(cred.user.uid, {
+        ...profileInput,
+        email: email.trim(),
+      });
+      setProfile(newProfile);
+      return newProfile;
+    } catch (err: any) {
+      setAuthError(err?.message || 'Registration failed');
+      throw err;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    setAuthError(null);
+    try {
+      await fbSignOut(auth);
+      setProfile(null);
+      setUser(null);
+    } catch (err: any) {
+      setAuthError(err?.message || 'Sign out failed');
+      throw err;
+    }
+  };
+
+  const refreshProfile = async (): Promise<UserProfileDoc | null> => {
+    if (!user) return null;
+    setIsProfileLoading(true);
+    try {
+      const refreshed = await profileService.getProfile(user.uid);
+      setProfile(refreshed);
+      return refreshed;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  const updateProfile = async (updates: UpdateProfileInput): Promise<UserProfileDoc> => {
+    if (!user) {
+      throw new Error('Must be authenticated to update profile.');
+    }
+    setIsProfileLoading(true);
+    try {
+      const updated = await profileService.updateProfile(user.uid, updates);
+      setProfile(updated);
+      return updated;
+    } catch (err: any) {
+      setAuthError(err?.message || 'Update failed');
+      throw err;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  /**
+   * Helper for instant testing / development in Expo without entering full credentials.
+   * Signs in anonymously and creates a real Firestore profile document.
+   */
+  const signInQuickTest = async (
+    role: UserRole,
+    displayName: string = role === 'worker' ? 'மதுரை தொழிலாளி' : 'மதுரை வாடிக்கையாளர்'
+  ): Promise<UserProfileDoc> => {
+    setAuthError(null);
+    setIsProfileLoading(true);
+    try {
+      const cred = await signInAnonymously(auth);
+      const newProfile = await profileService.createProfile(cred.user.uid, {
+        displayName,
+        phone: '+91 94432 10000',
+        role,
+        localityId: 'loc-mattuthavani',
+        locality_en: 'Mattuthavani',
+        locality_ta: 'மாட்டுத்தாவணி',
+        language: 'ta',
+        trade_en: role === 'worker' ? 'Electrician' : undefined,
+        trade_ta: role === 'worker' ? 'எலக்ட்ரீஷியன்' : undefined,
+        categoryId: role === 'worker' ? 'cat-electrician' : undefined,
+        categoryName_en: role === 'worker' ? 'Electrician' : undefined,
+        categoryName_ta: role === 'worker' ? 'எலக்ட்ரீஷியன்' : undefined,
+        dailyRate: role === 'worker' ? 850 : undefined,
+        hourlyRate: role === 'worker' ? 150 : undefined,
+        skills: role === 'worker' ? ['House Wiring', 'Fan Repair'] : undefined,
+      });
+      setProfile(newProfile);
+      return newProfile;
+    } catch (err: any) {
+      setAuthError(err?.message || 'Quick sign-in failed');
+      throw err;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        isLoading,
+        isProfileLoading,
+        authError,
+        setAuthError,
+        signInWithEmail,
+        signUpWithEmail,
+        signOut,
+        refreshProfile,
+        updateProfile,
+        signInQuickTest,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

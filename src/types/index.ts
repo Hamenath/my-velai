@@ -135,3 +135,5 @@ export interface UserProfile {
   skills?: string[];
   isVerified?: boolean;
 }
+
+export * from './profile';
