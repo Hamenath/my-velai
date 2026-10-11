@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Worker } from '../../types';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { Card } from '../ui/Card';
 
@@ -172,11 +172,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   category: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -198,12 +200,14 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xs,
   },
   ratingText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     color: Colors.textPrimary,
     marginLeft: 2,
   },
   reviewCount: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -215,6 +219,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   metaText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     flex: 1,
@@ -234,6 +239,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   skillText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -249,16 +255,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rateLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '500',
     color: Colors.textSecondary,
   },
   rateValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   rateUnit: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -279,6 +288,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   callText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -292,6 +302,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandYellow,
   },
   bookText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '800',
     color: Colors.brandBlack,

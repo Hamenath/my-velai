@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Radius } from '../constants/colors';
+import { Colors, Radius, FontFamilies } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { Button } from '../components/ui/Button';
 
@@ -75,8 +75,9 @@ export default function WelcomeScreen() {
     }
   }, [buttonReady, hasSeenOnboarding, role, router]);
 
-  // Responsive, prominent logo sizing keeping original proportions and generous whitespace
-  const logoSize = Math.min(Math.max(width * 0.58, 200), 240);
+  // Responsive, prominent wordmark sizing keeping 3:1 aspect ratio and generous whitespace
+  const logoWidth = Math.min(Math.max(width * 0.72, 220), 320);
+  const logoHeight = Math.round(logoWidth / 3);
 
   // Interpolations for logo (starts at opacity 0, scale 0.82, translated down 16px)
   const logoOpacity = logoAnim;
@@ -124,8 +125,8 @@ export default function WelcomeScreen() {
             style={[
               styles.logoImage,
               {
-                width: logoSize,
-                height: logoSize,
+                width: logoWidth,
+                height: logoHeight,
               },
             ]}
             resizeMode="contain"
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   logoImage: {
-    borderRadius: 36,
+    // clean wordmark image
   },
   footerSection: {
     width: '100%',
@@ -187,6 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   getStartedText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,

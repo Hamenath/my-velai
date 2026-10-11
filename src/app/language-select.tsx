@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Colors, Radius, Shadows } from '../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Logo } from '../components/ui/Logo';
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   subtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     lineHeight: 18,
@@ -197,6 +199,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandYellow,
   },
   flagLetter: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
@@ -215,16 +218,19 @@ const styles = StyleSheet.create({
     borderColor: Colors.successBorder,
   },
   recommendedText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '700',
     color: Colors.success,
   },
   langTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   langSub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,

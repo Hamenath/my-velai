@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 
 interface LogoutConfirmModalProps {
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 18,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   subtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     textAlign: 'center',
@@ -159,6 +161,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   emailText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -175,6 +178,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   errorText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.error,
     fontWeight: '500',
@@ -200,6 +204,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   cancelBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '600',
     color: Colors.textPrimary,
@@ -208,6 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.error,
   },
   logoutBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',

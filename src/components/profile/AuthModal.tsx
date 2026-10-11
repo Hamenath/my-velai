@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
@@ -292,11 +292,13 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   subtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -327,6 +329,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   tabText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -347,6 +350,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   errorText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.error,
     flex: 1,
@@ -356,6 +360,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -363,6 +368,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   input: {
+    fontFamily: FontFamilies.primary,
     backgroundColor: Colors.secondaryBg,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -381,6 +387,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   submitBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '800',
     color: Colors.brandBlack,
@@ -398,6 +405,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   quickTestText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,

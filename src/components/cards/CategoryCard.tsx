@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ServiceCategory } from '../../types';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 
 interface CategoryCardProps {
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brandYellowDark,
   },
   tileName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '600',
     color: Colors.textPrimary,
@@ -137,6 +138,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -153,6 +155,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   countText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '600',
     color: Colors.textSecondary,

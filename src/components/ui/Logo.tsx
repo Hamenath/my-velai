@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ViewStyle, StyleProp } from 'react-native';
 import { Colors } from '../../constants/colors';
 
 const APP_LOGO = require('../../../assets/images/app-logo.png');
@@ -8,117 +8,70 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'hero';
   showSubtitle?: boolean;
   light?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Logo: React.FC<LogoProps> = ({
   size = 'md',
-  showSubtitle = true,
+  showSubtitle = false,
   light = false,
+  style,
 }) => {
-  const getBadgeDimensions = () => {
+  const getDimensions = () => {
     switch (size) {
       case 'sm':
-        return { box: 28, fontSize: 16, subSize: 9 };
+        return { width: 84, height: 28, subSize: 9 };
       case 'lg':
-        return { box: 48, fontSize: 24, subSize: 12 };
+        return { width: 156, height: 52, subSize: 11 };
       case 'hero':
-        return { box: 76, fontSize: 32, subSize: 14 };
+        return { width: 228, height: 76, subSize: 12 };
       case 'md':
       default:
-        return { box: 36, fontSize: 19, subSize: 10 };
+        return { width: 114, height: 38, subSize: 10 };
     }
   };
 
-  const dims = getBadgeDimensions();
+  const dims = getDimensions();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Image
         source={APP_LOGO}
-        style={[
-          styles.badge,
-          {
-            width: dims.box,
-            height: dims.box,
-            borderRadius: dims.box * 0.22,
-          },
-        ]}
+        style={{
+          width: dims.width,
+          height: dims.height,
+        }}
         resizeMode="contain"
+        accessibilityLabel="MY VELAI"
       />
 
-      <View style={styles.textWrapper}>
-        <View style={styles.titleRow}>
-          <Text
-            style={[
-              styles.brandName,
-              {
-                fontSize: dims.fontSize,
-                color: light ? '#FFFFFF' : Colors.brandBlack,
-              },
-            ]}
-          >
-            MY{' '}
-            <Text
-              style={{
-                color: light ? Colors.brandYellow : Colors.brandBlack,
-                fontWeight: '900',
-              }}
-            >
-              VELAI
-            </Text>
-          </Text>
-          <View style={styles.dot} />
-        </View>
-
-        {showSubtitle && (
-          <Text
-            style={[
-              styles.subtitle,
-              {
-                fontSize: dims.subSize,
-                color: light ? '#E5E5E5' : Colors.textSecondary,
-              },
-            ]}
-          >
-            என் வேலை • MADURAI
-          </Text>
-        )}
-      </View>
+      {showSubtitle && (
+        <Text
+          style={[
+            styles.subtitle,
+            {
+              fontSize: dims.subSize,
+              color: light ? '#E5E5E5' : Colors.textSecondary,
+            },
+          ]}
+        >
+          என் வேலை • MADURAI
+        </Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     alignItems: 'center',
-  },
-  badge: {
-    marginRight: 9,
-  },
-  textWrapper: {
     justifyContent: 'center',
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  brandName: {
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  dot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: Colors.brandYellow,
-    marginLeft: 3,
-    marginTop: 2,
   },
   subtitle: {
     fontWeight: '700',
-    letterSpacing: 1,
-    marginTop: 1,
+    letterSpacing: 1.2,
+    marginTop: 2,
+    textTransform: 'uppercase',
   },
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, FontFamilies } from '../../constants/colors';
 
 interface ChipProps {
   label: string;
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   label: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
   },

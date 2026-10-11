@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
+import { Colors, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 
 export default function CustomerTabsLayout() {
@@ -43,6 +43,7 @@ export default function CustomerTabsLayout() {
           marginBottom: 1,
         },
         tabBarLabelStyle: {
+          fontFamily: FontFamilies.primary,
           fontSize: 10.5,
           fontWeight: '700',
           letterSpacing: 0.1,

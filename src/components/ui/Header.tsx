@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { Logo } from './Logo';
 import { LocationModal } from './LocationModal';
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     marginLeft: -4,
   },
   titleText: {
+    fontFamily: FontFamilies.primary,
     flex: 1,
     fontSize: 17,
     fontWeight: '800',
@@ -166,6 +167,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   langText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     color: Colors.brandBlack,
@@ -202,11 +204,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationMainText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   landmarkSubtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -221,6 +225,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   changeTagText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '700',
     color: Colors.brandBlack,

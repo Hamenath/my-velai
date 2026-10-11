@@ -7,7 +7,7 @@ import {
   ViewStyle,
   TextInputProps,
 } from 'react-native';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, FontFamilies } from '../../constants/colors';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -111,18 +112,21 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   input: {
+    fontFamily: FontFamilies.primary,
     flex: 1,
     fontSize: 14,
     color: Colors.textPrimary,
     paddingVertical: 8,
   },
   errorText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.error,
     marginTop: 4,
     fontWeight: '500',
   },
   helperText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 4,

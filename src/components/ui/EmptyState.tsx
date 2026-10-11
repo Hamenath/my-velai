@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
+import { Colors, FontFamilies } from '../../constants/colors';
 import { Button } from './Button';
 
 interface EmptyStateProps {
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   description: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     textAlign: 'center',

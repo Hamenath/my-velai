@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius } from '../constants/colors';
+import { Colors, Radius, FontFamilies } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Logo } from '../components/ui/Logo';
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.round,
   },
   langBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     color: Colors.brandBlack,
@@ -154,6 +155,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   skipText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -185,11 +187,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   highlightText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '600',
     color: Colors.textSecondary,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -198,6 +202,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   desc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     textAlign: 'center',

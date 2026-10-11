@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/colors';
+import { Colors, FontFamilies } from '../../constants/colors';
 
 interface SectionHeaderProps {
   title: string;
@@ -50,12 +50,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
     letterSpacing: 0.1,
   },
   subtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -66,6 +68,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   actionText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Job } from '../../types';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     width: 20,
   },
   metaText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     flex: 1,
@@ -160,11 +162,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   wageValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   wageSuffix: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -183,6 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brandYellow,
   },
   applyBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
   },

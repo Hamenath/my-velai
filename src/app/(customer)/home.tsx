@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -187,12 +187,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   greetingText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
     letterSpacing: 0.1,
   },
   subGreeting: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -208,6 +210,7 @@ const styles = StyleSheet.create({
     height: 44,
   },
   searchInput: {
+    fontFamily: FontFamilies.primary,
     flex: 1,
     fontSize: 13,
     color: Colors.textPrimary,
@@ -257,11 +260,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   postTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   postDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -275,6 +280,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
   },
   postCtaText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '800',
     color: Colors.brandBlack,

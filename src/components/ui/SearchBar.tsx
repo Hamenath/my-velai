@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 
 interface SearchBarProps {
   value: string;
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   input: {
+    fontFamily: FontFamilies.primary,
     flex: 1,
     fontSize: 14,
     color: Colors.textPrimary,

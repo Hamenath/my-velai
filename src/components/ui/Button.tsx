@@ -8,7 +8,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, FontFamilies } from '../../constants/colors';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'dark';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textBase: {
+    fontFamily: FontFamilies.primary,
     textAlign: 'center',
     letterSpacing: 0.1,
   },

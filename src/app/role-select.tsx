@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
 import { Logo } from '../components/ui/Logo';
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
+    fontFamily: FontFamilies.primary,
     fontSize: 20,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -187,6 +188,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   subtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     lineHeight: 18,
@@ -250,12 +252,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brandBlack,
   },
   roleTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
     marginBottom: 4,
   },
   roleDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     lineHeight: 17,
@@ -274,6 +278,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   bulletText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '600',
     color: Colors.textPrimary,

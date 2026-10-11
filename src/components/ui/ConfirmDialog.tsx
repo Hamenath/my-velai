@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows, Typography } from '../../constants/colors';
+import { Colors, Radius, Shadows, Typography, FontFamilies } from '../../constants/colors';
 
 interface ConfirmDialogProps {
   visible: boolean;
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   cancelBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '600',
     color: Colors.textPrimary,
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.error,
   },
   confirmBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '700',
     color: Colors.brandBlack,

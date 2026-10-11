@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { Colors, Radius } from '../../constants/colors';
+import { Colors, Radius, FontFamilies } from '../../constants/colors';
 
 export type BadgeVariant = 'yellow' | 'success' | 'urgent' | 'neutral' | 'info';
 
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   text: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 0.1,
