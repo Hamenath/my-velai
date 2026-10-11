@@ -27,6 +27,9 @@ export default function RootLayout() {
           <Stack.Screen name="onboarding" options={{ headerShown: false }} />
           <Stack.Screen name="language-select" options={{ headerShown: false }} />
           <Stack.Screen name="role-select" options={{ headerShown: false }} />
+          <Stack.Screen name="register" options={{ headerShown: false }} />
+          <Stack.Screen name="otp-verify" options={{ headerShown: false }} />
+          <Stack.Screen name="profile-setup" options={{ headerShown: false }} />
           <Stack.Screen name="(customer)" options={{ headerShown: false }} />
           <Stack.Screen name="(worker)" options={{ headerShown: false }} />
           <Stack.Screen name="job/[id]" options={{ headerShown: false }} />

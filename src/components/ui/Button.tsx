@@ -7,6 +7,7 @@ import {
   View,
   ViewStyle,
   TextStyle,
+  StyleProp,
 } from 'react-native';
 import { Colors, Radius, FontFamilies } from '../../constants/colors';
 
@@ -23,8 +24,8 @@ interface ButtonProps {
   iconPosition?: 'left' | 'right';
   loading?: boolean;
   disabled?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export const Button: React.FC<ButtonProps> = ({

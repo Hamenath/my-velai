@@ -11,19 +11,15 @@ import { UserRole } from '../types';
 
 export default function RoleSelectScreen() {
   const router = useRouter();
-  const { role, setRole, setHasSeenOnboarding, t, language } = useApp();
+  const { role, setRole, language } = useApp();
 
   const handleSelect = (selectedRole: UserRole) => {
     setRole(selectedRole);
   };
 
   const handleContinue = () => {
-    setHasSeenOnboarding(true);
-    if (role === 'worker') {
-      router.replace('/(worker)/home');
-    } else {
-      router.replace('/(customer)/home');
-    }
+    // Navigate to registration (Name & Mobile number) with selected role preserved
+    router.push('/register');
   };
 
   return (
@@ -36,66 +32,19 @@ export default function RoleSelectScreen() {
 
         {/* Title */}
         <View style={styles.titleSection}>
-          <Text style={styles.title}>{t('roleTitle')}</Text>
-          <Text style={styles.subtitle}>{t('roleSubtitle')}</Text>
+          <Text style={styles.title}>
+            {language === 'ta' ? 'கணக்கு வகையைத் தேர்ந்தெடுக்கவும்' : 'Choose Your Account Type'}
+          </Text>
+          <Text style={styles.subtitle}>
+            {language === 'ta'
+              ? 'உங்கள் தேவைக்கேற்ப கணக்கைத் தேர்ந்தெடுத்து தொடரவும்'
+              : 'Select how you want to use MY VELAI today'}
+          </Text>
         </View>
 
         {/* Roles List */}
         <View style={styles.rolesList}>
-          {/* Customer Option */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => handleSelect('customer')}
-            style={[
-              styles.roleCard,
-              role === 'customer' && styles.selectedRoleCard,
-            ]}
-          >
-            <View style={styles.cardHeader}>
-              <View
-                style={[
-                  styles.iconBox,
-                  role === 'customer' && styles.selectedIconBox,
-                ]}
-              >
-                <Ionicons
-                  name="person-outline"
-                  size={20}
-                  color={Colors.brandBlack}
-                />
-              </View>
-              <View style={styles.radioWrapper}>
-                <View
-                  style={[
-                    styles.radioCircle,
-                    role === 'customer' && styles.selectedRadio,
-                  ]}
-                >
-                  {role === 'customer' && <View style={styles.radioDot} />}
-                </View>
-              </View>
-            </View>
-
-            <Text style={styles.roleTitle}>{t('customerTitle')}</Text>
-            <Text style={styles.roleDesc}>{t('customerDesc')}</Text>
-
-            <View style={styles.bulletsRow}>
-              <View style={styles.bulletItem}>
-                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
-                <Text style={styles.bulletText}>
-                  {language === 'ta' ? 'வேலை பதிவு செய்ய' : 'Post Jobs'}
-                </Text>
-              </View>
-              <View style={styles.bulletItem}>
-                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
-                <Text style={styles.bulletText}>
-                  {language === 'ta' ? 'நேரடியாக அழைக்க' : 'Call Workers'}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          {/* Worker Option */}
+          {/* Card 1: Find Work (Worker) */}
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => handleSelect('worker')}
@@ -112,8 +61,8 @@ export default function RoleSelectScreen() {
                 ]}
               >
                 <Ionicons
-                  name="construct-outline"
-                  size={20}
+                  name="briefcase-outline"
+                  size={22}
                   color={Colors.brandBlack}
                 />
               </View>
@@ -129,20 +78,85 @@ export default function RoleSelectScreen() {
               </View>
             </View>
 
-            <Text style={styles.roleTitle}>{t('workerTitle')}</Text>
-            <Text style={styles.roleDesc}>{t('workerDesc')}</Text>
+            <Text style={styles.roleTitle}>
+              {language === 'ta' ? 'வேலை தேடுகிறேன் (தொழிலாளி)' : 'Find Work'}
+            </Text>
+            <Text style={styles.roleDesc}>
+              {language === 'ta'
+                ? 'தினக்கூலி, பகுதிநேர வேலைகள், ஃப்ரீலான்ஸ் மற்றும் உள்ளூர் சேவை தொழிலாளர்களுக்கு.'
+                : 'For part-time workers, daily-wage workers, freelancers, and service professionals.'}
+            </Text>
 
             <View style={styles.bulletsRow}>
               <View style={styles.bulletItem}>
                 <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
                 <Text style={styles.bulletText}>
-                  {language === 'ta' ? 'தினக்கூலி & பகுதிநேரம்' : 'Daily Wage & Tasks'}
+                  {language === 'ta' ? 'தினக்கூலி & பகுதிநேர வேலைகள்' : 'Daily wage & local jobs'}
                 </Text>
               </View>
               <View style={styles.bulletItem}>
                 <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
                 <Text style={styles.bulletText}>
-                  {language === 'ta' ? 'நேரடி வருமானம்' : 'Direct Income'}
+                  {language === 'ta' ? 'நேரடி வருமானம் (கமிஷன் இல்லை)' : 'Keep 100% of your earnings'}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 2: Hire Workers (Customer) */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => handleSelect('customer')}
+            style={[
+              styles.roleCard,
+              role === 'customer' && styles.selectedRoleCard,
+            ]}
+          >
+            <View style={styles.cardHeader}>
+              <View
+                style={[
+                  styles.iconBox,
+                  role === 'customer' && styles.selectedIconBox,
+                ]}
+              >
+                <Ionicons
+                  name="people-outline"
+                  size={22}
+                  color={Colors.brandBlack}
+                />
+              </View>
+              <View style={styles.radioWrapper}>
+                <View
+                  style={[
+                    styles.radioCircle,
+                    role === 'customer' && styles.selectedRadio,
+                  ]}
+                >
+                  {role === 'customer' && <View style={styles.radioDot} />}
+                </View>
+              </View>
+            </View>
+
+            <Text style={styles.roleTitle}>
+              {language === 'ta' ? 'தொழிலாளர்களை அழைக்கிறேன்' : 'Hire Workers'}
+            </Text>
+            <Text style={styles.roleDesc}>
+              {language === 'ta'
+                ? 'வீட்டு வேலைகள் மற்றும் தொழில் பணிகளுக்கு ஆட்கள் தேவைப்படும் வாடிக்கையாளர்களுக்கு.'
+                : 'For customers and homeowners who need trusted workers or local services.'}
+            </Text>
+
+            <View style={styles.bulletsRow}>
+              <View style={styles.bulletItem}>
+                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
+                <Text style={styles.bulletText}>
+                  {language === 'ta' ? 'சரிபார்க்கப்பட்ட தொழிலாளர்கள்' : 'Verified local workers'}
+                </Text>
+              </View>
+              <View style={styles.bulletItem}>
+                <Ionicons name="checkmark-circle" size={13} color={Colors.success} />
+                <Text style={styles.bulletText}>
+                  {language === 'ta' ? 'வேலைகளை உடனே பதிவு செய்ய' : 'Post jobs in 30 seconds'}
                 </Text>
               </View>
             </View>
@@ -152,11 +166,13 @@ export default function RoleSelectScreen() {
         {/* Footer */}
         <View style={styles.footer}>
           <Button
-            title={t('continueBtn')}
+            title={language === 'ta' ? 'தொடர்க' : 'Continue'}
             onPress={handleContinue}
             variant="primary"
             size="lg"
             fullWidth
+            style={styles.continueBtn}
+            textStyle={styles.continueBtnText}
           />
         </View>
       </View>
@@ -167,47 +183,49 @@ export default function RoleSelectScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 24,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
   },
   header: {
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 8,
   },
   titleSection: {
+    alignItems: 'center',
     marginBottom: 20,
   },
   title: {
     fontFamily: FontFamilies.primary,
-    fontSize: 20,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    lineHeight: 26,
+    fontSize: 22,
+    fontWeight: '900',
+    color: Colors.brandBlack,
+    textAlign: 'center',
     marginBottom: 6,
   },
   subtitle: {
     fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
+    textAlign: 'center',
     lineHeight: 18,
+    paddingHorizontal: 12,
   },
   rolesList: {
-    flex: 1,
     gap: 14,
+    flex: 1,
+    justifyContent: 'center',
   },
   roleCard: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: Colors.border,
-    borderRadius: Radius.lg,
-    padding: 16,
+    borderRadius: Radius.xl,
+    padding: 18,
     ...Shadows.subtle,
   },
   selectedRoleCard: {
     borderColor: Colors.brandYellow,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FEFCE8',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -216,9 +234,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
@@ -227,35 +245,35 @@ const styles = StyleSheet.create({
   },
   selectedIconBox: {
     backgroundColor: Colors.brandYellow,
-    borderColor: Colors.brandYellow,
+    borderColor: Colors.brandYellowDark,
   },
   radioWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 4,
   },
   radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
   },
   selectedRadio: {
     borderColor: Colors.brandBlack,
   },
   radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: Colors.brandBlack,
   },
   roleTitle: {
     fontFamily: FontFamilies.primary,
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '800',
-    color: Colors.textPrimary,
+    color: Colors.brandBlack,
     marginBottom: 4,
   },
   roleDesc: {
@@ -263,27 +281,38 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
     lineHeight: 17,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   bulletsRow: {
-    flexDirection: 'row',
-    gap: 14,
-    paddingTop: 8,
+    gap: 6,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderTopColor: 'rgba(0,0,0,0.06)',
+    paddingTop: 10,
   },
   bulletItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
   },
   bulletText: {
     fontFamily: FontFamilies.primary,
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 12,
     color: Colors.textPrimary,
+    fontWeight: '600',
   },
   footer: {
-    paddingBottom: 20,
+    marginTop: 16,
+  },
+  continueBtn: {
+    height: 54,
+    minHeight: 54,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.brandYellow,
+  },
+  continueBtnText: {
+    fontFamily: FontFamilies.primary,
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.brandBlack,
   },
 });

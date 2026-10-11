@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Radius, Shadows, FontFamilies } from '../constants/colors';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 
 const APP_LOGO = require('../../assets/images/app-logo.png');
@@ -24,7 +25,8 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { hasSeenOnboarding, role, language } = useApp();
+  const { language } = useApp();
+  const { user, profile } = useAuth();
 
   const [buttonReady, setButtonReady] = useState(false);
   const hasNavigatedRef = useRef(false);
@@ -182,16 +184,18 @@ export default function WelcomeScreen() {
   const handleProceed = useCallback(() => {
     if (!buttonReady || hasNavigatedRef.current) return;
     hasNavigatedRef.current = true;
-    if (hasSeenOnboarding) {
-      if (role === 'worker') {
+    // Returning authenticated user: skip onboarding and go straight to home screen
+    if (user && profile) {
+      if (profile.role === 'worker') {
         router.replace('/(worker)/home');
       } else {
         router.replace('/(customer)/home');
       }
-    } else {
-      router.replace('/onboarding');
+      return;
     }
-  }, [buttonReady, hasSeenOnboarding, role, router]);
+    // New or unauthenticated user: begin onboarding carousel
+    router.replace('/onboarding');
+  }, [buttonReady, user, profile, router]);
 
   // Geometric layout dimensions
   const ringSize = Math.min(Math.max(width * 0.72, 230), 280);
