@@ -117,7 +117,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       );
       onClose();
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Quick sign-in failed');
+      const msg = err?.message || '';
+      if (msg.includes('auth/operation-not-allowed') || msg.includes('admin-restricted-operation')) {
+        setErrorMsg(
+          language === 'ta'
+            ? 'அனானிமஸ் உள்நுழைவு Firebase கன்சோலில் முடக்கப்பட்டுள்ளது. மேலே உள்ள மின்னஞ்சல் மூலம் பதிவு செய்யவும்.'
+            : 'Anonymous sign-in is disabled in Firebase Console. Please register using Email/Password above.'
+        );
+      } else {
+        setErrorMsg(err?.message || 'Quick sign-in failed');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -82,7 +82,6 @@ export const profileService = {
         workerId: uid,
         name_en: input.displayName.trim(),
         name_ta: input.displayName.trim(),
-        phone: input.phone?.trim() || '',
         localityId: input.localityId,
         locality_en: input.locality_en,
         locality_ta: input.locality_ta,
@@ -100,6 +99,8 @@ export const profileService = {
         reviewsCount: 0,
         experienceYears: input.experienceYears || 1,
         updatedAt: now,
+        avatarUrl: input.avatarUrl || '',
+        bio: input.bio || '',
       };
       batch.set(workerDocRef, workerPublicData);
     }
@@ -220,9 +221,6 @@ export const profileService = {
           workerPublicUpdates.name_en = sanitizedUpdates.displayName;
           workerPublicUpdates.name_ta = sanitizedUpdates.displayName;
         }
-        if (sanitizedUpdates.phone !== undefined) {
-          workerPublicUpdates.phone = sanitizedUpdates.phone || '';
-        }
         if (sanitizedUpdates.localityId) workerPublicUpdates.localityId = sanitizedUpdates.localityId;
         if (sanitizedUpdates.locality_en) workerPublicUpdates.locality_en = sanitizedUpdates.locality_en;
         if (sanitizedUpdates.locality_ta) workerPublicUpdates.locality_ta = sanitizedUpdates.locality_ta;
@@ -236,6 +234,8 @@ export const profileService = {
         if (sanitizedUpdates.skills !== undefined) workerPublicUpdates.skills = sanitizedUpdates.skills;
         if (sanitizedUpdates.isAvailable !== undefined) workerPublicUpdates.isAvailable = sanitizedUpdates.isAvailable;
         if (sanitizedUpdates.experienceYears !== undefined) workerPublicUpdates.experienceYears = sanitizedUpdates.experienceYears;
+        if (sanitizedUpdates.avatarUrl !== undefined) workerPublicUpdates.avatarUrl = sanitizedUpdates.avatarUrl;
+        if (sanitizedUpdates.bio !== undefined) workerPublicUpdates.bio = sanitizedUpdates.bio;
 
         // Use setDoc with merge in case worker public doc doesn't exist yet
         await setDoc(workerDocRef, workerPublicUpdates, { merge: true });

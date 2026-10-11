@@ -2,76 +2,221 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Deny all by default
+    // Default Deny: All collections are private and inaccessible by default
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // User profiles: each user can only read and write their own private document
+    // Common security helper functions
+    function isAuthenticated() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function hasOnlyFields(fieldsList) {
+      return request.resource.data.keys().hasOnly(fieldsList);
+    }
+
+    // =========================================================================
+    // 1. Private User Profiles (/users/{userId})
+    // =========================================================================
     match /users/{userId} {
-      // Private profile: only the document owner can read their private data
-      allow read: if request.auth != null && request.auth.uid == userId;
+      // Read: Strictly authenticated document owner only
+      allow read: if isOwner(userId);
 
-      // Creation: must be authenticated, match UID, and have valid customer or worker role
-      allow create: if request.auth != null 
-                    && request.auth.uid == userId 
-                    && request.resource.data.uid == userId 
-                    && request.resource.data.role in ['customer', 'worker'];
+      // Create: Authenticated owner, correct UID, valid role, and no pre-verified privileges
+      allow create: if isOwner(userId)
+                    && request.resource.data.uid == userId
+                    && request.resource.data.role in ['customer', 'worker']
+                    && request.resource.data.get('isVerified', false) == false
+                    && request.resource.data.get('aadhaarVerified', false) == false
+                    && hasOnlyFields([
+                      'uid', 'displayName', 'email', 'phone', 'role', 'language',
+                      'localityId', 'locality_en', 'locality_ta', 'avatarUrl',
+                      'createdAt', 'updatedAt', 'trade_en', 'trade_ta',
+                      'categoryId', 'categoryName_en', 'categoryName_ta',
+                      'dailyRate', 'hourlyRate', 'skills', 'isAvailable',
+                      'isVerified', 'experienceYears', 'aadhaarVerified', 'bio'
+                    ])
+                    && request.resource.data.displayName is string
+                    && request.resource.data.displayName.size() >= 2
+                    && request.resource.data.displayName.size() <= 100
+                    && (!('email' in request.resource.data) || request.resource.data.email == null || request.resource.data.email is string)
+                    && (!('phone' in request.resource.data) || request.resource.data.phone == null || request.resource.data.phone is string)
+                    && (!('dailyRate' in request.resource.data) || (request.resource.data.dailyRate is number && request.resource.data.dailyRate >= 0))
+                    && (!('hourlyRate' in request.resource.data) || (request.resource.data.hourlyRate is number && request.resource.data.hourlyRate >= 0))
+                    && (!('skills' in request.resource.data) || request.resource.data.skills is list);
 
-      // Update: only document owner, and protected fields (uid, role) are strictly immutable
-      allow update: if request.auth != null 
-                    && request.auth.uid == userId 
-                    && request.resource.data.uid == resource.data.uid 
-                    && request.resource.data.role == resource.data.role;
+      // Update: Authenticated owner only; UID, role, createdAt, and verification statuses are strictly immutable
+      allow update: if isOwner(userId)
+                    && request.resource.data.uid == resource.data.uid
+                    && request.resource.data.role == resource.data.role
+                    && request.resource.data.get('createdAt', null) == resource.data.get('createdAt', null)
+                    && request.resource.data.get('isVerified', false) == resource.data.get('isVerified', false)
+                    && request.resource.data.get('aadhaarVerified', false) == resource.data.get('aadhaarVerified', false)
+                    && hasOnlyFields([
+                      'uid', 'displayName', 'email', 'phone', 'role', 'language',
+                      'localityId', 'locality_en', 'locality_ta', 'avatarUrl',
+                      'createdAt', 'updatedAt', 'trade_en', 'trade_ta',
+                      'categoryId', 'categoryName_en', 'categoryName_ta',
+                      'dailyRate', 'hourlyRate', 'skills', 'isAvailable',
+                      'isVerified', 'experienceYears', 'aadhaarVerified', 'bio'
+                    ])
+                    && (!('displayName' in request.resource.data) || (request.resource.data.displayName is string && request.resource.data.displayName.size() >= 2))
+                    && (!('email' in request.resource.data) || request.resource.data.email == null || request.resource.data.email is string)
+                    && (!('phone' in request.resource.data) || request.resource.data.phone == null || request.resource.data.phone is string)
+                    && (!('dailyRate' in request.resource.data) || (request.resource.data.dailyRate is number && request.resource.data.dailyRate >= 0))
+                    && (!('hourlyRate' in request.resource.data) || (request.resource.data.hourlyRate is number && request.resource.data.hourlyRate >= 0))
+                    && (!('skills' in request.resource.data) || request.resource.data.skills is list);
 
-      // Deletion: denied from client
+      // Delete: Denied from client
       allow delete: if false;
     }
 
-    // Worker profiles: public read for marketplace discovery, write only by worker owner
+    // =========================================================================
+    // 2. Public Worker Directory (/workers/{workerId})
+    // =========================================================================
     match /workers/{workerId} {
+      // Read: Publicly readable for marketplace browsing & search
       allow read: if true;
-      allow create: if request.auth != null 
-                    && request.auth.uid == workerId 
-                    && request.resource.data.workerId == workerId;
-      allow update: if request.auth != null 
-                    && request.auth.uid == workerId 
-                    && request.resource.data.workerId == resource.data.workerId;
+
+      // Create: Authenticated worker owner only; MUST NOT contain private PII (email, phone, aadhaar)
+      allow create: if isOwner(workerId)
+                    && request.resource.data.workerId == workerId
+                    && !('email' in request.resource.data)
+                    && !('phone' in request.resource.data)
+                    && !('aadhaar' in request.resource.data)
+                    && !('aadhaarVerified' in request.resource.data)
+                    && request.resource.data.get('isVerified', false) == false
+                    && request.resource.data.get('reviewsCount', 0) == 0
+                    && request.resource.data.get('rating', 5.0) in [5.0, 5, 0]
+                    && hasOnlyFields([
+                      'workerId', 'name_en', 'name_ta', 'localityId', 'locality_en',
+                      'locality_ta', 'categoryId', 'categoryName_en', 'categoryName_ta',
+                      'trade_en', 'trade_ta', 'skills', 'dailyRate', 'hourlyRate',
+                      'isAvailable', 'isVerified', 'rating', 'reviewsCount',
+                      'experienceYears', 'updatedAt', 'avatarUrl', 'bio'
+                    ])
+                    && request.resource.data.name_en is string
+                    && request.resource.data.skills is list
+                    && request.resource.data.dailyRate is number && request.resource.data.dailyRate >= 0
+                    && request.resource.data.hourlyRate is number && request.resource.data.hourlyRate >= 0;
+
+      // Update: Authenticated worker owner only; PII strictly forbidden; ratings and verification immutable from client
+      allow update: if isOwner(workerId)
+                    && request.resource.data.workerId == resource.data.workerId
+                    && !('email' in request.resource.data)
+                    && !('phone' in request.resource.data)
+                    && !('aadhaar' in request.resource.data)
+                    && !('aadhaarVerified' in request.resource.data)
+                    && request.resource.data.get('isVerified', false) == resource.data.get('isVerified', false)
+                    && request.resource.data.get('rating', 0) == resource.data.get('rating', 0)
+                    && request.resource.data.get('reviewsCount', 0) == resource.data.get('reviewsCount', 0)
+                    && hasOnlyFields([
+                      'workerId', 'name_en', 'name_ta', 'localityId', 'locality_en',
+                      'locality_ta', 'categoryId', 'categoryName_en', 'categoryName_ta',
+                      'trade_en', 'trade_ta', 'skills', 'dailyRate', 'hourlyRate',
+                      'isAvailable', 'isVerified', 'rating', 'reviewsCount',
+                      'experienceYears', 'updatedAt', 'avatarUrl', 'bio'
+                    ])
+                    && (!('skills' in request.resource.data) || request.resource.data.skills is list)
+                    && (!('dailyRate' in request.resource.data) || (request.resource.data.dailyRate is number && request.resource.data.dailyRate >= 0))
+                    && (!('hourlyRate' in request.resource.data) || (request.resource.data.hourlyRate is number && request.resource.data.hourlyRate >= 0));
+
+      // Delete: Denied from client
       allow delete: if false;
     }
 
-    // Job listings: public read for job seekers, create/update/delete by job creator
+    // =========================================================================
+    // 3. Job Listings (/jobs/{jobId})
+    // =========================================================================
     match /jobs/{jobId} {
+      // Read: Public for all registered workers and visitors
       allow read: if true;
-      allow create: if request.auth != null && request.resource.data.customerId == request.auth.uid;
-      allow update, delete: if request.auth != null && resource.data.customerId == request.auth.uid;
+
+      // Create: Authenticated customer only
+      allow create: if isAuthenticated()
+                    && request.resource.data.customerId == request.auth.uid
+                    && request.resource.data.get('applicantsCount', 0) == 0
+                    && hasOnlyFields([
+                      'jobId', 'customerId', 'customerName', 'category', 'categoryId',
+                      'title_en', 'title_ta', 'description', 'localityId',
+                      'locality_en', 'locality_ta', 'budget', 'budgetType',
+                      'status', 'applicantsCount', 'createdAt', 'updatedAt'
+                    ]);
+
+      // Update: Customer owner only; customerId and createdAt cannot be changed
+      allow update: if isAuthenticated()
+                    && resource.data.customerId == request.auth.uid
+                    && request.resource.data.customerId == resource.data.customerId
+                    && request.resource.data.get('createdAt', null) == resource.data.get('createdAt', null);
+
+      // Delete: Customer owner only
+      allow delete: if isAuthenticated() && resource.data.customerId == request.auth.uid;
     }
 
-    // Job Applications: only applicant worker or job customer can read/write
+    // =========================================================================
+    // 4. Job Applications (/applications/{applicationId})
+    // =========================================================================
     match /applications/{applicationId} {
-      allow read: if request.auth != null && (
+      // Read: Only applicant worker or job customer owner
+      allow read: if isAuthenticated() && (
         resource.data.workerId == request.auth.uid ||
         resource.data.customerId == request.auth.uid
       );
-      allow create: if request.auth != null && request.resource.data.workerId == request.auth.uid;
-      allow update: if request.auth != null && (
-        resource.data.workerId == request.auth.uid ||
-        resource.data.customerId == request.auth.uid
-      );
-      allow delete: if request.auth != null && resource.data.workerId == request.auth.uid;
+
+      // Create: Applicant worker only
+      allow create: if isAuthenticated()
+                    && request.resource.data.workerId == request.auth.uid
+                    && hasOnlyFields([
+                      'applicationId', 'jobId', 'workerId', 'workerName',
+                      'customerId', 'proposedRate', 'message', 'status',
+                      'createdAt', 'updatedAt'
+                    ]);
+
+      // Update: Participants only; workerId, customerId, and jobId are immutable
+      allow update: if isAuthenticated()
+                    && (resource.data.workerId == request.auth.uid || resource.data.customerId == request.auth.uid)
+                    && request.resource.data.workerId == resource.data.workerId
+                    && request.resource.data.customerId == resource.data.customerId
+                    && request.resource.data.jobId == resource.data.jobId
+                    && request.resource.data.get('createdAt', null) == resource.data.get('createdAt', null);
+
+      // Delete: Only applicant worker
+      allow delete: if isAuthenticated() && resource.data.workerId == request.auth.uid;
     }
 
-    // Bookings: only participating customer or worker can read/write
+    // =========================================================================
+    // 5. Direct Bookings (/bookings/{bookingId})
+    // =========================================================================
     match /bookings/{bookingId} {
-      allow read: if request.auth != null && (
+      // Read: Only participating customer or worker
+      allow read: if isAuthenticated() && (
         resource.data.customerId == request.auth.uid ||
         resource.data.workerId == request.auth.uid
       );
-      allow create: if request.auth != null && request.resource.data.customerId == request.auth.uid;
-      allow update: if request.auth != null && (
-        resource.data.customerId == request.auth.uid ||
-        resource.data.workerId == request.auth.uid
-      );
+
+      // Create: Authenticated customer only
+      allow create: if isAuthenticated()
+                    && request.resource.data.customerId == request.auth.uid
+                    && hasOnlyFields([
+                      'bookingId', 'jobId', 'customerId', 'customerName',
+                      'customerPhone', 'workerId', 'workerName', 'workerPhone',
+                      'serviceDate', 'status', 'totalAmount', 'createdAt',
+                      'updatedAt', 'notes', 'rating', 'review'
+                    ]);
+
+      // Update: Participating customer or worker only; customerId and workerId immutable
+      allow update: if isAuthenticated()
+                    && (resource.data.customerId == request.auth.uid || resource.data.workerId == request.auth.uid)
+                    && request.resource.data.customerId == resource.data.customerId
+                    && request.resource.data.workerId == resource.data.workerId
+                    && request.resource.data.get('createdAt', null) == resource.data.get('createdAt', null);
+
+      // Delete: Denied from client (audit retention)
       allow delete: if false;
     }
   }

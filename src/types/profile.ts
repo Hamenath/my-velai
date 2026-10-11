@@ -34,7 +34,6 @@ export interface WorkerPublicDoc {
   workerId: string;
   name_en: string;
   name_ta: string;
-  phone: string;
   localityId: string;
   locality_en: string;
   locality_ta: string;
@@ -52,6 +51,8 @@ export interface WorkerPublicDoc {
   reviewsCount: number;
   experienceYears: number;
   updatedAt: any;
+  avatarUrl?: string;
+  bio?: string;
 }
 
 export interface CreateProfileInput {
