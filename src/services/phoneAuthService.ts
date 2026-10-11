@@ -22,30 +22,48 @@ declare global {
  * - Supports configured Firebase test phone numbers (e.g. +91 87787 07086 with code 123456).
  * - For Native builds: handles dev client configuration and provides clear status guidance.
  */
-// Enable official Firebase testing settings in development to prevent external reCAPTCHA script collisions
+// Enable official Firebase testing settings in development to allow configured test phone numbers on Web
 if (Platform.OS === 'web' && __DEV__ && auth?.settings) {
   auth.settings.appVerificationDisabledForTesting = true;
 }
 
 export const phoneAuthService = {
   /**
-   * Initializes or returns the persistent reCAPTCHA verifier mounted on a stable DOM container.
-   * Avoids calling .clear() or removing containers dynamically, which triggers
-   * "Cannot read properties of null (reading 'style')" inside Google's recaptcha__en.js.
+   * Safely clears and resets the web reCAPTCHA verifier instance and its container.
+   * Cleans up the existing instance so a fresh verifier can be recreated after errors.
+   */
+  clearRecaptchaVerifier(): void {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch {
+          // Ignore errors on already-destroyed verifier instances
+        }
+        window.recaptchaVerifier = undefined;
+      }
+      const container = document.getElementById('recaptcha-container');
+      if (container) {
+        try {
+          container.innerHTML = '';
+        } catch {}
+      }
+    }
+  },
+
+  /**
+   * Initializes or reuses the web RecaptchaVerifier on a stable DOM container.
+   * Ensures the DOM container exists, reuses existing healthy verifier, or creates a clean instance.
    */
   getRecaptchaVerifier(): RecaptchaVerifier | null {
     if (Platform.OS === 'web' && typeof window !== 'undefined' && typeof document !== 'undefined') {
       const containerId = 'recaptcha-container';
       let container = document.getElementById(containerId);
 
-      // Ensure stable container exists in DOM
+      // Ensure stable container exists in document body
       if (!container) {
         container = document.createElement('div');
         container.id = containerId;
-        container.style.position = 'fixed';
-        container.style.bottom = '0';
-        container.style.right = '0';
-        container.style.zIndex = '-1';
         document.body.appendChild(container);
       }
 
@@ -54,24 +72,38 @@ export const phoneAuthService = {
         return window.recaptchaVerifier;
       }
 
+      // Ensure testing flag is active in development
+      if (__DEV__ && auth?.settings) {
+        auth.settings.appVerificationDisabledForTesting = true;
+      }
+
+      if (__DEV__) {
+        console.log(
+          '[phoneAuthService] Initializing RecaptchaVerifier. appVerificationDisabledForTesting:',
+          auth?.settings?.appVerificationDisabledForTesting
+        );
+      }
+
       try {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, container, {
           size: 'invisible',
           callback: () => {
             // reCAPTCHA solved
           },
           'expired-callback': () => {
-            // Widget expired, reset widget
-            if (window.grecaptcha) {
-              try {
-                window.grecaptcha.reset();
-              } catch {}
-            }
+            // Widget expired: clean up verifier so it will be recreated on next request
+            this.clearRecaptchaVerifier();
           },
         });
         return window.recaptchaVerifier;
-      } catch (err) {
-        console.warn('[phoneAuthService] Error initializing RecaptchaVerifier:', err);
+      } catch (err: any) {
+        if (__DEV__) {
+          console.warn('[phoneAuthService] Error initializing RecaptchaVerifier:', {
+            code: err?.code,
+            message: err?.message,
+          });
+        }
+        this.clearRecaptchaVerifier();
         return null;
       }
     }
@@ -133,19 +165,25 @@ export const phoneAuthService = {
     if (Platform.OS === 'web') {
       const verifier = this.getRecaptchaVerifier();
       if (!verifier) {
-        throw new Error('reCAPTCHA verifier could not be initialized in this browser.');
+        throw new Error('reCAPTCHA verifier could not be initialized in this browser. Please reload the page.');
       }
       try {
+        if (__DEV__) {
+          console.log('[phoneAuthService] Initiating signInWithPhoneNumber for:', this.maskPhoneNumber(formatted));
+        }
         const confirmation = await signInWithPhoneNumber(auth, formatted, verifier);
         activeConfirmationResult = confirmation;
         return true;
       } catch (err: any) {
-        // Reset widget without destroying verifier or DOM container
-        if (typeof window !== 'undefined' && window.grecaptcha) {
-          try {
-            window.grecaptcha.reset();
-          } catch {}
+        // Safe development diagnostics: log error code and message without leaking PII or credentials
+        if (__DEV__) {
+          console.error('[phoneAuthService] sendOtp failed:', {
+            code: err?.code,
+            message: err?.message,
+          });
         }
+        // Clean up failed verifier safely so it is recreated on subsequent attempts
+        this.clearRecaptchaVerifier();
         throw this.mapFirebaseError(err);
       }
     } else {
@@ -170,50 +208,56 @@ export const phoneAuthService = {
       activeConfirmationResult = null;
       return userCredential.user;
     } catch (err: any) {
+      if (__DEV__) {
+        console.error('[phoneAuthService] verifyOtp failed:', {
+          code: err?.code,
+          message: err?.message,
+        });
+      }
       throw this.mapFirebaseError(err);
     }
   },
 
   /**
-   * Friendly error mapper for Firebase Auth errors
+   * Friendly error mapper for Firebase Auth errors with safe development diagnostics.
+   * Displays the exact Firebase error code and message in __DEV__ without leaking sensitive data.
    */
   mapFirebaseError(err: any): Error {
     const code = err?.code || '';
-    const message = err?.message || '';
+    const rawMessage = err?.message || '';
+
+    let userMessage = 'Authentication error occurred. Please try again.';
 
     if (code === 'auth/admin-restricted-operation') {
-      return new Error(
-        'Operation restricted in Firebase. In Firebase Console → Authentication → Sign-in method, click "Phone", ensure "Enable" is toggled ON, and click the "Save" button at the bottom right.'
-      );
+      userMessage =
+        'Operation restricted in Firebase. In Firebase Console → Authentication → Sign-in method, click "Phone", ensure "Enable" is toggled ON, and click the "Save" button.';
+    } else if (code === 'auth/operation-not-allowed') {
+      userMessage =
+        'Phone Authentication is not enabled or the test phone number is not registered in Firebase Console. If testing with a phone number, ensure it is added under Authentication → Sign-in method → Phone → "Phone numbers for testing" and Saved.';
+    } else if (code === 'auth/invalid-phone-number') {
+      userMessage = 'Invalid phone number format. Please enter a valid 10-digit mobile number.';
+    } else if (code === 'auth/missing-phone-number') {
+      userMessage = 'Mobile number is required.';
+    } else if (code === 'auth/quota-exceeded') {
+      userMessage =
+        'SMS quota exceeded for today on Firebase free tier. Please use the configured test number +91 87787 07086 with code 123456.';
+    } else if (code === 'auth/too-many-requests') {
+      userMessage = 'Too many attempts. Please wait a minute before requesting another OTP.';
+    } else if (code === 'auth/invalid-verification-code') {
+      userMessage = 'Incorrect verification code. Please check the 6-digit code and try again.';
+    } else if (code === 'auth/code-expired') {
+      userMessage = 'Verification code has expired. Please tap "Resend OTP" to request a new code.';
+    } else if (code === 'auth/captcha-check-failed') {
+      userMessage = 'reCAPTCHA verification failed. Please try again.';
+    } else if (rawMessage) {
+      userMessage = rawMessage;
     }
-    if (code === 'auth/operation-not-allowed') {
-      return new Error(
-        'Phone Authentication is not enabled in Firebase. In Firebase Console → Authentication → Sign-in method, click "Phone", toggle "Enable", and click the "Save" button at the bottom right.'
-      );
+
+    // In development mode, append exact Firebase error code for immediate diagnostics
+    if (__DEV__ && code) {
+      return new Error(`${userMessage} [${code}]`);
     }
-    if (code === 'auth/invalid-phone-number') {
-      return new Error('Invalid phone number format. Please enter a valid 10-digit mobile number.');
-    }
-    if (code === 'auth/missing-phone-number') {
-      return new Error('Mobile number is required.');
-    }
-    if (code === 'auth/quota-exceeded') {
-      return new Error(
-        'SMS quota exceeded for today on Firebase free tier. Please use the test number +91 87787 07086 with code 123456 configured in your Firebase Console.'
-      );
-    }
-    if (code === 'auth/too-many-requests') {
-      return new Error('Too many attempts. Please wait a minute before requesting another OTP.');
-    }
-    if (code === 'auth/invalid-verification-code') {
-      return new Error('Incorrect verification code. Please check the 6-digit code and try again.');
-    }
-    if (code === 'auth/code-expired') {
-      return new Error('Verification code has expired. Please tap "Resend OTP" to request a new code.');
-    }
-    if (code === 'auth/captcha-check-failed') {
-      return new Error('reCAPTCHA verification failed. Please try again.');
-    }
-    return new Error(message || 'Authentication error occurred. Please try again.');
+
+    return new Error(userMessage);
   },
 };
