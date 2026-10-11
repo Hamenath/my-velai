@@ -50,3 +50,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 });
+
+export const StandardCard = Card;

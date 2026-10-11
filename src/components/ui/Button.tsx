@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Colors, Radius } from '../../constants/colors';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'dark';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps {
@@ -42,6 +42,17 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const getVariantStyles = (): { container: ViewStyle; text: TextStyle } => {
     switch (variant) {
+      case 'dark':
+        return {
+          container: {
+            backgroundColor: Colors.brandBlack,
+            borderColor: Colors.brandBlack,
+            borderWidth: 1,
+          },
+          text: {
+            color: '#FFFFFF',
+          },
+        };
       case 'secondary':
       case 'outline':
         return {
@@ -81,7 +92,7 @@ export const Button: React.FC<ButtonProps> = ({
         return {
           container: {
             backgroundColor: Colors.brandYellow,
-            borderColor: Colors.brandYellow,
+            borderColor: Colors.brandYellowDark,
             borderWidth: 1,
           },
           text: {
@@ -203,3 +214,15 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
 });
+
+export const PrimaryButton: React.FC<Omit<ButtonProps, 'variant'>> = (props) => (
+  <Button {...props} variant="primary" />
+);
+
+export const SecondaryButton: React.FC<Omit<ButtonProps, 'variant'>> = (props) => (
+  <Button {...props} variant="secondary" />
+);
+
+export const DarkButton: React.FC<Omit<ButtonProps, 'variant'>> = (props) => (
+  <Button {...props} variant="dark" />
+);

@@ -12,6 +12,7 @@ interface JobCardProps {
   onPress: () => void;
   onApply?: () => void;
   showApplyButton?: boolean;
+  buttonVariant?: 'dark' | 'yellow';
 }
 
 export const JobCard: React.FC<JobCardProps> = ({
@@ -19,94 +20,91 @@ export const JobCard: React.FC<JobCardProps> = ({
   onPress,
   onApply,
   showApplyButton = true,
+  buttonVariant = 'dark',
 }) => {
   const { language, t } = useApp();
 
   const title = language === 'ta' ? job.title_ta : job.title_en;
-  const categoryName = language === 'ta' ? job.categoryName_ta : job.categoryName_en;
   const localityName = language === 'ta' ? job.locality_ta : job.locality_en;
 
   const wageSuffix =
     job.wageType === 'per_day'
-      ? t('perDay')
+      ? `/ ${t('perDay')}`
       : job.wageType === 'per_hour'
-      ? t('perHour')
-      : ` (${t('fixedPrice')})`;
+      ? `/ ${t('perHour')}`
+      : `(${t('fixedPrice')})`;
 
   return (
     <Card style={styles.card} onPress={onPress}>
-      {/* Top row: Category + Urgent / Status */}
-      <View style={styles.topRow}>
-        <Badge
-          label={categoryName}
-          variant="neutral"
-          icon={<Ionicons name="briefcase-outline" size={11} color={Colors.textSecondary} />}
-        />
-
-        <View style={styles.rightBadges}>
-          {job.isUrgent && (
-            <Badge
-              label={language === 'ta' ? 'அவசரம்' : 'Urgent'}
-              variant="urgent"
-              icon={<Ionicons name="flame-outline" size={11} color={Colors.error} />}
-            />
-          )}
-          <Text style={styles.timeAgo}>{job.postedAt}</Text>
-        </View>
+      {/* 1. Job Title */}
+      <View style={styles.headerRow}>
+        <Text style={styles.title} numberOfLines={2}>
+          {title}
+        </Text>
+        {job.isUrgent ? (
+          <Badge
+            label={language === 'ta' ? 'அவசரம்' : 'Urgent'}
+            variant="urgent"
+            icon={<Ionicons name="flame-outline" size={11} color={Colors.error} />}
+          />
+        ) : null}
       </View>
 
-      {/* Title */}
-      <Text style={styles.title} numberOfLines={2}>
-        {title}
-      </Text>
-
-      {/* Location & Landmark */}
+      {/* 2. Location & Address */}
       <View style={styles.metaRow}>
-        <Ionicons name="location-outline" size={13} color={Colors.textSecondary} />
-        <Text style={styles.metaText} numberOfLines={1}>
-          {localityName} • {job.landmark}
+        <Ionicons name="location-outline" size={15} color={Colors.textSecondary} style={styles.iconStyle} />
+        <Text style={styles.metaText} numberOfLines={2}>
+          {job.landmark ? `${job.landmark}, ` : ''}{localityName}, Tamil Nadu
         </Text>
       </View>
 
-      {/* Date & Time */}
+      {/* 3. Calendar Date */}
       <View style={styles.metaRow}>
-        <Ionicons name="calendar-outline" size={13} color={Colors.textSecondary} />
-        <Text style={styles.metaText} numberOfLines={1}>
-          {job.date} • {job.time}
+        <Ionicons name="calendar-outline" size={15} color={Colors.textSecondary} style={styles.iconStyle} />
+        <Text style={styles.metaText}>
+          {job.date}
         </Text>
       </View>
 
-      {/* Divider */}
-      <View style={styles.divider} />
+      {/* 4. Clock Time */}
+      <View style={styles.metaRow}>
+        <Ionicons name="time-outline" size={15} color={Colors.textSecondary} style={styles.iconStyle} />
+        <Text style={styles.metaText}>
+          {job.time}
+        </Text>
+      </View>
 
-      {/* Bottom Row: Wage & Action */}
+      {/* 5. Bottom Row: Wage + Apply Action */}
       <View style={styles.bottomRow}>
-        <View style={styles.wagePill}>
-          <Text style={styles.wageLabel}>{t('wageOffered')}</Text>
+        <View style={styles.wageContainer}>
+          <Ionicons name="cash-outline" size={16} color={Colors.brandYellowDark} style={{ marginRight: 6 }} />
           <Text style={styles.wageValue}>
             ₹{job.wageRate}
-            <Text style={styles.wageSuffix}>{wageSuffix}</Text>
+          </Text>
+          <Text style={styles.wageSuffix}>
+            {' '}{wageSuffix}
           </Text>
         </View>
 
-        <View style={styles.actionGroup}>
-          <View style={styles.applicantsBadge}>
-            <Ionicons name="people-outline" size={11} color={Colors.textSecondary} />
-            <Text style={styles.applicantsText}>
-              {job.applicantsCount}/{job.workersNeeded}
-            </Text>
-          </View>
-
-          {showApplyButton && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={onApply || onPress}
-              style={styles.applyBtn}
+        {showApplyButton && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={onApply || onPress}
+            style={[
+              styles.applyBtn,
+              buttonVariant === 'yellow' ? styles.applyBtnYellow : styles.applyBtnDark,
+            ]}
+          >
+            <Text
+              style={[
+                styles.applyBtnText,
+                buttonVariant === 'yellow' ? styles.applyBtnTextDark : styles.applyBtnTextWhite,
+              ]}
             >
-              <Text style={styles.applyBtnText}>{t('applyNow')}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+              {t('applyNow')}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </Card>
   );
@@ -114,115 +112,84 @@ export const JobCard: React.FC<JobCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 12,
-    padding: 14,
+    marginBottom: 14,
+    padding: 16,
     borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border,
     backgroundColor: '#FFFFFF',
     ...Shadows.subtle,
   },
-  topRow: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
   },
-  rightBadges: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  timeAgo: {
-    fontSize: 11,
-    color: Colors.textMuted,
-    fontWeight: '500',
-  },
   title: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
-    lineHeight: 20,
-    marginBottom: 8,
+    lineHeight: 22,
+    flex: 1,
+    marginRight: 6,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 6,
+  },
+  iconStyle: {
+    width: 20,
   },
   metaText: {
-    fontSize: 12,
+    fontSize: 13,
     color: Colors.textSecondary,
-    marginLeft: 5,
     flex: 1,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.border,
-    marginVertical: 10,
+    lineHeight: 18,
   },
   bottomRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 10,
+    paddingTop: 8,
   },
-  wagePill: {
-    backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: Radius.xs,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  wageLabel: {
-    fontSize: 9,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.2,
+  wageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   wageValue: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   wageSuffix: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '500',
     color: Colors.textSecondary,
   },
-  actionGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  applicantsBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.secondaryBg,
-    paddingHorizontal: 7,
-    paddingVertical: 5,
-    borderRadius: Radius.xs,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    gap: 3,
-  },
-  applicantsText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
   applyBtn: {
-    backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 13,
-    paddingVertical: 7,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: Colors.brandYellow,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  applyBtnDark: {
+    backgroundColor: Colors.brandBlack,
+  },
+  applyBtnYellow: {
+    backgroundColor: Colors.brandYellow,
   },
   applyBtnText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800',
+  },
+  applyBtnTextWhite: {
+    color: '#FFFFFF',
+  },
+  applyBtnTextDark: {
     color: Colors.brandBlack,
   },
 });

@@ -128,3 +128,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+export const AppInput = Input;

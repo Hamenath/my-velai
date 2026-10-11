@@ -103,3 +103,5 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
 });
+
+export const StatusBadge = Badge;

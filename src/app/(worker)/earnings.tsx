@@ -1,374 +1,596 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Typography, Spacing, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
-import { Header } from '../../components/ui/Header';
-import { Badge } from '../../components/ui/Badge';
 
 export default function WorkerEarningsScreen() {
-  const { t, language } = useApp();
+  const router = useRouter();
+  const { language } = useApp();
+  const { profile } = useAuth();
 
-  const weeklyData = [
-    { day_en: 'Mon', day_ta: 'திங்கள்', amount: 800 },
-    { day_en: 'Tue', day_ta: 'செவ்வாய்', amount: 950 },
-    { day_en: 'Wed', day_ta: 'புதன்', amount: 800 },
-    { day_en: 'Thu', day_ta: 'வியாழன்', amount: 600 },
-    { day_en: 'Fri', day_ta: 'வெள்ளி', amount: 900 },
-    { day_en: 'Sat', day_ta: 'சனி', amount: 800 },
-    { day_en: 'Sun', day_ta: 'ஞாயிறு', amount: 0 },
-  ];
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [bankModalVisible, setBankModalVisible] = useState(false);
+  const [accountNumber, setAccountNumber] = useState('');
+  const [ifsc, setIfsc] = useState('');
+  const [accountName, setAccountName] = useState(profile?.displayName || '');
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isBankVerified, setIsBankVerified] = useState(false);
 
-  const recentPayouts = [
-    {
-      id: 'tx-1',
-      title_en: 'Vegetable Crate Loading',
-      title_ta: 'காய்கறி கூடைகள் ஏற்றுதல்',
-      customer: 'M. Selvakumar',
-      locality_en: 'Mattuthavani',
-      locality_ta: 'மாட்டுத்தாவணி',
-      amount: 800,
-      date: 'Yesterday / நேற்று',
-    },
-    {
-      id: 'tx-2',
-      title_en: 'Motor Pump & CPVC Fitting',
-      title_ta: 'மோட்டார் பம்ப் & பிட்டிங்',
-      customer: 'R. Meenakshi Sundaram',
-      locality_en: 'Goripalayam',
-      locality_ta: 'கோரிப்பாளையம்',
-      amount: 600,
-      date: '08 Oct 2026',
-    },
-    {
-      id: 'tx-3',
-      title_en: 'House Wiring & Fan Setup',
-      title_ta: 'வீட்டு வயரிங் & மின்விசிறி',
-      customer: 'K. Anand',
-      locality_en: 'Anna Nagar',
-      locality_ta: 'அண்ணா நகர்',
-      amount: 950,
-      date: '06 Oct 2026',
-    },
-  ];
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 600);
+  };
+
+  const handleVerifyBank = () => {
+    if (!accountNumber || !ifsc) return;
+    setIsVerifying(true);
+    setTimeout(() => {
+      setIsVerifying(false);
+      setIsBankVerified(true);
+      setBankModalVisible(false);
+    }, 1200);
+  };
 
   return (
-    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
-      <Header
-        showLocation={false}
-        title={language === 'ta' ? 'வருமானம் & வரலாறு' : 'Earnings & History'}
-      />
+    <ScreenWrapper scrollable backgroundColor={Colors.mainBg}>
+      {/* 1. Header with Back, Title, Refresh */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.iconBtn}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chevron-back" size={24} color={Colors.brandBlack} />
+        </TouchableOpacity>
 
-      <View style={styles.container}>
-        {/* Main Stat Card */}
-        <View style={styles.mainCard}>
-          <Text style={styles.cardHeaderLabel}>{t('earningsSummary')}</Text>
-          <Text style={styles.mainAmount}>₹4,850</Text>
-          <Text style={styles.mainSub}>
-            {language === 'ta'
-              ? 'இந்த வாரம் முடித்த 6 வேலைகளில் பெறப்பட்டது'
-              : 'Earned from 6 completed jobs this week'}
-          </Text>
-
-          <View style={styles.statsRow}>
-            <View style={styles.statBox}>
-              <Text style={styles.statLabel}>{t('totalEarned')}</Text>
-              <Text style={styles.statVal}>₹32,500</Text>
-            </View>
-            <View style={styles.vDivider} />
-            <View style={styles.statBox}>
-              <Text style={styles.statLabel}>{t('completedJobsCount')}</Text>
-              <Text style={styles.statVal}>38</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Weekly Breakdown Chart Bar */}
-        <View style={styles.chartCard}>
-          <Text style={styles.chartTitle}>
-            {language === 'ta' ? 'இந்த வார தினசரி வருமானம்' : 'Daily Income Breakdown'}
-          </Text>
-
-          <View style={styles.barGraphRow}>
-            {weeklyData.map((item, index) => (
-              <View key={index} style={styles.barCol}>
-                <Text style={styles.barVal}>₹{item.amount}</Text>
-                <View style={styles.barTrack}>
-                  <View
-                    style={[
-                      styles.barFill,
-                      {
-                        height: item.amount > 0 ? (item.amount / 1000) * 75 : 4,
-                        backgroundColor:
-                          item.amount > 0 ? Colors.brandYellow : Colors.borderStrong,
-                      },
-                    ]}
-                  />
-                </View>
-                <Text style={styles.barDay}>
-                  {language === 'ta' ? item.day_ta.slice(0, 3) : item.day_en}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Upcoming Work Schedule */}
-        <View style={styles.upcomingCard}>
-          <View style={styles.upcomingHeader}>
-            <Text style={styles.upcomingTitle}>{t('upcomingJobs')}</Text>
-            <Badge
-              label={language === 'ta' ? 'நாளை' : 'Tomorrow'}
-              variant="neutral"
-            />
-          </View>
-          <Text style={styles.upcomingJobName}>
-            {language === 'ta'
-              ? '2 படுக்கையறை எமல்ஷன் பெயிண்டிங் வேலை'
-              : '2 Rooms Wall Painting (Emulsion Roller Work)'}
-          </Text>
-          <View style={styles.metaRow}>
-            <Ionicons name="location-outline" size={13} color={Colors.textSecondary} />
-            <Text style={styles.metaText}>
-              {language === 'ta' ? 'கே.கே. நகர், மதுரை' : 'KK Nagar, Madurai'} • 8:30 AM
-            </Text>
-          </View>
-          <View style={styles.rateRow}>
-            <Text style={styles.upcomingRate}>₹950 / {language === 'ta' ? 'நாள்' : 'day'}</Text>
-          </View>
-        </View>
-
-        {/* Recent Work History */}
-        <Text style={styles.historyTitle}>
-          {language === 'ta' ? 'சமீபத்திய வேலைகள்' : 'Recent Work History'}
+        <Text style={styles.headerTitle}>
+          {language === 'ta' ? 'பணப்பை' : 'Wallet'}
         </Text>
 
-        <View style={styles.historyList}>
-          {recentPayouts.map((item) => (
-            <View key={item.id} style={styles.historyItem}>
-              <View style={styles.historyIconCircle}>
-                <Ionicons name="cash-outline" size={16} color={Colors.brandBlack} />
+        <TouchableOpacity
+          onPress={handleRefresh}
+          style={styles.iconBtn}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="refresh-outline"
+            size={22}
+            color={isRefreshing ? Colors.brandYellowDark : Colors.brandBlack}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.container}>
+        {/* 2. Dark Wallet Balance Card */}
+        <View style={styles.darkBalanceCard}>
+          <View style={styles.darkBalanceTop}>
+            <View>
+              <Text style={styles.darkBalanceLabel}>
+                {language === 'ta' ? 'பணப்பை இருப்பு' : 'WALLET BALANCE'}
+              </Text>
+              <Text style={styles.darkBalanceAmount}>₹0</Text>
+              <View style={styles.trendRow}>
+                <Ionicons name="trending-up" size={14} color={Colors.success} />
+                <Text style={styles.trendText}>+12.4% this month</Text>
               </View>
-              <View style={{ flex: 1, marginLeft: 10 }}>
-                <Text style={styles.historyJobTitle}>
-                  {language === 'ta' ? item.title_ta : item.title_en}
-                </Text>
-                <Text style={styles.historyMeta}>
-                  {item.customer} • {language === 'ta' ? item.locality_ta : item.locality_en}
-                </Text>
-                <Text style={styles.historyDate}>{item.date}</Text>
-              </View>
-              <Text style={styles.historyAmount}>+₹{item.amount}</Text>
             </View>
-          ))}
+
+            <View style={styles.walletIconBox}>
+              <Ionicons name="wallet-outline" size={26} color={Colors.brandYellow} />
+            </View>
+          </View>
+        </View>
+
+        {/* 3. Verify Bank Account Action Button */}
+        <TouchableOpacity
+          style={styles.verifyActionBtn}
+          onPress={() => setBankModalVisible(true)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="business-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+          <Text style={styles.verifyActionText}>
+            {isBankVerified
+              ? (language === 'ta' ? 'வங்கி கணக்கு சரிபார்க்கப்பட்டது' : 'Bank Account Verified')
+              : (language === 'ta' ? 'வங்கி கணக்கை சரிபார்க்க' : 'Verify Bank Account')}
+          </Text>
+          {isBankVerified && (
+            <Ionicons name="checkmark-circle" size={16} color={Colors.brandYellow} style={{ marginLeft: 6 }} />
+          )}
+        </TouchableOpacity>
+
+        {/* 4. 2-Column Stats Grid: Available & Pending */}
+        <View style={styles.statsGrid}>
+          <View style={styles.statCard}>
+            <Text style={styles.statCardLabel}>
+              {language === 'ta' ? 'கிடைக்கும் தொகை' : 'AVAILABLE'}
+            </Text>
+            <Text style={styles.statCardValue}>₹0</Text>
+          </View>
+
+          <View style={styles.statCard}>
+            <Text style={styles.statCardLabel}>
+              {language === 'ta' ? 'நிலுவையில்' : 'PENDING'}
+            </Text>
+            <Text style={styles.statCardValue}>₹0</Text>
+          </View>
+        </View>
+
+        {/* 5. Bank Account Details Card */}
+        <View style={styles.bankDetailsCard}>
+          <View style={styles.bankHeaderRow}>
+            <View style={styles.bankTitleGroup}>
+              <Ionicons name="business" size={20} color={Colors.brandBlack} style={{ marginRight: 8 }} />
+              <Text style={styles.bankCardTitle}>
+                {language === 'ta' ? 'வங்கி கணக்கு விவரங்கள்' : 'Bank Account Details'}
+              </Text>
+            </View>
+
+            <View
+              style={[
+                styles.verificationBadge,
+                isBankVerified ? styles.verifiedBadgeBg : styles.notVerifiedBadgeBg,
+              ]}
+            >
+              <Ionicons
+                name={isBankVerified ? 'checkmark-circle-outline' : 'alert-circle-outline'}
+                size={13}
+                color={isBankVerified ? Colors.success : Colors.error}
+                style={{ marginRight: 4 }}
+              />
+              <Text
+                style={[
+                  styles.verificationBadgeText,
+                  { color: isBankVerified ? Colors.success : Colors.error },
+                ]}
+              >
+                {isBankVerified
+                  ? (language === 'ta' ? 'சரிபார்க்கப்பட்டது' : 'Verified')
+                  : (language === 'ta' ? 'சரிபார்க்கப்படவில்லை' : 'Not Verified')}
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.bankDesc}>
+            {isBankVerified
+              ? (language === 'ta'
+                  ? 'உங்கள் வங்கி கணக்கு வெற்றிகரமாக இணைக்கப்பட்டுள்ளது. வருமானங்கள் நேரடியாக செலுத்தப்படும்.'
+                  : `Your bank account (${accountNumber ? `••••${accountNumber.slice(-4)}` : 'Active'}) is verified. Daily payouts are automatically credited.`)
+              : (language === 'ta'
+                  ? 'உங்கள் வங்கி கணக்கை இணைத்து சரிபார்க்கவும். உடனடி சரிபார்ப்பிற்கு ₹1 பென்னி டிராப் பரிவர்த்தனை தொடங்கப்படும்.'
+                  : 'Please add and verify your bank account. A ₹1 Penny Drop transaction will be initiated to verify your account details instantly.')}
+          </Text>
+
+          {!isBankVerified && (
+            <TouchableOpacity
+              style={styles.verifyBankBtn}
+              onPress={() => setBankModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="add" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.verifyBankBtnText}>
+                {language === 'ta' ? 'வங்கி கணக்கை சரிபார்க்க' : 'Verify Bank Account'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* 6. Recent Transactions Section */}
+        <View style={styles.transactionsHeader}>
+          <Text style={styles.transactionsTitle}>
+            {language === 'ta' ? 'சமீபத்திய பரிவர்த்தனைகள்' : 'RECENT TRANSACTIONS'}
+          </Text>
+          <TouchableOpacity activeOpacity={0.7}>
+            <Text style={styles.seeAllText}>
+              {language === 'ta' ? 'அனைத்தும்' : 'See all'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 7. Clean Empty State Card */}
+        <View style={styles.emptyCard}>
+          <View style={styles.receiptIconCircle}>
+            <Ionicons name="receipt-outline" size={38} color={Colors.brandBlack} />
+          </View>
+          <Text style={styles.emptyTitle}>
+            {language === 'ta' ? 'பரிவர்த்தனைகள் எதுவும் இல்லை' : 'No Transactions Yet'}
+          </Text>
+          <Text style={styles.emptySubtitle}>
+            {language === 'ta'
+              ? 'உங்கள் வரவு மற்றும் திரும்பப் பெறுதல் வரலாறு இங்கே தோன்றும்.'
+              : 'Your deposit and withdrawal history will appear here.'}
+          </Text>
         </View>
       </View>
+
+      {/* Bank Account Verification Modal */}
+      <Modal
+        visible={bankModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setBankModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {language === 'ta' ? 'வங்கி கணக்கு சரிபார்ப்பு' : 'Bank Account Verification'}
+              </Text>
+              <TouchableOpacity onPress={() => setBankModalVisible(false)}>
+                <Ionicons name="close" size={22} color={Colors.brandBlack} />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.modalSubtitle}>
+              {language === 'ta'
+                ? 'நேரடி வங்கி பரிமாற்றத்திற்கு ₹1 பென்னி டிராப் சரிபார்ப்பு பயன்படுத்தப்படுகிறது.'
+                : 'Instant ₹1 Penny Drop verification for secure bank settlements.'}
+            </Text>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>
+                {language === 'ta' ? 'கணக்கு வைத்திருப்பவர் பெயர்' : 'Account Holder Name'}
+              </Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="e.g. Hamenath B"
+                placeholderTextColor={Colors.textMuted}
+                value={accountName}
+                onChangeText={setAccountName}
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>
+                {language === 'ta' ? 'வங்கி கணக்கு எண்' : 'Bank Account Number'}
+              </Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="e.g. 50100234567890"
+                placeholderTextColor={Colors.textMuted}
+                keyboardType="numeric"
+                value={accountNumber}
+                onChangeText={setAccountNumber}
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>
+                {language === 'ta' ? 'IFSC குறியீடு' : 'IFSC Code'}
+              </Text>
+              <TextInput
+                style={styles.modalInput}
+                placeholder="e.g. HDFC0001234"
+                placeholderTextColor={Colors.textMuted}
+                autoCapitalize="characters"
+                value={ifsc}
+                onChangeText={setIfsc}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.modalSubmitBtn,
+                (!accountNumber || !ifsc) && { opacity: 0.6 },
+              ]}
+              onPress={handleVerifyBank}
+              disabled={isVerifying || !accountNumber || !ifsc}
+            >
+              {isVerifying ? (
+                <ActivityIndicator color={Colors.brandBlack} size="small" />
+              ) : (
+                <Text style={styles.modalSubmitBtnText}>
+                  {language === 'ta' ? '₹1 சரிபார்ப்பை தொடங்கவும்' : 'Initiate ₹1 Verification'}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+    backgroundColor: Colors.mainBg,
+  },
+  headerTitle: {
+    fontSize: Typography.size.lg,
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
-    padding: 16,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xs,
     paddingBottom: 40,
   },
-  mainCard: {
+  darkBalanceCard: {
+    backgroundColor: Colors.brandDarkCard,
+    borderRadius: Radius.xl,
+    padding: 20,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#262626',
+    ...Shadows.subtle,
+  },
+  darkBalanceTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  darkBalanceLabel: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.bold,
+    color: '#A3A3A3',
+    letterSpacing: 0.6,
+  },
+  darkBalanceAmount: {
+    fontSize: Typography.size['4xl'],
+    fontWeight: Typography.weight.black,
+    color: '#FFFFFF',
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  trendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  trendText: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.semibold,
+    color: Colors.success,
+  },
+  walletIconBox: {
+    width: 50,
+    height: 50,
+    borderRadius: Radius.lg,
+    backgroundColor: '#262626',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verifyActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.brandBlack,
+    borderRadius: Radius.md,
+    height: 48,
+    marginBottom: 14,
+  },
+  verifyActionText: {
+    fontSize: Typography.size.sm,
+    fontWeight: Typography.weight.bold,
+    color: '#FFFFFF',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 14,
+  },
+  statCard: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: Radius.lg,
     padding: 16,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 14,
     ...Shadows.subtle,
   },
-  cardHeaderLabel: {
-    fontSize: 11,
-    fontWeight: '700',
+  statCardLabel: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.bold,
     color: Colors.textSecondary,
-    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  mainAmount: {
-    fontSize: 28,
-    fontWeight: '900',
+  statCardValue: {
+    fontSize: Typography.size['2xl'],
+    fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
-    marginVertical: 4,
-  },
-  mainSub: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginBottom: 14,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    backgroundColor: Colors.secondaryBg,
-    borderRadius: Radius.md,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  statBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  vDivider: {
-    width: 1,
-    backgroundColor: Colors.border,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: Colors.textSecondary,
-  },
-  statVal: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: Colors.brandBlack,
-    marginTop: 2,
-  },
-  chartCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: Radius.lg,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    marginBottom: 14,
-    ...Shadows.subtle,
-  },
-  chartTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    marginBottom: 14,
-  },
-  barGraphRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    height: 110,
-    paddingBottom: 4,
-  },
-  barCol: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  barVal: {
-    fontSize: 9,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    marginBottom: 4,
-  },
-  barTrack: {
-    width: 14,
-    height: 75,
-    backgroundColor: Colors.secondaryBg,
-    borderRadius: 7,
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-  },
-  barFill: {
-    width: '100%',
-    borderRadius: 7,
-  },
-  barDay: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: Colors.textSecondary,
     marginTop: 6,
   },
-  upcomingCard: {
+  bankDetailsCard: {
     backgroundColor: '#FFFFFF',
+    borderRadius: Radius.lg,
+    padding: 18,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: Radius.lg,
-    padding: 14,
-    marginBottom: 16,
+    marginBottom: 20,
     ...Shadows.subtle,
   },
-  upcomingHeader: {
+  bankHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 12,
   },
-  upcomingTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-  },
-  upcomingJobName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-    marginBottom: 4,
-  },
-  metaRow: {
+  bankTitleGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    flex: 1,
   },
-  metaText: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginLeft: 4,
-  },
-  rateRow: {
-    alignItems: 'flex-end',
-  },
-  upcomingRate: {
-    fontSize: 14,
-    fontWeight: '800',
+  bankCardTitle: {
+    fontSize: Typography.size.md,
+    fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
   },
-  historyTitle: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    marginBottom: 8,
-  },
-  historyList: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    overflow: 'hidden',
-    ...Shadows.subtle,
-  },
-  historyItem: {
+  verificationBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.full,
+    borderWidth: 1,
   },
-  historyIconCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+  notVerifiedBadgeBg: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FCA5A5',
+  },
+  verifiedBadgeBg: {
+    backgroundColor: '#F0FDF4',
+    borderColor: '#86EFAC',
+  },
+  verificationBadgeText: {
+    fontSize: 11,
+    fontWeight: Typography.weight.bold,
+  },
+  bankDesc: {
+    fontSize: Typography.size.xs,
+    color: Colors.textSecondary,
+    lineHeight: 18,
+    marginBottom: 16,
+  },
+  verifyBankBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.brandBlack,
+    borderRadius: Radius.md,
+    height: 48,
+  },
+  verifyBankBtnText: {
+    fontSize: Typography.size.sm,
+    fontWeight: Typography.weight.bold,
+    color: '#FFFFFF',
+  },
+  transactionsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  transactionsTitle: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.bold,
+    color: Colors.textSecondary,
+    letterSpacing: 0.6,
+  },
+  seeAllText: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
+  },
+  emptyCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Radius.lg,
+    paddingVertical: 36,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Shadows.subtle,
+  },
+  receiptIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: Colors.secondaryBg,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 14,
+  },
+  emptyTitle: {
+    fontSize: Typography.size.md,
+    fontWeight: Typography.weight.black,
+    color: Colors.brandBlack,
+    marginBottom: 6,
+  },
+  emptySubtitle: {
+    fontSize: Typography.size.xs,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
+    maxWidth: 240,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: Spacing.lg,
+  },
+  modalCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Radius.xl,
+    padding: 20,
     borderWidth: 1,
     borderColor: Colors.border,
+    ...Shadows.card,
   },
-  historyJobTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: Colors.textPrimary,
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
   },
-  historyMeta: {
-    fontSize: 11,
+  modalTitle: {
+    fontSize: Typography.size.lg,
+    fontWeight: Typography.weight.black,
+    color: Colors.brandBlack,
+  },
+  modalSubtitle: {
+    fontSize: Typography.size.xs,
     color: Colors.textSecondary,
-    marginTop: 1,
+    marginBottom: 16,
+    lineHeight: 16,
   },
-  historyDate: {
-    fontSize: 10,
-    color: Colors.textMuted,
-    marginTop: 1,
+  inputGroup: {
+    marginBottom: 12,
   },
-  historyAmount: {
+  inputLabel: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.bold,
+    color: Colors.textPrimary,
+    marginBottom: 6,
+  },
+  modalInput: {
+    height: 46,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.md,
+    paddingHorizontal: 12,
     fontSize: 14,
-    fontWeight: '800',
-    color: Colors.success,
+    color: Colors.brandBlack,
+    backgroundColor: Colors.secondaryBg,
+  },
+  modalSubmitBtn: {
+    backgroundColor: Colors.brandYellow,
+    height: 48,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  modalSubmitBtnText: {
+    fontSize: Typography.size.sm,
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
   },
 });

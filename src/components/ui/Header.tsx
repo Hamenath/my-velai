@@ -226,3 +226,5 @@ const styles = StyleSheet.create({
     color: Colors.brandBlack,
   },
 });
+
+export const AppHeader = Header;

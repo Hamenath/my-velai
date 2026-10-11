@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Linking,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Typography, Spacing, Shadows } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
-import { Header } from '../../components/ui/Header';
-import { Button } from '../../components/ui/Button';
 import { EditProfileModal } from '../../components/profile/EditProfileModal';
 import { AuthModal } from '../../components/profile/AuthModal';
 import { LogoutConfirmModal } from '../../components/profile/LogoutConfirmModal';
@@ -44,287 +50,302 @@ export default function WorkerProfileScreen() {
       await signOut();
       setLogoutModalVisible(false);
     } catch (err: any) {
-      setLogoutError(err?.message || (language === 'ta' ? 'வெளியேறுவதில் தோல்வி' : 'Sign out failed'));
+      setLogoutError(
+        err?.message || (language === 'ta' ? 'வெளியேறுவதில் தோல்வி' : 'Sign out failed')
+      );
     }
   };
 
   // Determine active display data
-  const displayName = profile?.displayName || (user ? (language === 'ta' ? 'மதுரை தொழிலாளி' : 'Madurai Worker') : (language === 'ta' ? 'விருந்தினர் தொழிலாளி' : 'Guest Worker'));
-  const trade = profile
-    ? (language === 'ta' ? (profile.trade_ta || profile.trade_en || 'பொது பணியாளர்') : (profile.trade_en || 'General Worker'))
-    : (user ? (language === 'ta' ? 'பொது பணியாளர்' : 'General Worker') : (language === 'ta' ? 'தொழில் அமைக்கப்படவில்லை' : 'Profile not set up'));
-  const phone = profile?.phone || profile?.email || user?.email || (language === 'ta' ? 'கணக்கு இணைக்கப்படவில்லை' : 'No account connected');
-  const dailyRate = profile?.dailyRate ?? (user ? 750 : 0);
-  const hourlyRate = profile?.hourlyRate ?? (user ? 120 : 0);
-  const skills = profile?.skills && profile.skills.length > 0
-    ? profile.skills
-    : (user
-        ? [language === 'ta' ? 'பொது வேலைகள்' : 'General Help']
-        : [language === 'ta' ? 'பதிவு செய்து திறன்களை சேர்க்கவும்' : 'Sign in to add skills']);
-  const avatarLetter = (displayName[0] || (user ? 'தொ' : 'W')).toUpperCase();
+  const displayName =
+    profile?.displayName ||
+    (user
+      ? user.displayName || (language === 'ta' ? 'ஹேமநாத் பி' : 'Hamenath B')
+      : (language === 'ta' ? 'விருந்தினர் தொழிலாளி' : 'Guest Worker'));
+
+  const email =
+    profile?.email ||
+    user?.email ||
+    (language === 'ta' ? 'மின்னஞ்சல் இணைக்கப்படவில்லை' : 'hamestudy@gmail.com');
+
+  const phone =
+    profile?.phone ||
+    (user ? '+91 87787 07086' : (language === 'ta' ? 'எண் இணைக்கப்படவில்லை' : '+91 87787 07086'));
+
+  const avatarLetter = (displayName[0] || 'H').toUpperCase();
 
   return (
-    <ScreenWrapper scrollable backgroundColor={Colors.secondaryBg}>
-      <Header
-        showLocation={false}
-        title={language === 'ta' ? 'தொழிலாளி சுயவிவரம்' : 'Worker Profile'}
-      />
+    <ScreenWrapper scrollable backgroundColor={Colors.mainBg}>
+      {/* 1. Header Banner & Top Navigation (Screen 4 Reference) */}
+      <View style={styles.bannerContainer}>
+        {/* Dark Top Wave Banner */}
+        <View style={styles.darkBanner}>
+          {/* Top navigation icons inside banner */}
+          <View style={styles.topNavRow}>
+            <TouchableOpacity
+              style={styles.circleNavBtn}
+              onPress={() => router.back()}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="chevron-back" size={20} color={Colors.brandBlack} />
+            </TouchableOpacity>
 
-      <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.circleNavBtn}
+              onPress={() => router.push('/settings')}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="settings-outline" size={20} color={Colors.brandBlack} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Add Banner Button */}
+          <TouchableOpacity
+            style={styles.addBannerBtn}
+            activeOpacity={0.8}
+            onPress={() => Alert.alert('Banner', 'Upload custom banner feature')}
+          >
+            <Ionicons name="camera-outline" size={14} color={Colors.brandBlack} style={{ marginRight: 4 }} />
+            <Text style={styles.addBannerText}>
+              {language === 'ta' ? 'பேனர் சேர்' : 'Add Banner'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Large Avatar Overlapping Banner */}
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatarCircle}>
+            <Text style={styles.avatarText}>{avatarLetter}</Text>
+          </View>
+          {/* Blue Verified Badge */}
+          <View style={styles.verifiedBadge}>
+            <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.contentContainer}>
         {/* Loading Indicator */}
         {isProfileLoading ? (
           <View style={styles.loadingBar}>
             <ActivityIndicator size="small" color={Colors.brandBlack} />
             <Text style={styles.loadingText}>
-              {language === 'ta' ? 'தொழிலாளி சுயவிவரம் ஏற்றப்படுகிறது...' : 'Loading Worker Profile...'}
+              {language === 'ta' ? 'சுயவிவரம் ஏற்றப்படுகிறது...' : 'Loading profile...'}
             </Text>
           </View>
         ) : null}
 
-        {/* Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.topInfo}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{avatarLetter}</Text>
-            </View>
+        {/* 2. User Information Hierarchy */}
+        <View style={styles.userInfoSection}>
+          <Text style={styles.userName}>{displayName}</Text>
+          <Text style={styles.userEmail}>{email}</Text>
+          <Text style={styles.userPhone}>{phone}</Text>
+        </View>
 
-            <View style={{ flex: 1, marginLeft: 12 }}>
-              <View style={styles.nameRow}>
-                <Text style={styles.name}>{displayName}</Text>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={16}
-                  color={Colors.success}
-                  style={{ marginLeft: 4 }}
-                />
-                {user && profile ? (
-                  <View style={styles.syncedPill}>
-                    <Ionicons name="cloud-done" size={10} color={Colors.success} />
-                    <Text style={styles.syncedText}>Cloud</Text>
-                  </View>
-                ) : null}
-              </View>
-
-              <Text style={styles.trade}>{trade}</Text>
-              <Text style={styles.phone}>{phone}</Text>
-
-              {user && profile ? (
-                <View style={styles.ratingBadge}>
-                  <Ionicons name="star" size={11} color="#EAB308" />
-                  <Text style={styles.ratingText}>5.0</Text>
-                  <Text style={styles.reviewsText}>
-                    ({language === 'ta' ? 'புதியவர்' : 'New Worker'})
-                  </Text>
-                </View>
-              ) : (
-                <View style={[styles.ratingBadge, { backgroundColor: Colors.secondaryBg }]}>
-                  <Ionicons name="person-outline" size={11} color={Colors.textSecondary} />
-                  <Text style={[styles.ratingText, { color: Colors.textSecondary }]}>
-                    {language === 'ta' ? 'விருந்தினர் நிலை' : 'Guest Mode'}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {/* Edit Button */}
-            <TouchableOpacity
-              onPress={() => setEditModalVisible(true)}
-              style={styles.editBtn}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="create-outline" size={16} color={Colors.brandBlack} />
-              <Text style={styles.editBtnText}>{t('editProfile')}</Text>
-            </TouchableOpacity>
+        {/* 3. Rating & Total Jobs Stats Row (Screen 4 Reference) */}
+        <View style={styles.statsRow}>
+          <View style={styles.statColumn}>
+            <Ionicons name="star" size={20} color={Colors.brandYellowDark} style={{ marginBottom: 4 }} />
+            <Text style={styles.statNumber}>5.0</Text>
+            <Text style={styles.statLabel}>
+              {language === 'ta' ? 'மதிப்பீடு' : 'Rating'}
+            </Text>
           </View>
 
-          {/* Verification Pill */}
-          <View style={[styles.verifiedBanner, !user && { backgroundColor: Colors.secondaryBg }]}>
-            <Ionicons
-              name={user ? 'shield-checkmark' : 'shield-outline'}
-              size={14}
-              color={user ? Colors.success : Colors.textSecondary}
-            />
-            <Text style={[styles.verifiedText, !user && { color: Colors.textSecondary }]}>
-              {user
-                ? (language === 'ta' ? 'ஆதார் & முகவரி சரிபார்க்கப்பட்டது' : 'Aadhaar & Madurai Address Verified')
-                : (language === 'ta' ? 'சரிபார்ப்புக்கு உள்நுழையவும்' : 'Sign in to verify profile')}
+          <View style={styles.statDivider} />
+
+          <View style={styles.statColumn}>
+            <Ionicons name="briefcase-outline" size={20} color={Colors.brandYellowDark} style={{ marginBottom: 4 }} />
+            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statLabel}>
+              {language === 'ta' ? 'மொத்த வேலைகள்' : 'Total jobs'}
             </Text>
           </View>
         </View>
 
-        {/* Unauthenticated / Guest Account Prompt */}
-        {!user ? (
-          <View style={styles.authPromptCard}>
-            <View style={{ flex: 1 }}>
-              <View style={styles.authBadge}>
-                <Ionicons name="shield-outline" size={12} color={Colors.brandBlack} />
-                <Text style={styles.authBadgeText}>Cloud Firestore</Text>
+        {/* 4. PERSONAL & KYC DETAILS Card (Screen 4 Reference) */}
+        <View style={styles.kycCard}>
+          <View style={styles.kycHeaderRow}>
+            <Text style={styles.kycSectionTitle}>
+              {language === 'ta' ? 'தனிப்பட்ட & KYC விவரங்கள்' : 'PERSONAL & KYC DETAILS'}
+            </Text>
+
+            <View style={styles.kycActionGroup}>
+              <TouchableOpacity
+                onPress={() => setEditModalVisible(true)}
+                style={styles.editActionRow}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="pencil" size={12} color={Colors.brandBlack} style={{ marginRight: 3 }} />
+                <Text style={styles.editText}>
+                  {language === 'ta' ? 'திருத்து' : 'EDIT'}
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.approvedPill}>
+                <Ionicons name="checkmark-circle" size={12} color={Colors.success} style={{ marginRight: 3 }} />
+                <Text style={styles.approvedText}>APPROVED</Text>
               </View>
-              <Text style={styles.authPromptTitle}>
-                {language === 'ta'
-                  ? 'சுயவிவரத்தை கிளவுடில் சேமிக்க'
-                  : 'Save Worker Profile to Firestore'}
-              </Text>
-              <Text style={styles.authPromptDesc}>
-                {language === 'ta'
-                  ? 'கணக்கை உருவாக்கி உங்கள் கூலி, திறன்கள் மற்றும் வேலைகளைப் பாதுகாக்கவும்.'
-                  : 'Register or sign in to persist your rates, skills, and jobs.'}
+            </View>
+          </View>
+
+          {/* DOB Row */}
+          <View style={styles.kycRow}>
+            <View style={styles.kycLabelGroup}>
+              <Ionicons name="calendar-outline" size={16} color={Colors.brandBlack} style={styles.kycIcon} />
+              <Text style={styles.kycLabel}>
+                {language === 'ta' ? 'பிறந்த தேதி' : 'Date of Birth'}
               </Text>
             </View>
-            <Button
-              title={language === 'ta' ? 'உள்நுழைக / பதிவு' : 'Sign In / Register'}
-              onPress={() => setAuthModalVisible(true)}
-              variant="primary"
-              size="sm"
-              style={{ marginLeft: 10 }}
-            />
+            <Text style={styles.kycValue}>15 Jan 2006</Text>
           </View>
-        ) : null}
+
+          {/* Gender Row */}
+          <View style={styles.kycRow}>
+            <View style={styles.kycLabelGroup}>
+              <Ionicons name="person-outline" size={16} color={Colors.brandBlack} style={styles.kycIcon} />
+              <Text style={styles.kycLabel}>
+                {language === 'ta' ? 'பாலினம்' : 'Gender'}
+              </Text>
+            </View>
+            <Text style={styles.kycValue}>
+              {language === 'ta' ? 'ஆண்' : 'Male'}
+            </Text>
+          </View>
+
+          {/* Address Row */}
+          <View style={styles.kycRow}>
+            <View style={styles.kycLabelGroup}>
+              <Ionicons name="location-outline" size={16} color={Colors.brandBlack} style={styles.kycIcon} />
+              <Text style={styles.kycLabel}>
+                {language === 'ta' ? 'முகவரி & இடம்' : 'Address & Location'}
+              </Text>
+            </View>
+            <Text style={styles.kycValue}>Theni, Tamilnadu, 623351</Text>
+          </View>
+
+          {/* ID Verification Row */}
+          <View style={[styles.kycRow, { borderBottomWidth: 0 }]}>
+            <View style={styles.kycLabelGroup}>
+              <Ionicons name="card-outline" size={16} color={Colors.brandBlack} style={styles.kycIcon} />
+              <Text style={styles.kycLabel}>
+                {language === 'ta' ? 'அடையாள சரிபார்ப்பு' : 'ID Verification'}
+              </Text>
+            </View>
+            <Text style={styles.kycValue}>Didit (Verified)</Text>
+          </View>
+        </View>
+
+        {/* 5. Menu List (Screen 4 Reference) */}
+        <TouchableOpacity
+          style={styles.menuCard}
+          onPress={() => setEditModalVisible(true)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuIconBox}>
+            <Ionicons name="person-outline" size={18} color={Colors.brandBlack} />
+          </View>
+          <Text style={styles.menuCardText}>
+            {language === 'ta' ? 'சுயவிவரத்தைத் திருத்து' : 'Edit profile'}
+          </Text>
+          <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.menuCard}
+          onPress={() => router.push('/(worker)/jobs')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuIconBox}>
+            <Ionicons name="clipboard-outline" size={18} color={Colors.brandBlack} />
+          </View>
+          <Text style={styles.menuCardText}>
+            {language === 'ta' ? 'என் வேலைகள்' : 'My zigs'}
+          </Text>
+          <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+        </TouchableOpacity>
+
+        {/* Language Selection */}
+        <TouchableOpacity
+          style={styles.menuCard}
+          onPress={toggleLanguage}
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuIconBox}>
+            <Ionicons name="globe-outline" size={18} color={Colors.brandBlack} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuCardText}>{t('preferredLanguage')}</Text>
+          </View>
+          <View style={styles.langPill}>
+            <Text style={styles.langPillText}>
+              {language === 'ta' ? 'English' : 'தமிழ்'}
+            </Text>
+          </View>
+        </TouchableOpacity>
 
         {/* Switch to Customer Mode */}
-        <View style={styles.switchCard}>
+        <TouchableOpacity
+          style={styles.menuCard}
+          onPress={handleSwitchToCustomer}
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuIconBox}>
+            <Ionicons name="swap-horizontal" size={18} color={Colors.brandBlack} />
+          </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.switchTitle}>
-              {language === 'ta' ? 'வேலை ஆட்கள் தேவையா?' : 'Need to hire someone?'}
-            </Text>
-            <Text style={styles.switchDesc}>
-              {language === 'ta'
-                ? 'வாடிக்கையாளர் முறைக்கு மாறி வேலைகளை பதிவிடுங்கள்.'
-                : 'Switch to customer mode to post jobs or hire workers.'}
+            <Text style={styles.menuCardText}>
+              {language === 'ta' ? 'வாடிக்கையாளர் முறைக்கு மாறுக' : 'Switch to Customer Mode'}
             </Text>
           </View>
-          <Button
-            title={language === 'ta' ? 'வாடிக்கையாளர் முறை' : 'Customer Mode'}
-            onPress={handleSwitchToCustomer}
-            variant="secondary"
-            size="sm"
-            style={{ marginLeft: 12 }}
-          />
-        </View>
+          <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+        </TouchableOpacity>
 
-        {/* My Skills & Rates */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>
-              {language === 'ta' ? 'என் திறன்கள் மற்றும் கூலி' : 'My Skills & Rates'}
-            </Text>
-            {user && profile ? (
-              <TouchableOpacity onPress={() => setEditModalVisible(true)}>
-                <Text style={styles.editSectionLink}>{t('editProfile')}</Text>
-              </TouchableOpacity>
-            ) : null}
+        {/* Support Helpline */}
+        <TouchableOpacity
+          style={styles.menuCard}
+          onPress={handleCallSupport}
+          activeOpacity={0.7}
+        >
+          <View style={styles.menuIconBox}>
+            <Ionicons name="call-outline" size={18} color={Colors.brandBlack} />
           </View>
-
-          <View style={styles.rateGrid}>
-            <View style={styles.rateBox}>
-              <Text style={styles.rateLabel}>
-                {language === 'ta' ? 'தினக்கூலி' : 'Daily Wage'}
-              </Text>
-              <Text style={styles.rateValue}>
-                {dailyRate > 0 ? `₹${dailyRate} / ${language === 'ta' ? 'நாள்' : 'day'}` : '—'}
-              </Text>
-            </View>
-            <View style={styles.rateBox}>
-              <Text style={styles.rateLabel}>
-                {language === 'ta' ? 'மணிநேர கூலி' : 'Hourly Rate'}
-              </Text>
-              <Text style={styles.rateValue}>
-                {hourlyRate > 0 ? `₹${hourlyRate} / ${language === 'ta' ? 'மணி' : 'hr'}` : '—'}
-              </Text>
-            </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.menuCardText}>{t('maduraiSupport')}</Text>
           </View>
+          <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
+        </TouchableOpacity>
 
-          <Text style={styles.skillsLabel}>
-            {language === 'ta' ? 'செயலிலுள்ள திறன்கள்:' : 'Active Skills:'}
-          </Text>
-          <View style={styles.skillsRow}>
-            {skills.map((skill, idx) => (
-              <View key={idx} style={styles.skillPill}>
-                <Text style={styles.skillText}>{skill}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Menu Items */}
-        <View style={styles.menuSection}>
-          {/* Language Switch */}
+        {/* Authentication Options */}
+        {!user ? (
           <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={toggleLanguage}
-            style={styles.menuItem}
+            style={[styles.menuCard, { backgroundColor: Colors.brandYellow }]}
+            onPress={() => setAuthModalVisible(true)}
+            activeOpacity={0.8}
           >
-            <View style={styles.menuIcon}>
-              <Ionicons name="globe-outline" size={18} color={Colors.textPrimary} />
+            <View style={[styles.menuIconBox, { backgroundColor: '#FFFFFF' }]}>
+              <Ionicons name="log-in-outline" size={18} color={Colors.brandBlack} />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.menuTitle}>{t('preferredLanguage')}</Text>
-              <Text style={styles.menuSub}>
-                {language === 'ta' ? 'தமிழ் (செயலில்)' : 'English (Active)'}
-              </Text>
-            </View>
-            <View style={styles.langPill}>
-              <Text style={styles.langPillText}>
-                {language === 'ta' ? 'English' : 'தமிழ்'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Settings */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => router.push('/settings')}
-            style={styles.menuItem}
-          >
-            <View style={styles.menuIcon}>
-              <Ionicons name="settings-outline" size={18} color={Colors.textPrimary} />
-            </View>
-            <Text style={[styles.menuTitle, { flex: 1 }]}>
-              {language === 'ta' ? 'அமைப்புகள்' : 'Settings'}
+            <Text style={[styles.menuCardText, { fontWeight: '900' }]}>
+              {language === 'ta' ? 'உள்நுழைக / பதிவு செய்க' : 'Sign In / Register'}
             </Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={18} color={Colors.brandBlack} />
           </TouchableOpacity>
-
-          {/* Madurai Helpline */}
+        ) : (
           <TouchableOpacity
+            style={[styles.menuCard, { borderColor: '#FCA5A5' }]}
+            onPress={handleOpenLogout}
             activeOpacity={0.7}
-            onPress={handleCallSupport}
-            style={[styles.menuItem, !user && { borderBottomWidth: 0 }]}
           >
-            <View style={styles.menuIcon}>
-              <Ionicons name="call-outline" size={18} color={Colors.textPrimary} />
+            <View style={[styles.menuIconBox, { backgroundColor: '#FEF2F2' }]}>
+              <Ionicons name="log-out-outline" size={18} color={Colors.error} />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.menuTitle}>{t('maduraiSupport')}</Text>
-              <Text style={styles.menuSub}>{t('maduraiHelpline')}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            <Text style={[styles.menuCardText, { color: Colors.error }]}>
+              {t('logout')}
+            </Text>
+            <Ionicons name="chevron-forward" size={18} color={Colors.error} />
           </TouchableOpacity>
-
-          {/* Sign Out Option (if authenticated) */}
-          {user ? (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={handleOpenLogout}
-              style={[styles.menuItem, { borderBottomWidth: 0 }]}
-            >
-              <View style={[styles.menuIcon, { backgroundColor: Colors.errorBg }]}>
-                {isSigningOut ? (
-                  <ActivityIndicator size="small" color={Colors.error} />
-                ) : (
-                  <Ionicons name="log-out-outline" size={18} color={Colors.error} />
-                )}
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.menuTitle, { color: Colors.error }]}>{t('logout')}</Text>
-                <Text style={styles.menuSub}>
-                  {user.email ? user.email : (language === 'ta' ? 'அனானிமஸ் / சோதனை அமர்வு' : 'Anonymous / Test Session')}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
-            </TouchableOpacity>
-          ) : null}
-        </View>
+        )}
       </View>
 
       {/* Edit Profile Modal */}
@@ -347,7 +368,7 @@ export default function WorkerProfileScreen() {
         onClose={() => setLogoutModalVisible(false)}
         onConfirm={handleConfirmLogout}
         isLoading={isSigningOut}
-        userEmail={user?.email || (user ? 'Anonymous User' : null)}
+        userEmail={user?.email || (user ? 'Authenticated User' : null)}
         errorMessage={logoutError}
       />
     </ScreenWrapper>
@@ -355,326 +376,259 @@ export default function WorkerProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    paddingBottom: 40,
+  bannerContainer: {
+    position: 'relative',
+    marginBottom: 50,
   },
-  profileCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: Radius.lg,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    marginBottom: 12,
-    ...Shadows.subtle,
+  darkBanner: {
+    backgroundColor: Colors.brandDarkCard,
+    height: 180,
+    paddingTop: 16,
+    paddingHorizontal: 16,
+    borderBottomLeftRadius: 36,
+    borderBottomRightRadius: 36,
+    justifyContent: 'space-between',
+    paddingBottom: 20,
   },
-  topInfo: {
+  topNavRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: Colors.secondaryBg,
+  circleNavBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.85)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.border,
+  },
+  addBannerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Radius.full,
+    alignSelf: 'flex-end',
+    marginBottom: 4,
+  },
+  addBannerText: {
+    fontSize: 11,
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
+  },
+  avatarWrapper: {
+    position: 'absolute',
+    bottom: -40,
+    left: 20,
+  },
+  avatarCircle: {
+    width: 86,
+    height: 86,
+    borderRadius: 43,
+    backgroundColor: Colors.brandBlack,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 4,
+    borderColor: '#FFFFFF',
+    ...Shadows.subtle,
   },
   avatarText: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: Colors.brandBlack,
+    fontSize: 32,
+    fontWeight: Typography.weight.black,
+    color: '#FFFFFF',
   },
-  nameRow: {
-    flexDirection: 'row',
+  verifiedBadge: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#0284C7',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
-  name: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-  },
-  syncedPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.successBg,
-    borderColor: Colors.successBorder,
-    borderWidth: 1,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: Radius.xs,
-    gap: 3,
-  },
-  syncedText: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: Colors.success,
-  },
-  editBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: Radius.sm,
-    gap: 4,
-  },
-  editBtnText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: Colors.brandBlack,
+  contentContainer: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: 40,
   },
   loadingBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: Radius.md,
-    padding: 8,
     marginBottom: 12,
     gap: 8,
   },
   loadingText: {
     fontSize: 12,
+    color: Colors.textSecondary,
     fontWeight: '600',
+  },
+  userInfoSection: {
+    marginBottom: 20,
+    marginTop: 4,
+  },
+  userName: {
+    fontSize: Typography.size['2xl'],
+    fontWeight: Typography.weight.black,
+    color: Colors.brandBlack,
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: Typography.size.sm,
+    color: Colors.textSecondary,
+    marginBottom: 2,
+  },
+  userPhone: {
+    fontSize: Typography.size.sm,
     color: Colors.textSecondary,
   },
-  authPromptCard: {
+  statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: Colors.brandYellowDark,
-    borderRadius: Radius.lg,
-    padding: 14,
-    marginBottom: 14,
-    ...Shadows.subtle,
+    justifyContent: 'space-around',
+    paddingVertical: 14,
+    marginBottom: 20,
   },
-  authBadge: {
-    flexDirection: 'row',
+  statColumn: {
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: Colors.brandYellow,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: Radius.xs,
-    marginBottom: 4,
-    gap: 3,
+    flex: 1,
   },
-  authBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
+  statNumber: {
+    fontSize: Typography.size['2xl'],
+    fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
   },
-  authPromptTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-  },
-  authPromptDesc: {
-    fontSize: 11,
+  statLabel: {
+    fontSize: Typography.size.xs,
     color: Colors.textSecondary,
     marginTop: 2,
-    lineHeight: 15,
   },
-  sectionHeaderRow: {
+  statDivider: {
+    width: 1,
+    height: 36,
+    backgroundColor: Colors.border,
+  },
+  kycCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Radius.lg,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: 16,
+    ...Shadows.subtle,
+  },
+  kycHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 14,
   },
-  editSectionLink: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Colors.brandYellowDark,
+  kycSectionTitle: {
+    fontSize: 11,
+    fontWeight: Typography.weight.black,
+    color: Colors.brandBlack,
+    letterSpacing: 0.5,
   },
-  trade: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  phone: {
-    fontSize: 12,
-    color: Colors.textMuted,
-    marginTop: 1,
-  },
-  ratingBadge: {
+  kycActionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.secondaryBg,
-    borderColor: Colors.border,
-    borderWidth: 1,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: Radius.xs,
-    alignSelf: 'flex-start',
-    marginTop: 4,
-    gap: 3,
+    gap: 8,
   },
-  ratingText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: Colors.textPrimary,
-  },
-  reviewsText: {
-    fontSize: 10,
-    color: Colors.textSecondary,
-  },
-  verifiedBanner: {
+  editActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.successBg,
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    borderRadius: Radius.xs,
-    marginTop: 12,
-    gap: 5,
-    borderWidth: 1,
-    borderColor: Colors.successBorder,
   },
-  verifiedText: {
+  editText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
+  },
+  approvedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0FDF4',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: '#86EFAC',
+  },
+  approvedText: {
+    fontSize: 9.5,
+    fontWeight: Typography.weight.black,
     color: Colors.success,
   },
-  switchCard: {
+  kycRow: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.lg,
-    padding: 14,
-    marginBottom: 14,
-    ...Shadows.subtle,
-  },
-  switchTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-  },
-  switchDesc: {
-    fontSize: 11,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  sectionCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: Radius.lg,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    marginBottom: 14,
-    ...Shadows.subtle,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: Colors.textPrimary,
-    marginBottom: 10,
-  },
-  rateGrid: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 10,
-  },
-  rateBox: {
-    flex: 1,
-    backgroundColor: Colors.secondaryBg,
-    padding: 10,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  rateLabel: {
-    fontSize: 10,
-    color: Colors.textSecondary,
-  },
-  rateValue: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: Colors.brandBlack,
-    marginTop: 2,
-  },
-  skillsLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: Colors.textSecondary,
-    marginBottom: 6,
-  },
-  skillsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  skillPill: {
-    backgroundColor: Colors.secondaryBg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.xs,
-  },
-  skillText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
-  menuSection: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    overflow: 'hidden',
-    marginBottom: 20,
-    ...Shadows.subtle,
-  },
-  menuItem: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 13,
-    paddingHorizontal: 14,
+    paddingVertical: 11,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  menuIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: Colors.secondaryBg,
+  kycLabelGroup: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+  },
+  kycIcon: {
+    marginRight: 8,
+  },
+  kycLabel: {
+    fontSize: Typography.size.xs,
+    color: Colors.brandBlack,
+    fontWeight: Typography.weight.medium,
+  },
+  kycValue: {
+    fontSize: Typography.size.xs,
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
+  },
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.secondaryBg,
+    borderRadius: Radius.lg,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: Colors.border,
   },
-  menuTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: Colors.textPrimary,
+  menuIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: Radius.sm,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
-  menuSub: {
-    fontSize: 11,
-    color: Colors.textSecondary,
-    marginTop: 1,
+  menuCardText: {
+    fontSize: Typography.size.sm,
+    fontWeight: Typography.weight.bold,
+    color: Colors.brandBlack,
+    flex: 1,
   },
   langPill: {
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.xs,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Radius.full,
     borderWidth: 1,
     borderColor: Colors.border,
   },
   langPillText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: Typography.weight.bold,
     color: Colors.brandBlack,
   },
 });
