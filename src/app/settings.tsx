@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../constants/colors';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { ScreenWrapper } from '../components/layout/ScreenWrapper';
@@ -31,7 +31,7 @@ export default function SettingsScreen() {
     setHasSeenOnboarding,
     t,
   } = useApp();
-  const { user, isSigningOut, signOut } = useAuth();
+  const { user, isSigningOut, signOut, isAdmin } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
@@ -261,6 +261,41 @@ export default function SettingsScreen() {
           )}
         </View>
 
+        {/* Owner & Admin Console */}
+        <Text style={styles.sectionHeader}>
+          {language === 'ta' ? 'நிர்வாகக் குழு' : 'Owner & Admin Console'}
+        </Text>
+        <View style={styles.card}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push('/admin')}
+            style={styles.settingRow}
+          >
+            <View style={{ flex: 1, paddingRight: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                <Text style={styles.rowTitle}>
+                  {language === 'ta' ? 'நிர்வாகக் குழு (Admin Console)' : 'Admin Dashboard'}
+                </Text>
+                <View style={[styles.adminBadge, isAdmin && styles.adminBadgeActive]}>
+                  <Text style={[styles.adminBadgeText, isAdmin && styles.adminBadgeTextActive]}>
+                    {isAdmin ? 'AUTHORIZED' : 'RESTRICTED'}
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.rowSub}>
+                {language === 'ta'
+                  ? 'பயனர், வேலை மற்றும் தொழிலாளர் சரிபார்ப்பு மேலாண்மை'
+                  : 'Platform metrics, job moderation & worker verification'}
+              </Text>
+            </View>
+            <Ionicons
+              name={isAdmin ? 'shield-checkmark' : 'shield-outline'}
+              size={20}
+              color={isAdmin ? Colors.brandBlack : Colors.textMuted}
+            />
+          </TouchableOpacity>
+        </View>
+
         {/* Developer / Reset Options */}
         <View style={{ marginTop: 20, marginBottom: 20 }}>
           <TouchableOpacity
@@ -305,11 +340,12 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   sectionHeader: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.textSecondary,
     marginBottom: 6,
-    marginTop: 12,
+    marginTop: 14,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -325,7 +361,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 13,
+    paddingVertical: 14,
     paddingHorizontal: 14,
   },
   divider: {
@@ -333,14 +369,39 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.border,
   },
   rowTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   rowSub: {
-    fontSize: 11,
+    fontFamily: FontFamilies.primary,
+    fontSize: 12,
     color: Colors.textSecondary,
-    marginTop: 1,
+    marginTop: 2,
+    lineHeight: 16,
+  },
+  adminBadge: {
+    backgroundColor: Colors.secondaryBg,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  adminBadgeActive: {
+    backgroundColor: Colors.brandYellow,
+    borderColor: Colors.brandYellowDark,
+  },
+  adminBadgeText: {
+    fontFamily: FontFamilies.primary,
+    fontSize: 9,
+    fontWeight: '800',
+    color: Colors.textSecondary,
+    letterSpacing: 0.5,
+  },
+  adminBadgeTextActive: {
+    color: Colors.brandBlack,
   },
   resetBtn: {
     flexDirection: 'row',
@@ -350,6 +411,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   resetText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,

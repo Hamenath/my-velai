@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing } from '../../constants/colors';
+import { Colors, Typography, Spacing, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Chip } from '../../components/ui/Chip';
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.mainBg,
   },
   screenTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size['2xl'],
     fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
@@ -203,6 +204,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   filtersBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.sm,
     fontWeight: Typography.weight.bold,
     color: Colors.brandBlack,

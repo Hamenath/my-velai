@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -324,6 +324,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   jobTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -341,16 +342,19 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
   },
   wageBoxLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     color: Colors.textSecondary,
     fontWeight: '600',
   },
   wageBoxAmount: {
+    fontFamily: FontFamilies.primary,
     fontSize: 18,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   wageBoxUnit: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -367,11 +371,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   workersNeededText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     color: Colors.brandBlack,
   },
   cardTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -392,16 +398,19 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   locName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   landmarkText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
   },
   descText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textPrimary,
     lineHeight: 19,
@@ -421,16 +430,19 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   custAvatarText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   customerName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   customerPhone: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -456,11 +468,13 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   appliedBannerTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.success,
   },
   appliedBannerSub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.success,
     marginTop: 1,
@@ -489,11 +503,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   modalTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   modalSub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginBottom: 14,
@@ -522,6 +538,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.successBorder,
   },
   successTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -529,6 +546,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   successDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',

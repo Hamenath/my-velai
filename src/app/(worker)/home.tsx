@@ -307,6 +307,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   helloText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textSecondary,
     fontWeight: '500',
@@ -318,11 +319,13 @@ const styles = StyleSheet.create({
     borderRadius: Radius.xs,
   },
   roleBadgeText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   workerName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 18,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -374,12 +377,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   noticeTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 2,
   },
   noticeSubtitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textMuted,
     lineHeight: 16,
@@ -393,6 +398,7 @@ const styles = StyleSheet.create({
     height: 44,
   },
   verifyNowText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '800',
     color: Colors.brandBlack,
@@ -411,11 +417,13 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   balanceLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.brandYellow,
     fontWeight: '600',
   },
   balanceAmount: {
+    fontFamily: FontFamilies.primary,
     fontSize: 26,
     fontWeight: '800',
     color: '#FFFFFF',
@@ -440,6 +448,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   actionTileLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -468,6 +477,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   availStatusTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,

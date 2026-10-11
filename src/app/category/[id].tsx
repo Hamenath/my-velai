@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -227,11 +227,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   catTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   catDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -254,10 +256,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   statsPillLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     color: Colors.textSecondary,
   },
   statsPillVal: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,
@@ -290,11 +294,13 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   segmentText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,
   },
   activeSegmentText: {
+    fontFamily: FontFamilies.primary,
     color: Colors.brandBlack,
     fontWeight: '700',
   },

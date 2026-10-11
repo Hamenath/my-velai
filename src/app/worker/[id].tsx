@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -328,11 +328,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
+    fontFamily: FontFamilies.primary,
     fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   categorySub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -355,11 +357,13 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   ratingText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   reviewsCount: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     color: Colors.textSecondary,
   },
@@ -377,11 +381,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statVal: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   statLbl: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -391,6 +397,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.border,
   },
   cardSectionTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -409,16 +416,19 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   priceLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     color: Colors.textSecondary,
   },
   priceValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.brandBlack,
     marginTop: 1,
   },
   priceUnit: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -440,11 +450,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   skillText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '600',
     color: Colors.textPrimary,
   },
   bioText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     color: Colors.textPrimary,
     lineHeight: 19,
@@ -456,6 +468,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   localityText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
   },
@@ -471,11 +484,13 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   verifiedTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '800',
     color: Colors.success,
   },
   verifiedDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -497,6 +512,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   callButtonText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -531,6 +547,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.successBorder,
   },
   modalBoxTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -538,6 +555,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   modalBoxDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',

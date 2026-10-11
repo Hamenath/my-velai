@@ -34,6 +34,7 @@ export default function RootLayout() {
           <Stack.Screen name="category/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="booking/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="settings" options={{ headerShown: false }} />
+          <Stack.Screen name="admin" options={{ headerShown: false }} />
         </Stack>
         </AppProvider>
       </AuthProvider>

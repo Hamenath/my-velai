@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -343,17 +343,20 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   introTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   introSub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
     lineHeight: 17,
   },
   sectionLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
@@ -386,6 +389,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandYellow,
   },
   wageTypeText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -427,6 +431,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.successBorder,
   },
   modalSuccessTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 17,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -434,6 +439,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   modalSuccessDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',

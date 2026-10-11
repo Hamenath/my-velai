@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.brandYellow,
   },
   tabText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -207,10 +208,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   timeAgo: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textMuted,
   },
   jobTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -223,6 +226,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   metaText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginLeft: 4,
@@ -236,11 +240,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   noteLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '700',
     color: Colors.textSecondary,
   },
   noteText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textPrimary,
     marginTop: 2,
@@ -256,10 +262,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rateLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     color: Colors.textSecondary,
   },
   rateValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -270,6 +278,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   linkText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,

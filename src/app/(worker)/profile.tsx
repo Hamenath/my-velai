@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Typography, Spacing, Shadows } from '../../constants/colors';
+import { Colors, Radius, Typography, Spacing, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
@@ -435,6 +435,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   avatarText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 32,
     fontWeight: Typography.weight.black,
     color: '#FFFFFF',
@@ -468,6 +469,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     fontWeight: '600',
@@ -477,17 +479,20 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   userName: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size['2xl'],
     fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
     marginBottom: 4,
   },
   userEmail: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.sm,
     color: Colors.textSecondary,
     marginBottom: 2,
   },
   userPhone: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.sm,
     color: Colors.textSecondary,
   },
@@ -503,11 +508,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statNumber: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size['2xl'],
     fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
   },
   statLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.xs,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -533,6 +540,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   kycSectionTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: Typography.weight.black,
     color: Colors.brandBlack,
@@ -548,6 +556,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   editText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: Typography.weight.bold,
     color: Colors.brandBlack,
@@ -563,6 +572,7 @@ const styles = StyleSheet.create({
     borderColor: '#86EFAC',
   },
   approvedText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 9.5,
     fontWeight: Typography.weight.black,
     color: Colors.success,
@@ -583,11 +593,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   kycLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.xs,
     color: Colors.brandBlack,
     fontWeight: Typography.weight.medium,
   },
   kycValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.xs,
     fontWeight: Typography.weight.bold,
     color: Colors.brandBlack,
@@ -613,6 +625,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   menuCardText: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.sm,
     fontWeight: Typography.weight.bold,
     color: Colors.brandBlack,
@@ -627,6 +640,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   langPillText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: Typography.weight.bold,
     color: Colors.brandBlack,

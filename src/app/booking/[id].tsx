@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -320,6 +320,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   notFoundText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     color: Colors.textSecondary,
   },
@@ -338,12 +339,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   bookingIdText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.textMuted,
     letterSpacing: 0.5,
   },
   serviceTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -362,11 +365,13 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   otpTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   otpDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -380,6 +385,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   otpNumber: {
+    fontFamily: FontFamilies.primary,
     fontSize: 18,
     fontWeight: '900',
     color: Colors.brandBlack,
@@ -395,6 +401,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   cardTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -444,6 +451,7 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
   },
   stepLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -457,6 +465,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   stepSub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     fontWeight: '500',
@@ -475,6 +484,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   simulateStepText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,
@@ -503,16 +513,19 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   workerAvatarText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   workerNameText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   workerPhoneText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -533,11 +546,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   addressText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   landmarkText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -549,15 +564,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   amountLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
   },
   amountValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: 18,
     fontWeight: '900',
     color: Colors.brandBlack,
   },
   paymentNote: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 4,

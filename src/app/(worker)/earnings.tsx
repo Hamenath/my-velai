@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Typography, Spacing, Shadows } from '../../constants/colors';
+import { Colors, Radius, Typography, Spacing, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
@@ -346,12 +346,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   darkBalanceLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.xs,
     fontWeight: Typography.weight.bold,
     color: '#A3A3A3',
     letterSpacing: 0.6,
   },
   darkBalanceAmount: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size['4xl'],
     fontWeight: Typography.weight.black,
     color: '#FFFFFF',
@@ -364,6 +366,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   trendText: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.xs,
     fontWeight: Typography.weight.semibold,
     color: Colors.success,
@@ -386,6 +389,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   verifyActionText: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.sm,
     fontWeight: Typography.weight.bold,
     color: '#FFFFFF',
@@ -405,12 +409,14 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   statCardLabel: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size.xs,
     fontWeight: Typography.weight.bold,
     color: Colors.textSecondary,
     letterSpacing: 0.5,
   },
   statCardValue: {
+    fontFamily: FontFamilies.primary,
     fontSize: Typography.size['2xl'],
     fontWeight: Typography.weight.black,
     color: Colors.brandBlack,

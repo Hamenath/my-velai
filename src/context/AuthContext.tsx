@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { profileService } from '../services/profileService';
+import { adminService } from '../services/adminService';
 import {
   UserProfileDoc,
   CreateProfileInput,
@@ -19,6 +20,7 @@ import {
 interface AuthContextType {
   user: User | null;
   profile: UserProfileDoc | null;
+  isAdmin: boolean;
   isLoading: boolean;
   isProfileLoading: boolean;
   isSigningOut: boolean;
@@ -38,12 +40,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfileDoc | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isProfileLoading, setIsProfileLoading] = useState<boolean>(false);
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // Synchronize Firebase Auth state and load real Firestore profile
+  // Synchronize Firebase Auth state, admin status, and load real Firestore profile
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
@@ -52,8 +55,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (currentUser) {
         setIsProfileLoading(true);
         try {
-          const loadedProfile = await profileService.getProfile(currentUser.uid);
+          const [loadedProfile, adminStatus] = await Promise.all([
+            profileService.getProfile(currentUser.uid),
+            adminService.checkAdminStatus(currentUser),
+          ]);
           setProfile(loadedProfile);
+          setIsAdmin(adminStatus);
         } catch (err: any) {
           console.error('[AuthContext] Failed to load Firestore profile:', err);
           setAuthError(err?.message || 'Failed to load profile');
@@ -62,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         setProfile(null);
+        setIsAdmin(false);
         setIsProfileLoading(false);
       }
 
@@ -199,6 +207,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         profile,
+        isAdmin,
         isLoading,
         isProfileLoading,
         isSigningOut,

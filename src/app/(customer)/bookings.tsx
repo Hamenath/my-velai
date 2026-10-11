@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
 import { Header } from '../../components/ui/Header';
@@ -172,17 +172,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bookingId: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.textMuted,
     letterSpacing: 0.5,
   },
   dateText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
   },
   serviceTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -194,6 +197,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   metaText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginLeft: 4,
@@ -219,21 +223,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 15,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   workerName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   otpNotice: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
   },
   otpValue: {
+    fontFamily: FontFamilies.primary,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
@@ -258,6 +266,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   amountText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 17,
     fontWeight: '900',
     color: Colors.textPrimary,
@@ -268,6 +277,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   trackLinkText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.brandBlack,

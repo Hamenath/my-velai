@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Radius, Shadows } from '../../constants/colors';
+import { Colors, Radius, Shadows, FontFamilies } from '../../constants/colors';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { ScreenWrapper } from '../../components/layout/ScreenWrapper';
@@ -317,6 +317,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   avatarText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 20,
     fontWeight: '800',
     color: Colors.brandBlack,
@@ -327,6 +328,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   userName: {
+    fontFamily: FontFamilies.primary,
     fontSize: 16,
     fontWeight: '800',
     color: Colors.textPrimary,
@@ -343,6 +345,7 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   syncedText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 9,
     fontWeight: '700',
     color: Colors.success,
@@ -357,6 +360,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   editBtnText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '800',
     color: Colors.brandBlack,
@@ -374,6 +378,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -402,22 +407,26 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   authBadgeText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 10,
     fontWeight: '800',
     color: Colors.brandBlack,
   },
   authPromptTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   authPromptDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 2,
     lineHeight: 15,
   },
   userPhone: {
+    fontFamily: FontFamilies.primary,
     fontSize: 12,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -436,6 +445,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   localityText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '600',
     color: Colors.textSecondary,
@@ -453,11 +463,13 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   switchTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 14,
     fontWeight: '800',
     color: Colors.textPrimary,
   },
   switchDesc: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 2,
@@ -492,11 +504,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   menuTitle: {
+    fontFamily: FontFamilies.primary,
     fontSize: 13,
     fontWeight: '700',
     color: Colors.textPrimary,
   },
   menuSub: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     color: Colors.textSecondary,
     marginTop: 1,
@@ -510,11 +524,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   langPillText: {
+    fontFamily: FontFamilies.primary,
     fontSize: 11,
     fontWeight: '700',
     color: Colors.brandBlack,
   },
   appVersion: {
+    fontFamily: FontFamilies.primary,
     textAlign: 'center',
     fontSize: 11,
     color: Colors.textMuted,
